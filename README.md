@@ -1,4 +1,4 @@
 catalan
 =======
 
-Catalan: a (mostly enumerative) combinatorics library for Julia
+Catalan: a combinatorics library for Julia, focusing mostly (as of now) on enumerative combinatorics and permutations.
