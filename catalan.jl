@@ -1,12 +1,12 @@
 module Catalan
 
 import Base.*
-export multinomial, stirling1, hyperfactorial, catalan, fibonacci, derangement
+export catalan, derangement, fibonacci, hyperfactorial, multinomial, stirlings1, subfactorial
 
 include("extras/bigint.jl")
 include("extras/poly.jl")
 
-# Multinomial where n = sum(k)
+# Multinomial coefficient where n = sum(k)
 function multinomial(k...)
     s = 0
     result = 1
@@ -23,20 +23,14 @@ function derangement(n::Integer)
 end
 subfactorial(n::Integer) = derangement(n)
 
-# Returns s(n, k), Stirling number of first kind
+# Returns s(n, k), the signed Stirling number of first kind
 function stirlings1(n::Integer, k::Integer)
     p = poly(0:(n-1))
     p[n - k + 1]
 end
 
-# Hyperfactorial, always returns a BigInt
-function hyperfactorial(n::Integer)
-    result = BigInt(1)
-    for i = 2:n
-        result *= i^i
-    end
-    result
-end
+# Hyperfactorial
+hyperfactorial(n::Integer) = prod([i^i for i = 2:n])
 
 # Returns the n-th Catalan number
 function catalan(bn::Integer)
