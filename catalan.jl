@@ -1,10 +1,41 @@
-load("bigint.jl")
-load("poly.jl")
+module Catalan
+
+import Base.*
+export multinomial, stirling1, hyperfactorial, catalan, fibonacci, derangement
+
+include("extras/bigint.jl")
+include("extras/poly.jl")
+
+# Multinomial where n = sum(k)
+function multinomial(k...)
+    s = 0
+    result = 1
+    for i in k
+        s += i
+        result *= binomial(s, i)
+    end
+    result
+end
+
+# The number of permutations of n with no fixed points (subfactorial) 
+function derangement(n::Integer)
+    return num(factorial(n)*sum([(-1)^k//factorial(k) for k=0:n]))
+end
+subfactorial(n::Integer) = derangement(n)
 
 # Returns s(n, k), Stirling number of first kind
-function stirling1(n::Integer, k::Integer)
+function stirlings1(n::Integer, k::Integer)
     p = poly(0:(n-1))
     p[n - k + 1]
+end
+
+# Hyperfactorial, always returns a BigInt
+function hyperfactorial(n::Integer)
+    result = BigInt(1)
+    for i = 2:n
+        result *= i^i
+    end
+    result
 end
 
 # Returns the n-th Catalan number
@@ -28,6 +59,7 @@ function fibonacci(bn::BigInt)
         (Ptr{Void}, Uint), z, n)
     BigInt(z)
 end
+
 # Overflows Int64 for n = 93+
 # Overflows Int32 for n = 47+
 function fibonacci(n::Integer)
@@ -133,3 +165,5 @@ const FIBONACCI = [ "0"
                     "2880067194370816120"
                     "4660046610375530309"
                     "7540113804746346429"]
+
+end
