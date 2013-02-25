@@ -12,7 +12,7 @@ using Catalan
 @assert lucas(10) == 123
 @assert lucas(100) == BigInt("792070839848372253127")
 @assert multifactorial(40,2) == doublefactorial(40)
-@assert multinomial(1,4,4,11) == 34650
+@assert multinomial(1,4,4,2) == 34650
 @assert primorial(17) == 510510
-@assert sum([abs(stirlings(8, i)) for i = 0:8]) == factorial(8)
+@assert sum([abs(stirlings1(8, i)) for i = 0:8]) == factorial(8)
 
