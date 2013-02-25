@@ -2,7 +2,7 @@ catalan
 =======
 
 Catalan: a combinatorics library for Julia, focusing mostly (as of now) on enumerative combinatorics and permutations.
-Loading and using `bigint.jl` as arguments is extremely recommended, as these functions overflow easily.
+As overflows are expected even for low values, most of the functions always return `BigInt`, and are marked as such below.
 
 Implements the following functions, with yet no real regard for performance:
  - `catalan(n)`: returns the n-th Catalan number; always returns a `BigInt`;
