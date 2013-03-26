@@ -1,8 +1,6 @@
-require("poly.jl")
-
 module Catalan
+using Polynomial
 
-import  Main.poly
 export  catalan,
         derangement,
         doublefactorial,
