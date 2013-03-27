@@ -9,6 +9,7 @@ using Test
 @test fibonacci(5) == 5
 @test fibonacci(101) == BigInt("573147844013817084101")
 @test hyperfactorial(15) == BigInt("55696437941726556979200000")
+@test lassalle(14) == BigInt("270316008395632253340")
 @test legendresymbol(1001,9907) == jacobisymbol(1001,9907)
 @test lucas(10) == 123
 @test lucas(100) == BigInt("792070839848372253127")

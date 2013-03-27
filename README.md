@@ -11,6 +11,7 @@ Implements the following functions, with yet no real regard for performance:
  - `fibonacci(n)`: the n-th Fibonacci number; always returns a `BigInt`;
  - `hyperfactorial(n)`: the n-th hyperfactorial, i.e. prod([i^i for i = 2:n]; always returns a `BigInt`;
  - `jacobisymbol(a,b)`: returns the Jacobi symbol (a/b);
+ - `lassalle(n)` :returns the nth Lassalle number A<sub>n</sub> defined in [arXiv:1009.4225](http://arxiv.org/abs/1009.4225) ([OEIS A180874](http://oeis.org/A180874))
  - `legendresymbol(a,p)`: returns the Legendre symbol (a/p);
  - `lucas(n)`: the n-th Lucas number; always returns a `BigInt`;
  - `multifactorial(n)`: returns the m-multifactorial n(!^m); always returns a `BigInt`;
