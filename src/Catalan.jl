@@ -62,6 +62,16 @@ function jacobisymbol(a::Integer, b::Integer)
         (Ptr{Void}, Ptr{Void}), ba.mpz, bb.mpz)
 end
 
+#Computes Lassalle's sequence
+#OEIS entry A180874
+function lassalle(m::Integer)
+   A = ones(BigInt,m)
+   for n=2:m
+       A[n]=(-1)^(n-1) * (catalan(n) + sum([(-1)^j*binomial(2n-1, 2j-1)*A[j]*catalan(n-j) for j=1:n-1]))
+   end
+   A[m]
+end
+
 function legendresymbol(a::Integer, b::Integer)
     ba = BigInt(a)
     bb = BigInt(b)
