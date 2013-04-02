@@ -1,12 +1,14 @@
 module Catalan
 using Polynomial
 
-export  catalan,
+export  bell,
+        catalan,
         derangement,
         doublefactorial,
         fibonacci,
         hyperfactorial,
         jacobisymbol,
+        lassalle,
         legendresymbol,
         lucas,
         multifactorial,
@@ -14,6 +16,25 @@ export  catalan,
         primorial,
         stirlings1,
         subfactorial
+
+# Returns the n-th Bell number
+function bell(bn::Integer)
+    if bn < 0
+        throw(DomainError())
+    else
+        n = BigInt(bn)
+    end
+    list = Array(BigInt, div(n*(n+1), 2))
+    list[1] = 1
+    for i = 2:n
+        beg = div(i*(i-1),2)
+        list[beg+1] = list[beg]
+        for j = 2:i
+            list[beg+j] = list[beg+j-1]+list[beg+j-i]
+        end
+    end
+    return list[end]
+end
 
 # Returns the n-th Catalan number
 function catalan(bn::Integer)
