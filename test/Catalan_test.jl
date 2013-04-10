@@ -1,5 +1,5 @@
 using Catalan
-using Test
+using Base.Test
 
 # catalan
 @test catalan(5) == 42
