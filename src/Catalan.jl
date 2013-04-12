@@ -17,6 +17,8 @@ export  bell,
         stirlings1,
         subfactorial
 
+include("youngdiagrams.jl")
+
 # Returns the n-th Bell number
 function bell(bn::Integer)
     if bn < 0
