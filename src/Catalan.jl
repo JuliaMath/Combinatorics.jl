@@ -1,4 +1,5 @@
 module Catalan
+
 using Polynomial
 
 export  bell,
@@ -15,7 +16,8 @@ export  bell,
         multinomial,
         primorial,
         stirlings1,
-        subfactorial
+        subfactorial,
+        partitions
 
 include("youngdiagrams.jl")
 
@@ -147,6 +149,24 @@ end
 function stirlings1(n::Integer, k::Integer)
     p = poly(0:(n-1))
     p[n - k + 1]
+end
+
+# Lists the partitions of the number n, the order is consistent with GAP
+function partitions(n)
+    if n == 1
+        return Vector{Int}[[1]]
+    end
+        
+    list = Vector{Int}[]
+    
+    for p in partitions(n-1)
+        push!(list, [p, 1])
+        if length(p) == 1 || p[end] < p[end-1]
+            push!(list, [p[1:end-1], p[end]+1])
+        end
+    end        
+
+    list
 end
 
 end
