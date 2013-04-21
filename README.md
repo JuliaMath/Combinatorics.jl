@@ -19,3 +19,15 @@ This library provides the following functions:
  - `multinomial(k...)`: receives a tuple of `k_1, ..., k_n` and calculates the multinomial coefficient `(n k)`, where `n = sum(k)`; returns a `BigInt` only if given a `BigInt`;
  - `primorial(n)`: returns the product of all positive prime numbers <= n; always returns a `BigInt`;
  - `stirlings1(n, k)`: the signed `(n,k)`-th Stirling number of the first kind; returns a `BigInt` only if given a `BigInt`.
+
+
+Young diagrams
+--------------
+Limited support for working with Young diagrams is provided.
+
+- `partitionsequence(a)`: computes partition sequence for an integer partition `a`
+- `x = a \ b` creates the skew diagram for partitions (tuples) `a`, `b`
+- `isrimhook(x)`: checks if skew diagram `x` is a rim hook
+- `leglength(x)`: computes leg length of rim hook `x`
+- `character(a, b)`: computes character the partition `b` in the `a`th irrep of Sn
+
