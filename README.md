@@ -11,6 +11,7 @@ This library provides the following functions:
  - `doublefactorial(n)`: returns the double factorial n!!; always returns a `BigInt`;
  - `fibonacci(n)`: the n-th Fibonacci number; always returns a `BigInt`;
  - `hyperfactorial(n)`: the n-th hyperfactorial, i.e. prod([i^i for i = 2:n]; always returns a `BigInt`;
+ - `integer_partitions(n)`: returns a `Vector{Int}` consisting of the partitions of the number `n`.
  - `jacobisymbol(a,b)`: returns the Jacobi symbol (a/b);
  - `lassalle(n)`: returns the nth Lassalle number A<sub>n</sub> defined in [arXiv:1009.4225](http://arxiv.org/abs/1009.4225) ([OEIS A180874](http://oeis.org/A180874)); always returns a `BigInt`;
  - `legendresymbol(a,p)`: returns the Legendre symbol (a/p);
@@ -19,7 +20,6 @@ This library provides the following functions:
  - `multinomial(k...)`: receives a tuple of `k_1, ..., k_n` and calculates the multinomial coefficient `(n k)`, where `n = sum(k)`; returns a `BigInt` only if given a `BigInt`;
  - `primorial(n)`: returns the product of all positive prime numbers <= n; always returns a `BigInt`;
  - `stirlings1(n, k)`: the signed `(n,k)`-th Stirling number of the first kind; returns a `BigInt` only if given a `BigInt`.
- - `partitions(n)`: returns a `Vector{Int}` consisting of the partitions of the number `n`.
 
 Young diagrams
 --------------
