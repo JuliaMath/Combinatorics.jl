@@ -45,3 +45,7 @@ using Base.Test
 @test bell(7) == 877
 @test bell(42) == BigInt("35742549198872617291353508656626642567")
 @test_fails bell(-1)
+
+# integer_partitions
+@test integer_partitions(5) == {[1, 1, 1, 1, 1], [2, 1, 1, 1], [2, 2, 1], [3, 1, 1], [3, 2], [4, 1], [5]}
+@test_fails integer_partitions(-1)
