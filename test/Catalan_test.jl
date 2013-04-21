@@ -49,3 +49,6 @@ using Base.Test
 # integer_partitions
 @test integer_partitions(5) == {[1, 1, 1, 1, 1], [2, 1, 1, 1], [2, 2, 1], [3, 1, 1], [3, 2], [4, 1], [5]}
 @test_fails integer_partitions(-1)
+
+# Young diagrams
+include("youngdiagrams.jl")

@@ -2,13 +2,13 @@
 # Young diagrams, partitions of unity and characters of the symmetric group Sn #
 ################################################################################
 
-typealias partition Vector{Int64}
-typealias youngdiagram Array{Int64,2}
-typealias skewdiagram (partition, partition)
+typealias Partition Vector{Int64}
+typealias YoungDiagram Array{Int64,2}
+typealias SkewDiagram (Partition, Partition)
 
-export partition,    
-       youngdiagram, #represents shape of Young diagram
-       skewdiagram,  #skew diagrams 
+export Partition,    
+       YoungDiagram, #represents shape of Young diagram
+       SkewDiagram,  #skew diagrams 
        partitionsequence,
        isrimhook,    #Check if skew diagram is rim hook
        leglength,
@@ -21,16 +21,16 @@ import Base.\
 #################
 
 #This uses a very simple internal representation for skew diagrams
-\(λ::partition, μ::partition) = Makeskewdiagram(λ, μ)
-function Makeskewdiagram(λ::partition, μ::partition)
+\(λ::Partition, μ::Partition) = MakeSkewDiagram(λ, μ)
+function MakeSkewDiagram(λ::Partition, μ::Partition)
     m, n = length(λ), length(μ)
     if n>m error("Cannot construct skew diagram") end
     (λ, μ)
 end
 
 #Checks if skew diagram is a rim hook
-isrimhook(λ::partition, μ::partition)=isrimhook(λ \ μ)
-function isrimhook(ξ::skewdiagram)
+isrimhook(λ::Partition, μ::Partition)=isrimhook(λ \ μ)
+function isrimhook(ξ::SkewDiagram)
     λ, μ = ξ
     m, n = length(λ), length(μ)
     if n>m error("Cannot construct skew diagram") end
@@ -74,8 +74,8 @@ end
 
 
 #Strictly speaking, defined for rim hook only, but here we define it for all skew diagrams
-leglength(λ::partition, μ::partition)=leglength((λ \ μ))
-function leglength(ξ::skewdiagram)
+leglength(λ::Partition, μ::Partition)=leglength((λ \ μ))
+function leglength(ξ::SkewDiagram)
     λ, μ = ξ
     m, n = length(λ), length(μ)
     #Construct matrix representation of diagram
@@ -99,7 +99,7 @@ end
 #######################
 
 #Computes essential part of the partition sequence of lambda
-function partitionsequence(lambda::partition)
+function partitionsequence(lambda::Partition)
     Λ▔ = Int64[]
     λ = [lambda; 0]
     m = length(lambda)
@@ -121,7 +121,7 @@ isrimhook(a::Int64, b::Int64) = (a==1) && (b==0)
 #############################
 
 #Computes recursively using the Murnaghan-Nakayama rule.
-function MN1inner(R::Vector{Int64}, T::Dict, μ::partition, t::Integer)
+function MN1inner(R::Vector{Int64}, T::Dict, μ::Partition, t::Integer)
     s=length(R)
     χ::Integer=1
     if t<=length(μ)
@@ -153,7 +153,7 @@ end
 #    "The computational complexity of rules for the character table of Sn",
 #    Journal of Symbolic Computation, vol. 37 iss. 6 (2004), pp 727-748.
 #    doi:10.1016/j.jsc.2003.11.001
-function character(λ::partition, μ::partition)
+function character(λ::Partition, μ::Partition)
     T = {()=>0} #Sparse array implemented as dict
     Λ▔ = partitionsequence(λ)
     MN1inner(Λ▔, T, μ, 1)
