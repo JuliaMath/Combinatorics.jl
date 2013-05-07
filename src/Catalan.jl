@@ -64,7 +64,7 @@ function doublefactorial(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_2fac_ui, :libgmp), Void,
-        (Ptr{Void}, Uint), z.mpz, uint(n))
+        (Ptr{BigInt}, Uint), &z, uint(n))
     return z
 end
 
@@ -74,7 +74,7 @@ function fibonacci(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_fib_ui, :libgmp), Void,
-        (Ptr{Void}, Uint), z.mpz, uint(n))
+        (Ptr{BigInt}, Uint), &z, uint(n))
     return z
 end
 
@@ -85,7 +85,7 @@ function jacobisymbol(a::Integer, b::Integer)
     ba = BigInt(a)
     bb = BigInt(b)
     return ccall((:__gmpz_jacobi, :libgmp), Int,
-        (Ptr{Void}, Ptr{Void}), ba.mpz, bb.mpz)
+        (Ptr{BigInt}, Ptr{BigInt}), &ba, &bb)
 end
 
 #Computes Lassalle's sequence
@@ -102,7 +102,7 @@ function legendresymbol(a::Integer, b::Integer)
     ba = BigInt(a)
     bb = BigInt(b)
     return ccall((:__gmpz_legendre, :libgmp), Int,
-        (Ptr{Void}, Ptr{Void}), ba.mpz, bb.mpz)
+        (Ptr{BigInt}, Ptr{BigInt}), &ba, &bb)
 end
 
 function lucas(n::Integer)
@@ -111,7 +111,7 @@ function lucas(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_lucnum_ui, :libgmp), Void,
-        (Ptr{Void}, Uint), z.mpz, uint(n))
+        (Ptr{BigInt}, Uint), &z, uint(n))
     return z
 end
 
@@ -121,7 +121,7 @@ function multifactorial(n::Integer, m::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_mfac_uiui, :libgmp), Void,
-        (Ptr{Void}, Uint, Uint), z.mpz, uint(n), uint(m))
+        (Ptr{BigInt}, Uint, Uint), &z, uint(n), uint(m))
     return z
 end
 
@@ -142,7 +142,7 @@ function primorial(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_primorial_ui, :libgmp), Void,
-        (Ptr{Void}, Uint), z.mpz, uint(n))
+        (Ptr{BigInt}, Uint), &z, uint(n))
     return z
 end
 
@@ -161,15 +161,15 @@ function integer_partitions(n::Integer)
     elseif n == 1
         return Vector{Int}[[1]]
     end
-        
+
     list = Vector{Int}[]
-    
+
     for p in integer_partitions(n-1)
         push!(list, [p, 1])
         if length(p) == 1 || p[end] < p[end-1]
             push!(list, [p[1:end-1], p[end]+1])
         end
-    end        
+    end
 
     list
 end

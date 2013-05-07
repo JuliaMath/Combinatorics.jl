@@ -134,7 +134,7 @@ function MN1inner(R::Vector{Int64}, T::Dict, μ::Partition, t::Integer)
             if isrimhook(R[i], R[i+μ[t]])
                 R[i], R[i+μ[t]] = R[i+μ[t]], R[i]
                 rhohat = R[i:i+μ[t]]
-                if !has(T, rhohat) #Cache result in lookup table
+                if !haskey(T, rhohat) #Cache result in lookup table
                     T[rhohat] = MN1inner(R, T, μ, t+1)
                 end
                 χ += σ * T[rhohat]
