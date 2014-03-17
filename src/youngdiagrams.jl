@@ -36,7 +36,7 @@ function isrimhook(ξ::SkewDiagram)
     if n>m error("Cannot construct skew diagram") end
     #Construct matrix representation of diagram
     #XXX This is a horribly inefficient way of checking condition 1!
-    l = max(λ)
+    l = maximum(λ)
     youngdiagram=zeros(Int64, m, l)
     for i=1:n
         youngdiagram[i, μ[i]+1:λ[i]]=1
@@ -79,7 +79,7 @@ function leglength(ξ::SkewDiagram)
     λ, μ = ξ
     m, n = length(λ), length(μ)
     #Construct matrix representation of diagram
-    l = max(λ)
+    l = maximum(λ)
     youngdiagram=zeros(Int64, m, l)
     for i=1:n
         youngdiagram[i, μ[i]+1:λ[i]]=1
