@@ -1,8 +1,6 @@
 #Generative algorithms
 
-import Base: integer_partitions
-
-export cool_lex, ncpartitions
+export cool_lex, integer_partitions, ncpartitions
 
 # Lists the partitions of the number n, the order is consistent with GAP
 function integer_partitions(n::Integer)
