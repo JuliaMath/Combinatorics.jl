@@ -70,7 +70,7 @@ function visit(X::Integer)
 end
 
 #Produces noncrossing partitions of length n
-ncpartitions(n::Integer)=ncpart(1,n,n,{})
+ncpartitions(n::Integer)=ncpart(1,n,n,Any[])
 function ncpart(a::Integer, b::Integer, nn::Integer,
     x::Array{Any,1})
   n=b-a+1
@@ -80,7 +80,7 @@ function ncpart(a::Integer, b::Integer, nn::Integer,
       #Abort if construction is out of lex order
       if length(x)>0 && x[end] > root return end
       #Produce if we've filled all the holes
-      sofar = {x..., root}
+      sofar = Any[x..., root]
       ssofaru = sort(union(sofar...))
       if length(ssofaru)==nn && ssofaru==[1:nn]
         produce(sofar)
