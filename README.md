@@ -1,5 +1,9 @@
-Combinatorics
-=============
+# Combinatorics
+
+[![Combinatorics](http://pkg.julialang.org/badges/Combinatorics_release.svg)](http://pkg.julialang.org/?pkg=Combinatorics&ver=release)
+[![Combinatorics](http://pkg.julialang.org/badges/Combinatorics_nightly.svg)](http://pkg.julialang.org/?pkg=Combinatorics&ver=nightly)
+[![Build Status](https://travis-ci.org/JuliaLang/Combinatorics.jl.svg?branch=master)](https://travis-ci.org/JuliaLang/Combinatorics.jl)
+[![Coverage Status](https://img.shields.io/coveralls/JuliaLang/Combinatorics.jl.svg)](https://coveralls.io/r/JuliaLang/Combinatorics.jl)
 
 A combinatorics library for Julia, focusing mostly (as of now) on enumerative
 combinatorics and permutations.  As overflows are expected even for low values,
