@@ -1,4 +1,4 @@
-module Catalan
+module Combinatorics
 
 using Polynomial
 
