@@ -1,8 +1,9 @@
-catalan
-=======
+Combinatorics
+=============
 
-Catalan: a combinatorics library for Julia, focusing mostly (as of now) on enumerative combinatorics and permutations.
-As overflows are expected even for low values, most of the functions always return `BigInt`, and are marked as such below.
+A combinatorics library for Julia, focusing mostly (as of now) on enumerative
+combinatorics and permutations.  As overflows are expected even for low values,
+most of the functions always return `BigInt`, and are marked as such below.
 
 This library provides the following functions:
  - `bell(n)`: returns the n-th Bell number; always returns a `BigInt`;
