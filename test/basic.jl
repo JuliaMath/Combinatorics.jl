@@ -1,6 +1,3 @@
-using Catalan
-using Base.Test
-
 # catalan
 @test catalan(5) == 42
 @test catalan(30) == BigInt("3814986502092304")
@@ -44,9 +41,9 @@ using Base.Test
 # bell
 @test bell(7) == 877
 @test bell(42) == BigInt("35742549198872617291353508656626642567")
-@test_throws bell(-1)
+@test_throws DomainError bell(-1)
 
 # integer_partitions
-@test integer_partitions(5) == {[1, 1, 1, 1, 1], [2, 1, 1, 1], [2, 2, 1], [3, 1, 1], [3, 2], [4, 1], [5]}
-@test_throws partitions(-1)
+@test integer_partitions(5) == Any[[1, 1, 1, 1, 1], [2, 1, 1, 1], [2, 2, 1], [3, 1, 1], [3, 2], [4, 1], [5]]
+@test_throws DomainError partitions(-1)
 
