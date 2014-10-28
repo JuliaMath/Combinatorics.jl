@@ -45,5 +45,5 @@
 
 # integer_partitions
 @test integer_partitions(5) == Any[[1, 1, 1, 1, 1], [2, 1, 1, 1], [2, 2, 1], [3, 1, 1], [3, 2], [4, 1], [5]]
-@test_throws DomainError partitions(-1)
+@test_throws DomainError integer_partitions(-1)
 
