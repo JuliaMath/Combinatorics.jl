@@ -1,6 +1,6 @@
 module Combinatorics
 
-using Polynomial
+using Compat, Polynomial
 
 export  bell,
         catalan,

@@ -154,7 +154,7 @@ end
 #    Journal of Symbolic Computation, vol. 37 iss. 6 (2004), pp 727-748.
 #    doi:10.1016/j.jsc.2003.11.001
 function character(λ::Partition, μ::Partition)
-    T = Dict{Any,Any}(()=>0) #Sparse array implemented as dict
+    T = @compat Dict{Any,Any}(()=>0) #Sparse array implemented as dict
     Λ▔ = partitionsequence(λ)
     MN1inner(Λ▔, T, μ, 1)
 end
