@@ -20,7 +20,7 @@
 @test lassalle(14) == BigInt("270316008395632253340")
 
 # legendresymbol
-@test legendresymbol(1001,9907) == jacobisymbol(1001,9907)
+@test legendresymbol(1001,9907) == jacobisymbol(1001,9907) == -1
 
 # lucas
 @test lucas(10) == 123

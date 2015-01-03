@@ -83,7 +83,7 @@ hyperfactorial(n::Integer) = prod([i^i for i = BigInt(2):n])
 function jacobisymbol(a::Integer, b::Integer)
     ba = BigInt(a)
     bb = BigInt(b)
-    return ccall((:__gmpz_jacobi, :libgmp), Int,
+    return ccall((:__gmpz_jacobi, :libgmp), Cint,
         (Ptr{BigInt}, Ptr{BigInt}), &ba, &bb)
 end
 
@@ -100,7 +100,7 @@ end
 function legendresymbol(a::Integer, b::Integer)
     ba = BigInt(a)
     bb = BigInt(b)
-    return ccall((:__gmpz_legendre, :libgmp), Int,
+    return ccall((:__gmpz_legendre, :libgmp), Cint,
         (Ptr{BigInt}, Ptr{BigInt}), &ba, &bb)
 end
 
