@@ -87,6 +87,26 @@ function jacobisymbol(a::Integer, b::Integer)
         (Ptr{BigInt}, Ptr{BigInt}), &ba, &bb)
 end
 
+# Taken from perl Math::Prime::Util
+function jacobisymbol(in::Union(Signed,Unsigned),m::Union(Signed,Unsigned))
+    j = 1
+    n = in < 0 ? -in : in
+    if m <= 0 || (m%2) == 0 return 0 end
+    if (in < 0 && (m%4) == 3) j = -j end
+    while (n != 0)
+        while ((n % 2) == 0)
+            n >>= 1
+            if  (m % 8) == 3 || (m % 8) == 5  j = -j end
+        end
+        t = n; n = m; m = t
+        if (n % 4) == 3 && (m % 4) == 3  j = -j end
+        n = n % m
+    end
+    return (m == 1) ? j : 0
+end
+
+legendresymbol(n::Union(Signed,Unsigned),m::Union(Signed,Unsigned)) = jacobisymbol(n,m)
+
 #Computes Lassalle's sequence
 #OEIS entry A180874
 function lassalle(m::Integer)

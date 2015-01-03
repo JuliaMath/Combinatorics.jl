@@ -22,6 +22,10 @@
 # legendresymbol
 @test legendresymbol(1001,9907) == jacobisymbol(1001,9907) == -1
 
+for (n,m) in ( (1001,9907), (10,7), (1,1), (typemax(Int64)-4, typemax(Int64)-6))
+    @test jacobisymbol(n,m) == jacobisymbol(BigInt(n),BigInt(m))
+end
+
 # lucas
 @test lucas(10) == 123
 @test lucas(100) == BigInt("792070839848372253127")
