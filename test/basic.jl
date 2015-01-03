@@ -20,7 +20,11 @@
 @test lassalle(14) == BigInt("270316008395632253340")
 
 # legendresymbol
-@test legendresymbol(1001,9907) == jacobisymbol(1001,9907)
+#@test legendresymbol(1001,9907) == jacobisymbol(1001,9907)
+
+for (n,m) in ( (1001,9907), (10,5) )
+    @test jacobisymbol(n,m) == jacobisymbol(BigInt(n),BigInt(m))
+end
 
 # lucas
 @test lucas(10) == 123
