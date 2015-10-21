@@ -62,7 +62,7 @@ function doublefactorial(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_2fac_ui, :libgmp), Void,
-        (Ptr{BigInt}, UInt), &z, UInt(n))
+        (Ptr{BigInt}, UInt), &z, @compat(UInt(n)))
     return z
 end
 
@@ -72,7 +72,7 @@ function fibonacci(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_fib_ui, :libgmp), Void,
-        (Ptr{BigInt}, UInt), &z, UInt(n))
+        (Ptr{BigInt}, UInt), &z, @compat(UInt(n)))
     return z
 end
 
@@ -109,7 +109,7 @@ function lucas(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_lucnum_ui, :libgmp), Void,
-        (Ptr{BigInt}, UInt), &z, UInt(n))
+        (Ptr{BigInt}, UInt), &z, @compat(UInt(n)))
     return z
 end
 
@@ -119,7 +119,7 @@ function multifactorial(n::Integer, m::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_mfac_uiui, :libgmp), Void,
-        (Ptr{BigInt}, UInt, UInt), &z, UInt(n), UInt(m))
+        (Ptr{BigInt}, UInt, UInt), &z, @compat(UInt(n)), @compat(UInt(m)))
     return z
 end
 
@@ -140,7 +140,7 @@ function primorial(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_primorial_ui, :libgmp), Void,
-        (Ptr{BigInt}, UInt), &z, UInt(n))
+        (Ptr{BigInt}, UInt), &z, @compat(UInt(n)))
     return z
 end
 
