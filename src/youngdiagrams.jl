@@ -4,11 +4,11 @@
 
 typealias Partition Vector{Int64}
 typealias YoungDiagram Array{Int64,2}
-typealias SkewDiagram (Partition, Partition)
+typealias SkewDiagram @compat(Tuple{Partition,Partition})
 
-export Partition,    
+export Partition,
        YoungDiagram, #represents shape of Young diagram
-       SkewDiagram,  #skew diagrams 
+       SkewDiagram,  #skew diagrams
        partitionsequence,
        isrimhook,    #Check if skew diagram is rim hook
        leglength,
@@ -158,5 +158,3 @@ function character(λ::Partition, μ::Partition)
     Λ▔ = partitionsequence(λ)
     MN1inner(Λ▔, T, μ, 1)
 end
-
-

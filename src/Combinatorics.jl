@@ -1,6 +1,6 @@
 module Combinatorics
 
-using Compat, Polynomial
+using Compat, Polynomials
 
 export  bell,
         catalan,
@@ -50,7 +50,7 @@ function catalan(bn::Integer)
     div(binomial(2*n, n), (n + 1))
 end
 
-# The number of permutations of n with no fixed points (subfactorial) 
+# The number of permutations of n with no fixed points (subfactorial)
 function derangement(sn::Integer)
     n = BigInt(sn)
     return num(factorial(n)*sum([(-1)^k//factorial(k) for k=0:n]))
