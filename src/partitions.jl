@@ -15,9 +15,9 @@ function integer_partitions(n::Integer)
     list = Vector{Int}[]
 
     for p in integer_partitions(n-1)
-        push!(list, [p, 1])
+        push!(list, [p; 1])
         if length(p) == 1 || p[end] < p[end-1]
-            push!(list, [p[1:end-1], p[end]+1])
+            push!(list, [p[1:end-1]; p[end]+1])
         end
     end
 
@@ -95,4 +95,3 @@ function ncpart(a::Integer, b::Integer, nn::Integer,
     end
   end
 end
-

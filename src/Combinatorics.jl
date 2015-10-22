@@ -1,9 +1,8 @@
 module Combinatorics
 
-using Compat, Polynomial
+using Compat, Polynomials
 
 export  bell,
-        catalan,
         derangement,
         doublefactorial,
         fibonacci,
@@ -50,7 +49,7 @@ function catalan(bn::Integer)
     div(binomial(2*n, n), (n + 1))
 end
 
-# The number of permutations of n with no fixed points (subfactorial) 
+# The number of permutations of n with no fixed points (subfactorial)
 function derangement(sn::Integer)
     n = BigInt(sn)
     return num(factorial(n)*sum([(-1)^k//factorial(k) for k=0:n]))
@@ -63,7 +62,7 @@ function doublefactorial(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_2fac_ui, :libgmp), Void,
-        (Ptr{BigInt}, Uint), &z, uint(n))
+        (Ptr{BigInt}, UInt), &z, @compat(UInt(n)))
     return z
 end
 
@@ -73,7 +72,7 @@ function fibonacci(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_fib_ui, :libgmp), Void,
-        (Ptr{BigInt}, Uint), &z, uint(n))
+        (Ptr{BigInt}, UInt), &z, @compat(UInt(n)))
     return z
 end
 
@@ -110,7 +109,7 @@ function lucas(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_lucnum_ui, :libgmp), Void,
-        (Ptr{BigInt}, Uint), &z, uint(n))
+        (Ptr{BigInt}, UInt), &z, @compat(UInt(n)))
     return z
 end
 
@@ -120,7 +119,7 @@ function multifactorial(n::Integer, m::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_mfac_uiui, :libgmp), Void,
-        (Ptr{BigInt}, Uint, Uint), &z, uint(n), uint(m))
+        (Ptr{BigInt}, UInt, UInt), &z, @compat(UInt(n)), @compat(UInt(m)))
     return z
 end
 
@@ -141,7 +140,7 @@ function primorial(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_primorial_ui, :libgmp), Void,
-        (Ptr{BigInt}, Uint), &z, uint(n))
+        (Ptr{BigInt}, UInt), &z, @compat(UInt(n)))
     return z
 end
 
