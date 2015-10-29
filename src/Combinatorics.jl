@@ -1,6 +1,8 @@
 module Combinatorics
 
-using Compat, Polynomials
+using Compat, Polynomials, Iterators
+
+import Base:combinations
 
 export  bell,
         derangement,
@@ -48,6 +50,10 @@ function catalan(bn::Integer)
     end
     div(binomial(2*n, n), (n + 1))
 end
+
+#generate combinations of all orders, chaining of order iterators is eager,
+#but sequence at each order is lazy
+combinations(a) = chain([combinations(a,k) for k=1:length(a)]...)
 
 # The number of permutations of n with no fixed points (subfactorial)
 function derangement(sn::Integer)

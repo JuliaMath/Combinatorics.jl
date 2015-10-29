@@ -12,6 +12,7 @@ most of the functions always return `BigInt`, and are marked as such below.
 This library provides the following functions:
  - `bell(n)`: returns the n-th Bell number; always returns a `BigInt`;
  - `catalan(n)`: returns the n-th Catalan number; always returns a `BigInt`;
+  - `combinations(a)`: returns combinations of all order by chaining calls to `Base.combinations(a,n);
  - `derangement(n)`/`subfactorial(n)`: returns the number of permutations of n with no fixed points; always returns a `BigInt`;
  - `doublefactorial(n)`: returns the double factorial n!!; always returns a `BigInt`;
  - `fibonacci(n)`: the n-th Fibonacci number; always returns a `BigInt`;
