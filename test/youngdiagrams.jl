@@ -1,3 +1,6 @@
+using Combinatorics
+using Base.Test
+
 @test ([5,4,2,2]\[2,1]) == ([5, 4, 2, 2],[2, 1])
 @test isrimhook([4,3,2], [2,2,2])
 @test !isrimhook([4,3,2], [2,2,1])

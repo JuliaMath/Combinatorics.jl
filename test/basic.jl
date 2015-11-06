@@ -1,3 +1,6 @@
+using Combinatorics
+using Base.Test
+
 # catalan
 @test Combinatorics.catalan(5) == 42
 @test Combinatorics.catalan(30) == parse(BigInt,"3814986502092304")
