@@ -4,7 +4,7 @@
 
 typealias Partition Vector{Int64}
 typealias YoungDiagram Array{Int64,2}
-typealias SkewDiagram @compat(Tuple{Partition,Partition})
+typealias SkewDiagram Tuple{Partition, Partition}
 
 export Partition,
        YoungDiagram, #represents shape of Young diagram
