@@ -1,8 +1,6 @@
 export combinations
 
-
 #The Combinations iterator
-import Base: start, next, done, length
 
 immutable Combinations{T}
     a::T

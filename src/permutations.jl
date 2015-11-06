@@ -1,12 +1,28 @@
+#Permutations
+
+export
+    invperm,
+    ipermute!,
+    isperm,
+    levicivita,
+    nthperm!,
+    nthperm,
+    parity,
+    permutations,
+    permute!!,
+    permute!
+
+#The basic permutaitons iterator
+
 immutable Permutations{T}
     a::T
 end
 
+permutations(a) = Permutations(a)
+
 eltype{T}(::Type{Permutations{T}}) = Vector{eltype(T)}
 
 length(p::Permutations) = factorial(length(p.a))
-
-permutations(a) = Permutations(a)
 
 start(p::Permutations) = [1:length(p.a);]
 function next(p::Permutations, s)
