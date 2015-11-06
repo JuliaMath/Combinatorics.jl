@@ -7,7 +7,7 @@ using Base.Test
 
 #combinations
 @test collect(combinations([])) == []
-@test collect(combinations("abc")) == ["a","b","c","ab","ac","bc","abc"]
+@test collect(combinations(['a', 'b', 'c'])) == Vector{Char}[['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
 
 # derangement
 @test derangement(4) == 9
