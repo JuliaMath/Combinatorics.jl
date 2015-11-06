@@ -1,7 +1,10 @@
 using Combinatorics
 using Base.Test
 
-include("basic.jl")
-include("frombase.jl")
+include("numbers.jl")
+include("factorials.jl")
+include("combinations.jl")
+include("permutations.jl")
+include("partitions.jl")
 include("youngdiagrams.jl")
 
