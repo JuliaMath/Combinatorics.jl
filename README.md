@@ -1,6 +1,5 @@
 # Combinatorics
 
-[![Combinatorics](http://pkg.julialang.org/badges/Combinatorics_0.3.svg)](http://pkg.julialang.org/?pkg=Combinatorics&ver=0.3)
 [![Combinatorics](http://pkg.julialang.org/badges/Combinatorics_0.4.svg)](http://pkg.julialang.org/?pkg=Combinatorics&ver=0.4)
 [![Build Status](https://travis-ci.org/JuliaLang/Combinatorics.jl.svg?branch=master)](https://travis-ci.org/JuliaLang/Combinatorics.jl)
 [![Coverage Status](https://coveralls.io/repos/JuliaLang/Combinatorics.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/JuliaLang/Combinatorics.jl?branch=master)
