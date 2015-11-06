@@ -2,9 +2,9 @@
 
 [![Combinatorics](http://pkg.julialang.org/badges/Combinatorics_0.3.svg)](http://pkg.julialang.org/?pkg=Combinatorics&ver=0.3)
 [![Combinatorics](http://pkg.julialang.org/badges/Combinatorics_0.4.svg)](http://pkg.julialang.org/?pkg=Combinatorics&ver=0.4)
-[![Build Status](https://travis-ci.org/jiahao/Combinatorics.jl.svg?branch=master)](https://travis-ci.org/jiahao/Combinatorics.jl)
-[![Coverage Status](https://coveralls.io/repos/jiahao/Combinatorics.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/jiahao/Combinatorics.jl?branch=master)
-[![codecov.io](https://codecov.io/github/jiahao/Combinatorics.jl/coverage.svg?branch=master)](https://codecov.io/github/jiahao/Combinatorics.jl?branch=master)
+[![Build Status](https://travis-ci.org/JuliaLang/Combinatorics.jl.svg?branch=master)](https://travis-ci.org/JuliaLang/Combinatorics.jl)
+[![Coverage Status](https://coveralls.io/repos/JuliaLang/Combinatorics.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/JuliaLang/Combinatorics.jl?branch=master)
+[![codecov.io](https://codecov.io/github/JuliaLang/Combinatorics.jl/coverage.svg?branch=master)](https://codecov.io/github/JuliaLang/Combinatorics.jl?branch=master)
 
 A combinatorics library for Julia, focusing mostly (as of now) on enumerative
 combinatorics and permutations.  As overflows are expected even for low values,
