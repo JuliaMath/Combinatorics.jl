@@ -1,22 +1,7 @@
 using Combinatorics
 using Base.Test
 
-import Combinatorics: invperm, ipermute!, isperm, levicivita, nthperm, nthperm!, parity, permutations, permute!
-
-p = shuffle([1:1000;])
-@test isperm(p)
-@test all(invperm(invperm(p)) .== p)
-
-push!(p, 1)
-@test !isperm(p)
-
-a = randcycle(10)
-@test ipermute!(permute!([1:10;], a),a) == [1:10;]
-
-# PR 12785
-let a = 2:-1:1
-    @test ipermute!(permute!([1, 2], a), a) == [1, 2]
-end
+import Combinatorics: levicivita, nthperm, nthperm!, parity, permutations
 
 @test collect(permutations("abc")) == Any[['a','b','c'],['a','c','b'],['b','a','c'],
                                           ['b','c','a'],['c','a','b'],['c','b','a']]
@@ -26,11 +11,16 @@ end
 
 @test length(permutations(0)) == 1
 
+#nthperm!
 for n = 0:7, k = 1:factorial(n)
     p = nthperm!([1:n;], k)
     @test isperm(p)
     @test nthperm(p) == k
 end
+#Euler Problem #24
+@test nthperm!([0:9;],1000000) == [2,7,8,3,9,1,5,4,6,0]
+
+@test nthperm([0,1,2],3) == [1,0,2]
 
 @test_throws ArgumentError parity([0])
 @test_throws ArgumentError parity([1,2,3,3])

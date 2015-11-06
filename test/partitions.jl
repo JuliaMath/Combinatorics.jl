@@ -21,3 +21,8 @@ using Base.Test
 # integer_partitions
 @test integer_partitions(5) == Any[[1, 1, 1, 1, 1], [2, 1, 1, 1], [2, 2, 1], [3, 1, 1], [3, 2], [4, 1], [5]]
 @test_throws DomainError integer_partitions(-1)
+
+@test_throws ArgumentError prevprod([2,3,5],Int128(typemax(Int))+1)
+@test prevprod([2,3,5],30) == 30
+@test prevprod([2,3,5],33) == 32
+

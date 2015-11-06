@@ -9,7 +9,7 @@ export bellnum,
     lucasnum,
     stirlings1
 
-# Returns the n-th Bell number
+"Returns the n-th Bell number"
 function bellnum(bn::Integer)
     if bn < 0
         throw(DomainError())
@@ -28,7 +28,7 @@ function bellnum(bn::Integer)
     return list[end]
 end
 
-# Returns the n-th Catalan number
+"Returns the n-th Catalan number"
 function catalannum(bn::Integer)
     if bn<0
         throw(DomainError())
@@ -44,7 +44,7 @@ function fibonaccinum(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_fib_ui, :libgmp), Void,
-        (Ptr{BigInt}, UInt), &z, @compat(UInt(n)))
+        (Ptr{BigInt}, UInt), &z, UInt(n))
     return z
 end
 
@@ -56,8 +56,10 @@ function jacobisymbol(a::Integer, b::Integer)
         (Ptr{BigInt}, Ptr{BigInt}), &ba, &bb)
 end
 
-#Computes Lassalle's sequence
-#OEIS entry A180874
+"""
+Computes Lassalle's sequence
+OEIS entry A180874
+"""
 function lassallenum(m::Integer)
    A = ones(BigInt,m)
    for n=2:m
@@ -79,11 +81,11 @@ function lucasnum(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_lucnum_ui, :libgmp), Void,
-        (Ptr{BigInt}, UInt), &z, @compat(UInt(n)))
+        (Ptr{BigInt}, UInt), &z, UInt(n))
     return z
 end
 
-# Returns s(n, k), the signed Stirling number of first kind
+"Returns s(n, k), the signed Stirling number of first kind"
 function stirlings1(n::Integer, k::Integer)
     p = poly(0:(n-1))
     p[n - k + 1]

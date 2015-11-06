@@ -1,6 +1,15 @@
 using Combinatorics
 using Base.Test
 
+@test factorial(7,3) == 7*6*5*4
+@test_throws DomainError factorial(3,7)
+@test_throws DomainError factorial(-3,-7)
+@test_throws DomainError factorial(-7,-3)
+#JuliaLang/julia#9943
+@test factorial(big(100), (80)) == 1303995018204712451095685346159820800000
+#JuliaLang/julia#9950
+@test_throws OverflowError factorial(1000,80)
+
 # derangement
 @test derangement(4) == 9
 @test derangement(24) == parse(BigInt,"228250211305338670494289")

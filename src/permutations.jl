@@ -1,23 +1,21 @@
 #Permutations
 
 export
-    invperm,
-    ipermute!,
-    isperm,
     levicivita,
     nthperm!,
     nthperm,
     parity,
-    permutations,
-    permute!!,
-    permute!
+    permutations
 
-#The basic permutaitons iterator
+#The basic permutations iterator
 
 immutable Permutations{T}
     a::T
 end
 
+"""
+Generate all permutations of an indexable object. Because the number of permutations can be very large, this function returns an iterator object. Use `collect(permutations(array))` to get an array of all permutations.
+"""
 permutations(a) = Permutations(a)
 
 eltype{T}(::Type{Permutations{T}}) = Vector{eltype(T)}
@@ -46,6 +44,8 @@ function next(p::Permutations, s)
 end
 done(p::Permutations, s) = !isempty(s) && s[1] > length(p.a)
 
+
+"In-place version of nthperm."
 function nthperm!(a::AbstractVector, k::Integer)
     k -= 1 # make k 1-indexed
     k < 0 && throw(ArgumentError("permutation k must be ≥ 0, got $k"))
@@ -66,8 +66,11 @@ function nthperm!(a::AbstractVector, k::Integer)
     end
     a
 end
+
+"Compute the kth lexicographic permutation of the vector a."
 nthperm(a::AbstractVector, k::Integer) = nthperm!(copy(a),k)
 
+"Return the `k` that generated permutation `p`. Note that `nthperm(nthperm([1:n], k)) == k` for `1 <= k <= factorial(n)`."
 function nthperm{T<:Integer}(p::AbstractVector{T})
     isperm(p) || throw(ArgumentError("argument is not a permutation"))
     k, n = 1, length(p)
@@ -80,84 +83,21 @@ function nthperm{T<:Integer}(p::AbstractVector{T})
     return k
 end
 
-function invperm(a::AbstractVector)
-    b = zero(a) # similar vector of zeros
-    n = length(a)
-    for i = 1:n
-        j = a[i]
-        ((1 <= j <= n) && b[j] == 0) ||
-            throw(ArgumentError("argument is not a permutation"))
-        b[j] = i
-    end
-    b
-end
 
-function isperm(A)
-    n = length(A)
-    used = falses(n)
-    for a in A
-        (0 < a <= n) && (used[a] $= true) || return false
-    end
-    true
-end
-
-function permute!!{T<:Integer}(a, p::AbstractVector{T})
-    count = 0
-    start = 0
-    while count < length(a)
-        ptr = start = findnext(p, start+1)
-        temp = a[start]
-        next = p[start]
-        count += 1
-        while next != start
-            a[ptr] = a[next]
-            p[ptr] = 0
-            ptr = next
-            next = p[next]
-            count += 1
-        end
-        a[ptr] = temp
-        p[ptr] = 0
-    end
-    a
-end
-
-permute!(a, p::AbstractVector) = permute!!(a, copy!(similar(p), p))
-
-function ipermute!!{T<:Integer}(a, p::AbstractVector{T})
-    count = 0
-    start = 0
-    while count < length(a)
-        start = findnext(p, start+1)
-        temp = a[start]
-        next = p[start]
-        count += 1
-        while next != start
-            temp_next = a[next]
-            a[next] = temp
-            temp = temp_next
-            ptr = p[next]
-            p[next] = 0
-            next = ptr
-            count += 1
-        end
-        a[next] = temp
-        p[next] = 0
-    end
-    a
-end
-
-ipermute!(a, p::AbstractVector) = ipermute!!(a, copy!(similar(p), p))
-
+# Parity of permutations
 
 const levicivita_lut = cat(3, [0 0  0;  0 0 1; 0 -1 0],
                               [0 0 -1;  0 0 0; 1  0 0],
                               [0 1  0; -1 0 0; 0  0 0])
 
-# Levi-Civita symbol of a permutation.
-# The parity is computed by using the fact that a permutation is odd if and
-# only if the number of even-length cycles is odd.
-# Returns 1 is the permutarion is even, -1 if it is odd and 0 otherwise.
+"""
+Levi-Civita symbol of a permutation.
+
+Returns 1 is the permutation is even, -1 if it is odd and 0 otherwise.
+
+The parity is computed by using the fact that a permutation is odd if and
+only if the number of even-length cycles is odd.
+"""
 function levicivita{T<:Integer}(p::AbstractVector{T})
     n = length(p)
 
@@ -187,8 +127,10 @@ function levicivita{T<:Integer}(p::AbstractVector{T})
     return iseven(flips) ? 1 : -1
 end
 
-# Computes the parity of a permutation using the levicivita function,
-# so you can ask iseven(parity(p)). If p is not a permutation throws an error.
+"""
+Computes the parity of a permutation using the levicivita function,
+so you can ask iseven(parity(p)). If p is not a permutation throws an error.
+"""
 function parity{T<:Integer}(p::AbstractVector{T})
     epsilon = levicivita(p)
     epsilon == 0 && throw(ArgumentError("Not a permutation"))

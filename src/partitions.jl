@@ -1,6 +1,12 @@
 #Partitions
 
-export cool_lex, integer_partitions, ncpartitions
+export
+    cool_lex,
+    integer_partitions,
+    ncpartitions,
+    partitions,
+    prevprod
+    #nextprod,
 
 
 #integer partitions
@@ -11,11 +17,16 @@ end
 
 length(p::IntegerPartitions) = npartitions(p.n)
 
-partitions(n::Integer) = IntegerPartitions(n)
-
 start(p::IntegerPartitions) = Int[]
 done(p::IntegerPartitions, xs) = length(xs) == p.n
 next(p::IntegerPartitions, xs) = (xs = nextpartition(p.n,xs); (xs,xs))
+
+"""
+Generate all integer arrays that sum to `n`. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(n))` to get an array of all partitions. The number of partitions to generate can be efficiently computed using `length(partitions(n))`.
+"""
+partitions(n::Integer) = IntegerPartitions(n)
+
+
 
 function nextpartition(n, as)
     if isempty(as);  return Int[n];  end
@@ -77,6 +88,9 @@ end
 
 length(f::FixedPartitions) = npartitions(f.n,f.m)
 
+"""
+Generate all arrays of `m` integers that sum to `n`. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(n,m))` to get an array of all partitions. The number of partitions to generate can be efficiently computed using `length(partitions(n,m))`.
+"""
 partitions(n::Integer, m::Integer) = n >= 1 && m >= 1 ? FixedPartitions(n,m) : throw(DomainError())
 
 start(f::FixedPartitions) = Int[]
@@ -139,6 +153,9 @@ end
 
 length(p::SetPartitions) = nsetpartitions(length(p.s))
 
+"""
+Generate all set partitions of the elements of an array, represented as arrays of arrays. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(array))` to get an array of all partitions. The number of partitions to generate can be efficiently computed using `length(partitions(array))`.
+"""
 partitions(s::AbstractVector) = SetPartitions(s)
 
 start(p::SetPartitions) = (n = length(p.s); (zeros(Int32, n), ones(Int32, n-1), n, 1))
@@ -206,6 +223,9 @@ end
 
 length(p::FixedSetPartitions) = nfixedsetpartitions(length(p.s),p.m)
 
+"""
+Generate all set partitions of the elements of an array into exactly m subsets, represented as arrays of arrays. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(array,m))` to get an array of all partitions. The number of partitions into m subsets is equal to the Stirling number of the second kind and can be efficiently computed using `length(partitions(array,m))`.
+"""
 partitions(s::AbstractVector,m::Int) = length(s) >= 1 && m >= 1 ? FixedSetPartitions(s,m) : throw(DomainError())
 
 function start(p::FixedSetPartitions)
@@ -278,51 +298,59 @@ function nfixedsetpartitions(n::Int,m::Int)
     return numpart
 end
 
+#This function is still defined in Base because it is being used by Base.DSP
+#"""
+#Next integer not less than `n` that can be written as $\prod k_i^{p_i}$ for integers $p_1$, $p_2$, etc.
+#
+#For a list of integers i1, i2, i3, find the smallest
+#    i1^n1 * i2^n2 * i3^n3 >= x
+#for integer n1, n2, n3
+#"""
+#function nextprod(a::Vector{Int}, x)
+#    if x > typemax(Int)
+#        throw(ArgumentError("unsafe for x > typemax(Int), got $x"))
+#    end
+#    k = length(a)
+#    v = ones(Int, k)                  # current value of each counter
+#    mx = [nextpow(ai,x) for ai in a]  # maximum value of each counter
+#    v[1] = mx[1]                      # start at first case that is >= x
+#    p::widen(Int) = mx[1]             # initial value of product in this case
+#    best = p
+#    icarry = 1
+#
+#    while v[end] < mx[end]
+#        if p >= x
+#            best = p < best ? p : best  # keep the best found yet
+#            carrytest = true
+#            while carrytest
+#                p = div(p, v[icarry])
+#                v[icarry] = 1
+#                icarry += 1
+#                p *= a[icarry]
+#                v[icarry] *= a[icarry]
+#                carrytest = v[icarry] > mx[icarry] && icarry < k
+#            end
+#            if p < x
+#                icarry = 1
+#            end
+#        else
+#            while p < x
+#                p *= a[1]
+#                v[1] *= a[1]
+#            end
+#        end
+#    end
+#    best = mx[end] < best ? mx[end] : best
+#    return Int(best)  # could overflow, but best to have predictable return type
+#end
 
-# For a list of integers i1, i2, i3, find the smallest
-#     i1^n1 * i2^n2 * i3^n3 >= x
-# for integer n1, n2, n3
-function nextprod(a::Vector{Int}, x)
-    if x > typemax(Int)
-        throw(ArgumentError("unsafe for x > typemax(Int), got $x"))
-    end
-    k = length(a)
-    v = ones(Int, k)                  # current value of each counter
-    mx = [nextpow(ai,x) for ai in a]  # maximum value of each counter
-    v[1] = mx[1]                      # start at first case that is >= x
-    p::widen(Int) = mx[1]             # initial value of product in this case
-    best = p
-    icarry = 1
+"""
+Previous integer not greater than `n` that can be written as $\prod k_i^{p_i}$ for integers $p_1$, $p_2$, etc.
 
-    while v[end] < mx[end]
-        if p >= x
-            best = p < best ? p : best  # keep the best found yet
-            carrytest = true
-            while carrytest
-                p = div(p, v[icarry])
-                v[icarry] = 1
-                icarry += 1
-                p *= a[icarry]
-                v[icarry] *= a[icarry]
-                carrytest = v[icarry] > mx[icarry] && icarry < k
-            end
-            if p < x
-                icarry = 1
-            end
-        else
-            while p < x
-                p *= a[1]
-                v[1] *= a[1]
-            end
-        end
-    end
-    best = mx[end] < best ? mx[end] : best
-    return Int(best)  # could overflow, but best to have predictable return type
-end
-
-# For a list of integers i1, i2, i3, find the largest
-#     i1^n1 * i2^n2 * i3^n3 <= x
-# for integer n1, n2, n3
+For a list of integers i1, i2, i3, find the largest
+    i1^n1 * i2^n2 * i3^n3 <= x
+for integer n1, n2, n3
+"""
 function prevprod(a::Vector{Int}, x)
     if x > typemax(Int)
         throw(ArgumentError("unsafe for x > typemax(Int), got $x"))
@@ -362,7 +390,7 @@ function prevprod(a::Vector{Int}, x)
 end
 
 
-# Lists the partitions of the number n, the order is consistent with GAP
+"Lists the partitions of the number n, the order is consistent with GAP"
 function integer_partitions(n::Integer)
     if n < 0
         throw(DomainError())
@@ -384,20 +412,22 @@ function integer_partitions(n::Integer)
     list
 end
 
-# Produces (n,k)-combinations in cool-lex order
-#
-#Implements the cool-lex algorithm to generate (n,k)-combinations
-#@article{Ruskey:2009fk,
-#	Author = {Frank Ruskey and Aaron Williams},
-#	Doi = {10.1016/j.disc.2007.11.048},
-#	Journal = {Discrete Mathematics},
-#	Month = {September},
-#	Number = {17},
-#	Pages = {5305-5320},
-#	Title = {The coolest way to generate combinations},
-#	Url = {http://www.sciencedirect.com/science/article/pii/S0012365X07009570},
-#	Volume = {309},
-#	Year = {2009}}
+"""
+Produces (n,k)-combinations in cool-lex order
+
+Implements the cool-lex algorithm to generate (n,k)-combinations
+@article{Ruskey:2009fk,
+	Author = {Frank Ruskey and Aaron Williams},
+	Doi = {10.1016/j.disc.2007.11.048},
+	Journal = {Discrete Mathematics},
+	Month = {September},
+	Number = {17},
+	Pages = {5305-5320},
+	Title = {The coolest way to generate combinations},
+	Url = {http://www.sciencedirect.com/science/article/pii/S0012365X07009570},
+	Volume = {309},
+	Year = {2009}}
+"""
 function cool_lex(n::Integer, t::Integer)
   s = n-t
   if n > 64 error("Not implemented for n > 64") end

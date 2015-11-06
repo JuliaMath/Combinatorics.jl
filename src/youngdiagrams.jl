@@ -98,7 +98,7 @@ end
 # partition sequences #
 #######################
 
-#Computes essential part of the partition sequence of lambda
+"Computes essential part of the partition sequence of lambda"
 function partitionsequence(lambda::Partition)
     Λ▔ = Int64[]
     λ = [lambda; 0]
@@ -145,16 +145,18 @@ function MN1inner(R::Vector{Int64}, T::Dict, μ::Partition, t::Integer)
     χ
 end
 
-#Computes character $χ^λ(μ)$ of the partition μ in the λth irrep of the
-#symmetric group $S_n$
-#
-#Implements the Murnaghan-Nakayama algorithm as described in:
-#    Dan Bernstein,
-#    "The computational complexity of rules for the character table of Sn",
-#    Journal of Symbolic Computation, vol. 37 iss. 6 (2004), pp 727-748.
-#    doi:10.1016/j.jsc.2003.11.001
+"""
+Computes character $χ^λ(μ)$ of the partition μ in the λth irrep of the
+symmetric group $S_n$
+
+Implements the Murnaghan-Nakayama algorithm as described in:
+    Dan Bernstein,
+    "The computational complexity of rules for the character table of Sn",
+    Journal of Symbolic Computation, vol. 37 iss. 6 (2004), pp 727-748.
+    doi:10.1016/j.jsc.2003.11.001
+"""
 function character(λ::Partition, μ::Partition)
-    T = @compat Dict{Any,Any}(()=>0) #Sparse array implemented as dict
+    T = Dict(()=>0) #Sparse array implemented as dict
     Λ▔ = partitionsequence(λ)
     MN1inner(Λ▔, T, μ, 1)
 end

@@ -2,6 +2,7 @@
 
 export
     derangement,
+    factorial,
     subfactorial,
     doublefactorial,
     hyperfactorial,
@@ -10,7 +11,24 @@ export
     primorial,
     multinomial
 
-# The number of permutations of n with no fixed points (subfactorial)
+import Base: factorial
+
+"computes n!/k!"
+function factorial{T<:Integer}(n::T, k::T)
+    if k < 0 || n < 0 || k > n
+        throw(DomainError())
+    end
+    f = one(T)
+    while n > k
+        f = Base.checked_mul(f,n)
+        n -= 1
+    end
+    return f
+end
+factorial(n::Integer, k::Integer) = factorial(promote(n, k)...)
+
+
+"The number of permutations of n with no fixed points (subfactorial)"
 function derangement(sn::Integer)
     n = BigInt(sn)
     return num(factorial(n)*sum([(-1)^k//factorial(k) for k=0:n]))
@@ -23,7 +41,7 @@ function doublefactorial(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_2fac_ui, :libgmp), Void,
-        (Ptr{BigInt}, UInt), &z, @compat(UInt(n)))
+        (Ptr{BigInt}, UInt), &z, UInt(n))
     return z
 end
 
@@ -36,7 +54,7 @@ function multifactorial(n::Integer, m::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_mfac_uiui, :libgmp), Void,
-        (Ptr{BigInt}, UInt, UInt), &z, @compat(UInt(n)), @compat(UInt(m)))
+        (Ptr{BigInt}, UInt, UInt), &z, UInt(n), UInt(m))
     return z
 end
 
@@ -46,15 +64,15 @@ function primorial(n::Integer)
     end
     z = BigInt()
     ccall((:__gmpz_primorial_ui, :libgmp), Void,
-        (Ptr{BigInt}, UInt), &z, @compat(UInt(n)))
+        (Ptr{BigInt}, UInt), &z, UInt(n))
     return z
 end
 
-#Multinomial coefficient where n = sum(k)
+"Multinomial coefficient where n = sum(k)"
 function multinomial(k...)
     s = 0
     result = 1
-    for i in k
+    @inbounds for i in k
         s += i
         result *= binomial(s, i)
     end
