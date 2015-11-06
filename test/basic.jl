@@ -2,6 +2,10 @@
 @test Combinatorics.catalan(5) == 42
 @test Combinatorics.catalan(30) == parse(BigInt,"3814986502092304")
 
+#combinations
+@test collect(combinations([])) == []
+@test collect(combinations("abc")) == ["a","b","c","ab","ac","bc","abc"]
+
 # derangement
 @test derangement(4) == 9
 @test derangement(24) == parse(BigInt,"228250211305338670494289")
