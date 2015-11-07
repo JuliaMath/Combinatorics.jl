@@ -79,6 +79,7 @@ function leglength(ξ::SkewDiagram)
     λ, μ = ξ
     m, n = length(λ), length(μ)
     #Construct matrix representation of diagram
+    if m==0 return -1 end
     l = maximum(λ)
     youngdiagram=zeros(Int, m, l)
     for i=1:n
