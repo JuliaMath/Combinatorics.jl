@@ -20,6 +20,7 @@ import Combinatorics: partitions, prevprod
 @test length(collect(partitions('a':'h',5))) == length(partitions('a':'h',5))
 
 # integer_partitions
+@test integer_partitions(0) == []
 @test integer_partitions(5) == Any[[1, 1, 1, 1, 1], [2, 1, 1, 1], [2, 2, 1], [3, 1, 1], [3, 2], [4, 1], [5]]
 @test_throws DomainError integer_partitions(-1)
 

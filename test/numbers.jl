@@ -8,6 +8,7 @@ using Base.Test
 # fibonacci
 @test fibonaccinum(5) == 5
 @test fibonaccinum(101) == parse(BigInt,"573147844013817084101")
+@test_throws DomainError fibonaccinum(-1)
 
 # lassalle
 @test lassallenum(14) == parse(BigInt,"270316008395632253340")
@@ -18,6 +19,7 @@ using Base.Test
 # lucas
 @test lucasnum(10) == 123
 @test lucasnum(100) == parse(BigInt,"792070839848372253127")
+@test_throws DomainError lucasnum(-1)
 
 # stirlings1
 @test sum([abs(stirlings1(8, i)) for i = 0:8]) == factorial(8)
