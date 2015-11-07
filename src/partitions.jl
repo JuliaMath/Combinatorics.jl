@@ -344,7 +344,7 @@ end
 #    return Int(best)  # could overflow, but best to have predictable return type
 #end
 
-"""
+doc"""
 Previous integer not greater than `n` that can be written as $\prod k_i^{p_i}$ for integers $p_1$, $p_2$, etc.
 
 For a list of integers i1, i2, i3, find the largest
