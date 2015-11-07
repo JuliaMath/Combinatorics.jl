@@ -2,8 +2,8 @@
 # Young diagrams, partitions of unity and characters of the symmetric group Sn #
 ################################################################################
 
-typealias Partition Vector{Int64}
-typealias YoungDiagram Array{Int64,2}
+typealias Partition Vector{Int}
+typealias YoungDiagram Array{Int,2}
 typealias SkewDiagram Tuple{Partition, Partition}
 
 export Partition,
@@ -20,7 +20,7 @@ import Base.\
 # Skew diagrams #
 #################
 
-#This uses a very simple internal representation for skew diagrams
+"This uses a very simple internal representation for skew diagrams"
 \(λ::Partition, μ::Partition) = MakeSkewDiagram(λ, μ)
 function MakeSkewDiagram(λ::Partition, μ::Partition)
     m, n = length(λ), length(μ)
@@ -28,7 +28,7 @@ function MakeSkewDiagram(λ::Partition, μ::Partition)
     (λ, μ)
 end
 
-#Checks if skew diagram is a rim hook
+"Checks if skew diagram is a rim hook"
 isrimhook(λ::Partition, μ::Partition)=isrimhook(λ \ μ)
 function isrimhook(ξ::SkewDiagram)
     λ, μ = ξ
@@ -37,7 +37,7 @@ function isrimhook(ξ::SkewDiagram)
     #Construct matrix representation of diagram
     #XXX This is a horribly inefficient way of checking condition 1!
     l = maximum(λ)
-    youngdiagram=zeros(Int64, m, l)
+    youngdiagram=zeros(Int, m, l)
     for i=1:n
         youngdiagram[i, μ[i]+1:λ[i]]=1
     end
@@ -73,14 +73,14 @@ function isrimhook(ξ::SkewDiagram)
 end
 
 
-#Strictly speaking, defined for rim hook only, but here we define it for all skew diagrams
+"Strictly speaking, defined for rim hook only, but here we define it for all skew diagrams"
 leglength(λ::Partition, μ::Partition)=leglength((λ \ μ))
 function leglength(ξ::SkewDiagram)
     λ, μ = ξ
     m, n = length(λ), length(μ)
     #Construct matrix representation of diagram
     l = maximum(λ)
-    youngdiagram=zeros(Int64, m, l)
+    youngdiagram=zeros(Int, m, l)
     for i=1:n
         youngdiagram[i, μ[i]+1:λ[i]]=1
     end
@@ -100,7 +100,7 @@ end
 
 "Computes essential part of the partition sequence of lambda"
 function partitionsequence(lambda::Partition)
-    Λ▔ = Int64[]
+    Λ▔ = Int[]
     λ = [lambda; 0]
     m = length(lambda)
     for i=m:-1:1
@@ -112,16 +112,16 @@ function partitionsequence(lambda::Partition)
     Λ▔
 end
 
-#This takes two elements of a partition sequence, with a to the left of b
-isrimhook(a::Int64, b::Int64) = (a==1) && (b==0)
+"Takes two elements of a partition sequence, with a to the left of b"
+isrimhook(a::Int, b::Int) = (a==1) && (b==0)
 
 
 #############################
 # Character of irreps of Sn #
 #############################
 
-#Computes recursively using the Murnaghan-Nakayama rule.
-function MN1inner(R::Vector{Int64}, T::Dict, μ::Partition, t::Integer)
+"Computes recursively using the Murnaghan-Nakayama rule."
+function MN1inner(R::Vector{Int}, T::Dict, μ::Partition, t::Integer)
     s=length(R)
     χ::Integer=1
     if t<=length(μ)
@@ -145,7 +145,7 @@ function MN1inner(R::Vector{Int64}, T::Dict, μ::Partition, t::Integer)
     χ
 end
 
-"""
+doc"""
 Computes character $χ^λ(μ)$ of the partition μ in the λth irrep of the
 symmetric group $S_n$
 
@@ -156,7 +156,7 @@ Implements the Murnaghan-Nakayama algorithm as described in:
     doi:10.1016/j.jsc.2003.11.001
 """
 function character(λ::Partition, μ::Partition)
-    T = Dict(()=>0) #Sparse array implemented as dict
+    T = Dict{Any,Int}(()=>0) #Sparse array implemented as dict
     Λ▔ = partitionsequence(λ)
     MN1inner(Λ▔, T, μ, 1)
 end
