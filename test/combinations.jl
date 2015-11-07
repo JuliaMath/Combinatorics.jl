@@ -19,4 +19,5 @@ import Combinatorics: combinations
 @test_throws DomainError collect(CoolLexCombinations(-1, 1))
 @test_throws DomainError collect(CoolLexCombinations(5, 0))
 @test collect(CoolLexCombinations(4,2)) == Vector[[1,2], [2,3], [1,3], [2,4], [3,4], [1,4]]
+@test isa(start(CoolLexCombinations(1000, 20)), Combinatorics.CoolLexIterState{BigInt})
 

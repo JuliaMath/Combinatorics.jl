@@ -4,6 +4,7 @@ using Base.Test
 # catalan
 @test catalannum(5) == 42
 @test catalannum(30) == parse(BigInt,"3814986502092304")
+@test_throws DomainError catalannum(-1)
 
 # fibonacci
 @test fibonaccinum(5) == 5
