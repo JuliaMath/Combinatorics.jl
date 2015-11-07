@@ -1,7 +1,6 @@
 #Partitions
 
 export
-    cool_lex,
     integer_partitions,
     ncpartitions,
     partitions,
@@ -412,52 +411,9 @@ function integer_partitions(n::Integer)
     list
 end
 
-"""
-Produces (n,k)-combinations in cool-lex order
 
-Implements the cool-lex algorithm to generate (n,k)-combinations
-@article{Ruskey:2009fk,
-	Author = {Frank Ruskey and Aaron Williams},
-	Doi = {10.1016/j.disc.2007.11.048},
-	Journal = {Discrete Mathematics},
-	Month = {September},
-	Number = {17},
-	Pages = {5305-5320},
-	Title = {The coolest way to generate combinations},
-	Url = {http://www.sciencedirect.com/science/article/pii/S0012365X07009570},
-	Volume = {309},
-	Year = {2009}}
-"""
-function cool_lex(n::Integer, t::Integer)
-  s = n-t
-  if n > 64 error("Not implemented for n > 64") end
-  if t < 1 error("Need t>1") end
-  R0::Int64=R1::Int64=0
-  R2::Int64 = 1 << (s+t)
-  R3::Int64 = (1 << t) - 1
-  while R3 & R2 == 0
-    produce(visit(R3))
-    R0 = R3 & (R3 + 1)
-    R1 = R0 $ (R0 - 1)
-    R0 = R1 + 1
-    R1 &= R3
-    R0 = max((R0 & R3) - 1, 0)
-    R3 += R1 - R0
-  end
-end
 
-#Converts an integer word X into a subset
-#If X & 2^k == 1, then k is in the subset
-function visit(X::Integer)
-  subset = Int[]
-  n::Int=1
-  while X != 0
-    if X & 1 == 1 push!(subset, n) end
-    X >>= 1
-    n += 1
-  end
-  subset
-end
+#Noncrossing partitions
 
 #Produces noncrossing partitions of length n
 ncpartitions(n::Integer)=ncpart(1,n,n,Any[])
