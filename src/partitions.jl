@@ -416,28 +416,35 @@ end
 #Noncrossing partitions
 
 #Produces noncrossing partitions of length n
-ncpartitions(n::Integer)=ncpart(1,n,n,Any[])
-function ncpart(a::Integer, b::Integer, nn::Integer,
-    x::Array{Any,1})
-  n=b-a+1
-  for k=1:n
-    for root in @task cool_lex(n, k)
-      root += a-1
-      #Abort if construction is out of lex order
-      if length(x)>0 && x[end] > root return end
-      #Produce if we've filled all the holes
-      sofar = Any[x..., root]
-      ssofaru = sort(union(sofar...))
-      if length(ssofaru)==nn && ssofaru==[1:nn]
-        produce(sofar)
-        return
-      end
-      #otherwise patch all remaining holes
-      blob = [ssofaru; nn+1]
-      for l=1:length(blob)-1
-        ap, bp = blob[l]+1, blob[l+1]-1
-        if ap <= bp ncpart(ap, bp, nn, sofar) end
-      end
-    end
-  end
+function ncpartitions(n::Int)
+    partitions = Vector{Vector{Int}}[]
+    _ncpart!(1,n,n,Vector{Int}[], partitions)
+    partitions
 end
+
+function _ncpart!(a::Int, b::Int, nn::Int,
+    x::Vector, partitions::Vector)
+
+    n=b-a+1
+    for k=1:n, root in CoolLexCombinations(n, k)
+        root += a-1
+        #Abort if construction is out of lex order
+        if !isempty(x) && lexcmp(x[end], root)==1 return end
+
+        #Save if we've filled all the holes
+        sofar = Vector{Int}[x..., root]
+        ssofaru = sort(union(sofar...))
+        if length(ssofaru)==nn && ssofaru==collect(1:nn)
+            push!(partitions, sofar)
+            return
+        end
+
+        #otherwise patch all remaining holes
+        blob = [ssofaru; nn+1]
+        for l=1:length(blob)-1
+            ap, bp = blob[l]+1, blob[l+1]-1
+            if ap <= bp _ncpart!(ap, bp, nn, sofar, partitions) end
+        end
+    end
+end
+
