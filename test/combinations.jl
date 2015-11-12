@@ -1,9 +1,6 @@
 using Combinatorics
 using Base.Test
 
-import Combinatorics: combinations
-
-
 @test collect(combinations([])) == []
 @test collect(combinations(['a', 'b', 'c'])) == Any[['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
 
