@@ -3,6 +3,7 @@ using Base.Test
 
 import Combinatorics: levicivita, nthperm, nthperm!, parity, permutations
 
+# permutations
 @test collect(permutations("abc")) == Any[['a','b','c'],['a','c','b'],['b','a','c'],
                                           ['b','c','a'],['c','a','b'],['c','b','a']]
 
@@ -10,6 +11,26 @@ import Combinatorics: levicivita, nthperm, nthperm!, parity, permutations
 @test collect(filter(x->(iseven(x[3])),permutations([1,2,3]))) == Any[[1,3,2],[3,1,2]]
 
 @test length(permutations(0)) == 1
+
+@test collect(permutations("abc", 4)) == Any[]
+@test collect(permutations("abc", 2)) == Any[['a','b'],['a','c'],['b','a'],
+                                             ['b','c'],['c','a'],['c','b']]
+@test collect(permutations("abc", 0)) == Any[Char[]]
+@test collect(permutations("abc", -1)) == Any[]
+@test collect(permutations("", 1)) == Any[]
+@test collect(permutations("", 0)) == Any[Char[]]
+@test collect(permutations("", -1)) == Any[]
+
+# multiset_permutations
+@test collect(multiset_permutations("aabc", 5)) == Any[]
+@test collect(multiset_permutations("aabc", 2)) == Any[['a','a'],['a','b'], ['a','c'],['b','a'],
+                                                       ['b','c'],['c','a'],['c','b']]
+@test collect(multiset_permutations("aabc", 0)) == Any[Char[]]
+@test collect(multiset_permutations("aabc", -1)) == Any[]
+@test collect(multiset_permutations("", 1)) == Any[]
+@test collect(multiset_permutations("", 0)) == Any[Char[]]
+@test collect(multiset_permutations("", -1)) == Any[]
+@test length(multiset_permutations("aaaaaaaaaaaaaaaaaaaaab", 21)) == 22
 
 #nthperm!
 for n = 0:7, k = 1:factorial(n)
@@ -32,4 +53,3 @@ end
 
 @test Combinatorics.nsetpartitions(-1) == 0
 @test collect(permutations([])) == Vector[[]]
-
