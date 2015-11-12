@@ -1,8 +1,6 @@
 using Combinatorics
 using Base.Test
 
-import Combinatorics: levicivita, nthperm, nthperm!, parity, permutations
-
 # permutations
 @test collect(permutations("abc")) == Any[['a','b','c'],['a','c','b'],['b','a','c'],
                                           ['b','c','a'],['c','a','b'],['c','b','a']]
