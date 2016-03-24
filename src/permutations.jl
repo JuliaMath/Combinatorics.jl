@@ -133,15 +133,15 @@ done(p::MultiSetPermutations, s) =
 
 "In-place version of nthperm."
 function nthperm!(a::AbstractVector, k::Integer)
-    k -= 1 # make k 1-indexed
-    k < 0 && throw(ArgumentError("permutation k must be ≥ 0, got $k"))
     n = length(a)
     n == 0 && return a
-    f = factorial(oftype(k, n-1))
+    f = factorial(oftype(k, n))
+    0 < k <= f || throw(ArgumentError("permutation k must satisfy 0 < k ≤ $f, got $k"))
+    k -= 1 # make k 1-indexed
     for i=1:n-1
+        f = div(f, n - i + 1)
         j = div(k, f) + 1
         k = k % f
-        f = div(f, n-i)
 
         j = j+i-1
         elt = a[j]

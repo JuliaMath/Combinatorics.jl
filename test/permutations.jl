@@ -39,7 +39,17 @@ end
 #Euler Problem #24
 @test nthperm!([0:9;],1000000) == [2,7,8,3,9,1,5,4,6,0]
 
-@test nthperm([0,1,2],3) == [1,0,2]
+@test_throws ArgumentError nthperm([0, 1, 2], 0)
+@test nthperm([0, 1, 2], 1) == [0, 1, 2]
+@test nthperm([0, 1, 2], 3) == [1, 0, 2]
+@test nthperm([0, 1, 2], 6) == [2, 1, 0]
+@test_throws ArgumentError nthperm([0, 1, 2], 7)
+
+@test_throws ArgumentError nthperm([0:20;], big(0))
+@test nthperm([0:20;], big(1)) == [0:20;]
+@test nthperm([0:20;], factorial(big(20))) == [0; 20:-1:1]
+@test nthperm([0:20;], factorial(big(21))) == [20:-1:0;]
+@test_throws ArgumentError nthperm([0:20;], factorial(big(21)) + 1)
 
 @test_throws ArgumentError parity([0])
 @test_throws ArgumentError parity([1,2,3,3])
