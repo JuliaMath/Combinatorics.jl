@@ -23,11 +23,42 @@ using Base.Test
 @test_throws DomainError lucasnum(-1)
 
 # stirlings1
-@test sum([abs(stirlings1(8, i)) for i = 0:8]) == factorial(8)
+@test_throws DomainError stirlings1(-1, 1)
+@test typeof(stirlings1(6, 2)) == Int
+@test stirlings1(0, 0) == 1
+@test stirlings1(1, 1) == 1
+@test stirlings1(2, 6) == 0
+@test stirlings1(6, 0) == 0
+@test stirlings1(6, 0, true) == 0
+@test stirlings1(6, 1) == 120
+@test stirlings1(6, 1, true) == -120
+@test stirlings1(6, 2) == 274
+@test stirlings1(6, 2, true) == 274
+@test stirlings1(6, 3) == 225
+@test stirlings1(6, 3, true) == -225
+@test stirlings1(6, 4) == 85
+@test stirlings1(6, 4, true) == 85
+@test stirlings1(6, 5) == 15
+@test stirlings1(6, 5, true) == -15
+@test stirlings1(6, 6) == 1
+@test stirlings1(6, 6, true) == 1
+@test sum([abs(stirlings1(8, i, true)) for i = 0:8]) == factorial(8)
+
+# stirlings2
+@test_throws DomainError stirlings2(-1, 1)
+@test typeof(stirlings2(6, 2)) == Int
+@test stirlings2(0, 0) == 1
+@test stirlings2(1, 1) == 1
+@test stirlings2(2, 6) == 0
+@test stirlings2(6, 0) == 0
+@test stirlings2(6, 1) == 1
+@test stirlings2(6, 2) == 31
+@test stirlings2(6, 3) == 90
+@test stirlings2(6, 4) == 65
+@test stirlings2(6, 5) == 15
+@test stirlings2(6, 6) == 1
 
 # bell
 @test bellnum(7) == 877
 @test bellnum(42) == parse(BigInt,"35742549198872617291353508656626642567")
 @test_throws DomainError bellnum(-1)
-
-
