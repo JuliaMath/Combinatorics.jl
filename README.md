@@ -26,7 +26,7 @@ This library provides the following functions:
  - `multinomial(k...)`: receives a tuple of `k_1, ..., k_n` and calculates the multinomial coefficient `(n k)`, where `n = sum(k)`; returns a `BigInt` only if given a `BigInt`;
  - `primorial(n)`: returns the product of all positive prime numbers <= n; always returns a `BigInt`;
  - `stirlings1(n, k, signed=false)`: returns the `(n,k)`-th Stirling number of the first kind; the number is signed if signed is true; returns a `BigInt` only if given a `BigInt`.
- - `stirlings2(n, k)`: returns the `(n,k)`-th Stirling number of the second kind; the number is signed if signed is true; returns a `BigInt` only if given a `BigInt`.
+ - `stirlings2(n, k)`: returns the `(n,k)`-th Stirling number of the second kind; returns a `BigInt` only if given a `BigInt`.
 
 Young diagrams
 --------------
