@@ -2,7 +2,6 @@
 
 export
     derangement,
-    factorial,
     subfactorial,
     doublefactorial,
     hyperfactorial,
@@ -10,23 +9,6 @@ export
     gamma,
     primorial,
     multinomial
-
-import Base: factorial
-
-"computes n!/k!"
-function factorial{T<:Integer}(n::T, k::T)
-    if k < 0 || n < 0 || k > n
-        throw(DomainError())
-    end
-    f = one(T)
-    while n > k
-        f = Base.checked_mul(f,n)
-        n -= 1
-    end
-    return f
-end
-factorial(n::Integer, k::Integer) = factorial(promote(n, k)...)
-
 
 "The number of permutations of n with no fixed points (subfactorial)"
 function derangement(sn::Integer)
@@ -78,5 +60,3 @@ function multinomial(k...)
     end
     result
 end
-
-

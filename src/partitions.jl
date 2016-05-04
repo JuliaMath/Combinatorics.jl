@@ -20,11 +20,6 @@ start(p::IntegerPartitions) = Int[]
 done(p::IntegerPartitions, xs) = length(xs) == p.n
 next(p::IntegerPartitions, xs) = (xs = nextpartition(p.n,xs); (xs,xs))
 
-"""
-Generate all integer arrays that sum to `n`. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(n))` to get an array of all partitions. The number of partitions to generate can be efficiently computed using `length(partitions(n))`.
-"""
-partitions(n::Integer) = IntegerPartitions(n)
-
 
 
 function nextpartition(n, as)
@@ -87,11 +82,6 @@ end
 
 length(f::FixedPartitions) = npartitions(f.n,f.m)
 
-"""
-Generate all arrays of `m` integers that sum to `n`. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(n,m))` to get an array of all partitions. The number of partitions to generate can be efficiently computed using `length(partitions(n,m))`.
-"""
-partitions(n::Integer, m::Integer) = n >= 1 && m >= 1 ? FixedPartitions(n,m) : throw(DomainError())
-
 start(f::FixedPartitions) = Int[]
 function done(f::FixedPartitions, s::Vector{Int})
     f.m <= f.n || return true
@@ -151,11 +141,6 @@ immutable SetPartitions{T<:AbstractVector}
 end
 
 length(p::SetPartitions) = nsetpartitions(length(p.s))
-
-"""
-Generate all set partitions of the elements of an array, represented as arrays of arrays. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(array))` to get an array of all partitions. The number of partitions to generate can be efficiently computed using `length(partitions(array))`.
-"""
-partitions(s::AbstractVector) = SetPartitions(s)
 
 start(p::SetPartitions) = (n = length(p.s); (zeros(Int32, n), ones(Int32, n-1), n, 1))
 done(p::SetPartitions, s) = s[1][1] > 0
@@ -221,11 +206,6 @@ immutable FixedSetPartitions{T<:AbstractVector}
 end
 
 length(p::FixedSetPartitions) = nfixedsetpartitions(length(p.s),p.m)
-
-"""
-Generate all set partitions of the elements of an array into exactly m subsets, represented as arrays of arrays. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(array,m))` to get an array of all partitions. The number of partitions into m subsets is equal to the Stirling number of the second kind and can be efficiently computed using `length(partitions(array,m))`.
-"""
-partitions(s::AbstractVector,m::Int) = length(s) >= 1 && m >= 1 ? FixedSetPartitions(s,m) : throw(DomainError())
 
 function start(p::FixedSetPartitions)
     n = length(p.s)
@@ -343,52 +323,6 @@ end
 #    return Int(best)  # could overflow, but best to have predictable return type
 #end
 
-doc"""
-Previous integer not greater than `n` that can be written as $\prod k_i^{p_i}$ for integers $p_1$, $p_2$, etc.
-
-For a list of integers i1, i2, i3, find the largest
-    i1^n1 * i2^n2 * i3^n3 <= x
-for integer n1, n2, n3
-"""
-function prevprod(a::Vector{Int}, x)
-    if x > typemax(Int)
-        throw(ArgumentError("unsafe for x > typemax(Int), got $x"))
-    end
-    k = length(a)
-    v = ones(Int, k)                  # current value of each counter
-    mx = [nextpow(ai,x) for ai in a]  # allow each counter to exceed p (sentinel)
-    first = Int(prevpow(a[1], x))     # start at best case in first factor
-    v[1] = first
-    p::widen(Int) = first
-    best = p
-    icarry = 1
-
-    while v[end] < mx[end]
-        while p <= x
-            best = p > best ? p : best
-            p *= a[1]
-            v[1] *= a[1]
-        end
-        if p > x
-            carrytest = true
-            while carrytest
-                p = div(p, v[icarry])
-                v[icarry] = 1
-                icarry += 1
-                p *= a[icarry]
-                v[icarry] *= a[icarry]
-                carrytest = v[icarry] > mx[icarry] && icarry < k
-            end
-            if p <= x
-                icarry = 1
-            end
-        end
-    end
-    best = x >= p > best ? p : best
-    return Int(best)
-end
-
-
 "Lists the partitions of the number n, the order is consistent with GAP"
 function integer_partitions(n::Integer)
     if n < 0
@@ -410,8 +344,6 @@ function integer_partitions(n::Integer)
 
     list
 end
-
-
 
 #Noncrossing partitions
 
@@ -447,4 +379,3 @@ function _ncpart!(a::Int, b::Int, nn::Int,
         end
     end
 end
-

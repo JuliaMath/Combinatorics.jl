@@ -36,17 +36,6 @@ length(c::Combinations) = binomial(length(c.a),c.t)
 
 eltype{T}(::Type{Combinations{T}}) = Vector{eltype(T)}
 
-"Generate all combinations of `n` elements from an indexable object. Because the number of combinations can be very large, this function returns an iterator object. Use `collect(combinations(array,n))` to get an array of all combinations.
-"
-function combinations(a, t::Integer)
-    if t < 0
-        # generate 0 combinations for negative argument
-        t = length(a)+1
-    end
-    Combinations(a, t)
-end
-
-
 """
 generate combinations of all orders, chaining of order iterators is eager,
 but sequence at each order is lazy
