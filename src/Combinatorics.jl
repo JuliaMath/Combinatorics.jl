@@ -1,3 +1,5 @@
+__precompile__()
+
 module Combinatorics
 
 using Compat, Polynomials, Iterators
