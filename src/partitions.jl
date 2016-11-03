@@ -161,16 +161,16 @@ start(p::SetPartitions) = (n = length(p.s); (zeros(Int32, n), ones(Int32, n-1), 
 done(p::SetPartitions, s) = s[1][1] > 0
 next(p::SetPartitions, s) = nextsetpartition(p.s, s...)
 
-function nextsetpartition(s::AbstractVector, a, b, n, m)
+function nextsetpartition{T}(s::AbstractVector{T}, a, b, n, m)
     function makeparts(s, a, m)
-        temp = [ similar(s,0) for k = 0:m ]
+        temp = Vector{T}[ similar(s,0) for k = 0:m ]
         for i = 1:n
             push!(temp[a[i]+1], s[i])
         end
         filter!(x->!isempty(x), temp)
     end
 
-    if isempty(s);  return ([s], ([1], Int[], n, 1));  end
+    if isempty(s);  return (Vector{T}[s], (Int32[1], Int32[], n, 1));  end
 
     part = makeparts(s,a,m)
 
@@ -184,7 +184,7 @@ function nextsetpartition(s::AbstractVector, a, b, n, m)
             end
         end
         a[j] += 1
-        m = b[j] + (a[j] == b[j])
+        m = Int64(b[j] + (a[j] == b[j]))
         for k = j+1:n-1
             a[k] = 0
             b[k] = m
