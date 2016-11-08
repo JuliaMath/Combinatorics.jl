@@ -121,7 +121,7 @@ end
 
 #Converts an integer bit pattern X into a subset
 #If X & 2^k == 1, then k is in the subset
-function _cool_lex_visit(X::Int)
+function _cool_lex_visit(X::Integer)
   subset = Int[]
   n=1
   while X != 0
