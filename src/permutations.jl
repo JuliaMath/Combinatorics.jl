@@ -36,13 +36,13 @@ end
 start(p::Permutations) = [1:length(p.a);]
 next(p::Permutations, s) = nextpermutation(p.a, p.t ,s)
 
-function nextpermutation(m, t, s)
+function nextpermutation(m, t, state)
+    s = copy(state)
     perm = [m[s[i]] for i in 1:t]
     n = length(s)
     if t <= 0
         return(perm, [n+1])
     end
-    s = copy(s)
     if t < n
         j = t + 1
         while j <= n &&  s[t] >= s[j]; j+=1; end

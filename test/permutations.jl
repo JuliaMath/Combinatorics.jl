@@ -19,6 +19,8 @@ using Base.Test
 @test collect(permutations("", 0)) == Any[Char[]]
 @test collect(permutations("", -1)) == Any[]
 
+@inferred first(permutations("abc", 2))
+
 # multiset_permutations
 @test collect(multiset_permutations("aabc", 5)) == Any[]
 @test collect(multiset_permutations("aabc", 2)) == Any[['a','a'],['a','b'], ['a','c'],['b','a'],
