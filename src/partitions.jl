@@ -15,6 +15,7 @@ immutable IntegerPartitions
 end
 
 length(p::IntegerPartitions) = npartitions(p.n)
+eltype(p::IntegerPartitions) = Vector{Int}
 
 start(p::IntegerPartitions) = Int[]
 done(p::IntegerPartitions, xs) = length(xs) == p.n
@@ -86,6 +87,7 @@ immutable FixedPartitions
 end
 
 length(f::FixedPartitions) = npartitions(f.n,f.m)
+eltype(f::FixedPartitions) = Vector{Int}
 
 """
 Generate all arrays of `m` integers that sum to `n`. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(n,m))` to get an array of all partitions. The number of partitions to generate can be efficiently computed using `length(partitions(n,m))`.
@@ -104,7 +106,7 @@ function nextfixedpartition(n, m, bs)
     as = copy(bs)
     if isempty(as)
         # First iteration
-        as = [n-m+1; ones(Int, m-1)]
+        as = [[n-m+1]; ones(Int, m-1)]
     elseif as[2] < as[1]-1
         # Most common iteration
         as[1] -= 1
@@ -151,6 +153,7 @@ immutable SetPartitions{T<:AbstractVector}
 end
 
 length(p::SetPartitions) = nsetpartitions(length(p.s))
+eltype(p::SetPartitions) = Vector{Vector{eltype(p.s)}}
 
 """
 Generate all set partitions of the elements of an array, represented as arrays of arrays. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(array))` to get an array of all partitions. The number of partitions to generate can be efficiently computed using `length(partitions(array))`.
@@ -170,7 +173,7 @@ function nextsetpartition(s::AbstractVector, a, b, n, m)
         filter!(x->!isempty(x), temp)
     end
 
-    if isempty(s);  return ([s], ([1], Int[], n, 1));  end
+    if isempty(s);  return ([s], (eltype(a)[1], eltype(b)[], n, 1));  end
 
     part = makeparts(s,a,m)
 
@@ -184,7 +187,7 @@ function nextsetpartition(s::AbstractVector, a, b, n, m)
             end
         end
         a[j] += 1
-        m = b[j] + (a[j] == b[j])
+        m = b[j] + Int(a[j] == b[j])
         for k = j+1:n-1
             a[k] = 0
             b[k] = m
@@ -221,6 +224,7 @@ immutable FixedSetPartitions{T<:AbstractVector}
 end
 
 length(p::FixedSetPartitions) = nfixedsetpartitions(length(p.s),p.m)
+eltype(p::FixedSetPartitions) = Vector{Vector{eltype(p.s)}}
 
 """
 Generate all set partitions of the elements of an array into exactly m subsets, represented as arrays of arrays. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(array,m))` to get an array of all partitions. The number of partitions into m subsets is equal to the Stirling number of the second kind and can be efficiently computed using `length(partitions(array,m))`.
@@ -230,7 +234,7 @@ partitions(s::AbstractVector,m::Int) = length(s) >= 1 && m >= 1 ? FixedSetPartit
 function start(p::FixedSetPartitions)
     n = length(p.s)
     m = p.m
-    m <= n ? (vcat(ones(Int, n-m),1:m), vcat(1,n-m+2:n), n) : (Int[], Int[], n)
+    m <= n ? (vcat(ones(Int, n-m),1:m), vcat([1],n-m+2:n), n) : (Int[], Int[], n)
 end
 # state consists of:
 # vector a of length n describing to which partition every element of s belongs
@@ -240,16 +244,16 @@ end
 done(p::FixedSetPartitions, s) = isempty(s[1]) || s[1][1] > 1
 next(p::FixedSetPartitions, s) = nextfixedsetpartition(p.s,p.m, s...)
 
-function nextfixedsetpartition(s::AbstractVector, m, a, b, n)
-    function makeparts(s, a)
-        part = [ similar(s,0) for k = 1:m ]
-        for i = 1:n
-            push!(part[a[i]], s[i])
-        end
-        return part
+function makefixedsetparts(s, m, a, n)
+    part = [ similar(s,0) for k = 1:m ]
+    for i = 1:n
+        push!(part[a[i]], s[i])
     end
+    return part
+end
 
-    part = makeparts(s,a)
+function nextfixedsetpartition(s::AbstractVector, m, a, b, n)
+    part = makefixedsetparts(s,m,a,n)
 
     if m == 1
         a[1] = 2
@@ -447,4 +451,3 @@ function _ncpart!(a::Int, b::Int, nn::Int,
         end
     end
 end
-
