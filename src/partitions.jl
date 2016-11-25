@@ -106,7 +106,7 @@ function nextfixedpartition(n, m, bs)
     as = copy(bs)
     if isempty(as)
         # First iteration
-        as = [[n-m+1]; ones(Int, m-1)]
+        as = ones(Int, m); as[1] = n - m + 1
     elseif as[2] < as[1]-1
         # Most common iteration
         as[1] -= 1
@@ -187,7 +187,7 @@ function nextsetpartition(s::AbstractVector, a, b, n, m)
             end
         end
         a[j] += 1
-        m = b[j] + Int(a[j] == b[j])
+        m = Int(b[j]) + (a[j] == b[j])
         for k = j+1:n-1
             a[k] = 0
             b[k] = m
@@ -234,7 +234,7 @@ partitions(s::AbstractVector,m::Int) = length(s) >= 1 && m >= 1 ? FixedSetPartit
 function start(p::FixedSetPartitions)
     n = length(p.s)
     m = p.m
-    m <= n ? (vcat(ones(Int, n-m),1:m), vcat([1],n-m+2:n), n) : (Int[], Int[], n)
+    m <= n ? (vcat(ones(Int, n-m),1:m), vcat(1:1,n-m+2:n), n) : (Int[], Int[], n)
 end
 # state consists of:
 # vector a of length n describing to which partition every element of s belongs
@@ -244,16 +244,16 @@ end
 done(p::FixedSetPartitions, s) = isempty(s[1]) || s[1][1] > 1
 next(p::FixedSetPartitions, s) = nextfixedsetpartition(p.s,p.m, s...)
 
-function makefixedsetparts(s, m, a, n)
-    part = [ similar(s,0) for k = 1:m ]
-    for i = 1:n
-        push!(part[a[i]], s[i])
-    end
-    return part
-end
-
 function nextfixedsetpartition(s::AbstractVector, m, a, b, n)
-    part = makefixedsetparts(s,m,a,n)
+    function makeparts(s, a)
+        local part = [ similar(s,0) for k = 1:m ]
+        for i = 1:n
+            push!(part[a[i]], s[i])
+        end
+        return part
+    end
+
+    part = makeparts(s,a)
 
     if m == 1
         a[1] = 2
