@@ -110,7 +110,7 @@ function next(C::CoolLexCombinations, S::CoolLexIterState)
     R3 = S.R3
 
     R0 = R3 & (R3 + 1)
-    R1 = R0 $ (R0 - 1)
+    R1 = xor(R0, R0 - 1)
     R0 = R1 + 1
     R1 &= R3
     R0 = max((R0 & R3) - 1, 0)

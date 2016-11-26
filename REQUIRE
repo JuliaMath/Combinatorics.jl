@@ -1,3 +1,4 @@
-julia 0.5-
+julia 0.5
+Compat 0.9.4
 Polynomials
 Iterators

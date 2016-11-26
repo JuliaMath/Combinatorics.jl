@@ -198,12 +198,12 @@ function levicivita{T<:Integer}(p::AbstractVector{T})
 
     while cycles + flips < n
         first = findnext(todo, first)
-        (todo[first] $= true) && return 0
+        (todo[first] = !todo[first]) && return 0
         j = p[first]
         (0 < j <= n) || return 0
         cycles += 1
         while j ≠ first
-            (todo[j] $= true) && return 0
+            (todo[j] = !todo[j]) && return 0
             j = p[j]
             (0 < j <= n) || return 0
             flips += 1
