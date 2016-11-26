@@ -10,22 +10,19 @@ export bellnum,
     stirlings1
 
 "Returns the n-th Bell number"
-function bellnum(bn::Integer)
-    if bn < 0
+function bellnum(n::Integer)
+    if n < 0
         throw(DomainError())
-    else
-        n = BigInt(bn)
     end
-    list = Array(BigInt, div(n*(n+1), 2))
+    list = Array(BigInt, n)
     list[1] = 1
     for i = 2:n
-        beg = div(i*(i-1),2)
-        list[beg+1] = list[beg]
-        for j = 2:i
-            list[beg+j] = list[beg+j-1]+list[beg+j-i]
+        list[i] = list[1]
+        for j = 1:i - 1
+            list[i - j] += list[i - j + 1]
         end
     end
-    return list[end]
+    return list[1]
 end
 
 "Returns the n-th Catalan number"
