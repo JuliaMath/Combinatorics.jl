@@ -7,8 +7,11 @@ export bellnum,
     lassallenum,
     legendresymbol,
     lucasnum,
-    stirlings1
+    stirlings1,
+    stirlings2
 
+import Base: factorial, binomial
+	
 "Returns the n-th Bell number"
 function bellnum(bn::Integer)
     if bn < 0
@@ -85,9 +88,44 @@ function lucasnum(n::Integer)
     return z
 end
 
-"Returns s(n, k), the signed Stirling number of first kind"
-function stirlings1(n::Integer, k::Integer)
-    p = poly(0:(n-1))
-    p[n - k + 1]
+function stirlings1(n::Int, k::Int, signed::Bool=false)
+    if signed == true
+        return (-1)^(n - k) * stirlings1(n, k)
+    end
+    
+    if n < 0
+        throw(DomainError())
+    elseif n == k == 0
+        return 1
+    elseif n == 0 || k == 0
+        return 0
+    elseif n == k
+        return 1
+    elseif k == 1
+        return factorial(n-1)
+    elseif k == n - 1
+        return binomial(n, 2)
+    elseif k == n - 2
+        return div((3 * n - 1) * binomial(n, 3), 4)
+    elseif k == n - 3
+        return binomial(n, 2) * binomial(n, 4)
+    end
+    
+    return (n - 1) * stirlings1(n - 1, k) + stirlings1(n - 1, k - 1)
 end
 
+function stirlings2(n::Int, k::Int)
+    if n < 0
+        throw(DomainError())
+    elseif n == k == 0
+        return 1
+    elseif n == 0 || k == 0
+        return 0
+    elseif k == n - 1
+        return binomial(n, 2)
+    elseif k == 2
+        return 2^(n-1) - 1
+    end
+    
+    return k * stirlings2(n - 1, k) + stirlings2(n - 1, k - 1)
+end
