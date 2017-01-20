@@ -15,7 +15,7 @@ This library provides the following functions:
  - `combinations(a)`: returns combinations of all order by chaining calls to `Base.combinations(a,n)`;
  - `derangement(n)`/`subfactorial(n)`: returns the number of permutations of n with no fixed points; always returns a `BigInt`;
  - `doublefactorial(n)`: returns the double factorial n!!; always returns a `BigInt`;
- - `fibonacci(n)`: the n-th Fibonacci number; always returns a `BigInt`;
+ - `fibonaccinum(n)`: the n-th Fibonacci number; always returns a `BigInt`;
  - `hyperfactorial(n)`: the n-th hyperfactorial, i.e. prod([i^i for i = 2:n]; always returns a `BigInt`;
  - `integer_partitions(n)`: returns a `Vector{Int}` consisting of the partitions of the number `n`.
  - `jacobisymbol(a,b)`: returns the Jacobi symbol (a/b);
