@@ -1,7 +1,8 @@
 export combinations,
        CoolLexCombinations,
        multiset_combinations,
-       with_replacement_combinations
+       with_replacement_combinations,
+       powerset
 
 #The Combinations iterator
 
@@ -250,3 +251,21 @@ function next(c::WithReplacementCombinations, s)
     (comb, s)
 end
 done(c::WithReplacementCombinations, s) = !isempty(s) && s[1] > length(c.a) || c.t < 0
+
+# Power set
+
+"""
+    powerset(a, min=0, max=length(a))
+
+Returns an iterator over the power set of `a`.
+That is, the set of all subsets of `a`, including the empty set.
+
+The cardinality of the subsets can be bounded by the `min` and `max` arguments.
+
+Use collect(powerset(a)) to get an array.
+"""
+function powerset(a, min::Integer = 0, max::Integer = length(a))
+    iterators = [combinations(a,k) for k=min:max]
+    if min < 1 append!(iterators, []) end
+    chain(iterators...)
+end
