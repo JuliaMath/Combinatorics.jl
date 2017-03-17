@@ -11,7 +11,7 @@ export bellnum,
     stirlings2
 
 import Base: factorial, binomial
-	
+
 "Returns the n-th Bell number"
 function bellnum(bn::Integer)
     if bn < 0
@@ -19,7 +19,7 @@ function bellnum(bn::Integer)
     else
         n = BigInt(bn)
     end
-    list = Array(BigInt, div(n*(n+1), 2))
+    list = Vector{BigInt}(div(n*(n+1), 2))
     list[1] = 1
     for i = 2:n
         beg = div(i*(i-1),2)
@@ -92,7 +92,7 @@ function stirlings1(n::Int, k::Int, signed::Bool=false)
     if signed == true
         return (-1)^(n - k) * stirlings1(n, k)
     end
-    
+
     if n < 0
         throw(DomainError())
     elseif n == k == 0
@@ -110,7 +110,7 @@ function stirlings1(n::Int, k::Int, signed::Bool=false)
     elseif k == n - 3
         return binomial(n, 2) * binomial(n, 4)
     end
-    
+
     return (n - 1) * stirlings1(n - 1, k) + stirlings1(n - 1, k - 1)
 end
 
@@ -126,6 +126,6 @@ function stirlings2(n::Int, k::Int)
     elseif k == 2
         return 2^(n-1) - 1
     end
-    
+
     return k * stirlings2(n - 1, k) + stirlings2(n - 1, k - 1)
 end

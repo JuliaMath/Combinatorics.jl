@@ -31,7 +31,7 @@ factorial(n::Integer, k::Integer) = factorial(promote(n, k)...)
 "The number of permutations of n with no fixed points (subfactorial)"
 function derangement(sn::Integer)
     n = BigInt(sn)
-    return num(factorial(n)*sum([(-1)^k//factorial(k) for k=0:n]))
+    return numerator(factorial(n)*sum([(-1)^k//factorial(k) for k=0:n]))
 end
 subfactorial(n::Integer) = derangement(n)
 

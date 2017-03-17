@@ -2,9 +2,9 @@
 # Young diagrams, partitions of unity and characters of the symmetric group Sn #
 ################################################################################
 
-typealias Partition Vector{Int}
-typealias YoungDiagram Array{Int,2}
-typealias SkewDiagram Tuple{Partition, Partition}
+const Partition = Vector{Int}
+const YoungDiagram = Array{Int,2}
+const SkewDiagram = Tuple{Partition, Partition}
 
 export Partition,
        YoungDiagram, #represents shape of Young diagram
