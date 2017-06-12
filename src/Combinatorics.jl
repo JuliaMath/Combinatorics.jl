@@ -2,7 +2,7 @@ __precompile__(true)
 
 module Combinatorics
 
-using Compat, Polynomials, Iterators
+using Compat, Polynomials
 
 import Base: start, next, done, length, eltype
 
@@ -20,5 +20,5 @@ include("combinations.jl")
 include("permutations.jl")
 include("partitions.jl")
 include("youngdiagrams.jl")
-
+include("iterators.jl")
 end #module

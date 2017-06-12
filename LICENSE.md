@@ -22,3 +22,9 @@ Combinatorics.jl is licensed under the MIT License:
 > OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 > WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+The chain function is from Iterators.jl and is licensed under the MIT License:
+
+>Copyright (c) 2012-2016: Daniel Jones, Stefan Karpinski, Simon Kornblith, Kevin Squire, Jeff Bezanson, Tim Holy, Jonathan Malmaud, Eric Davies, and other contributors.
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
