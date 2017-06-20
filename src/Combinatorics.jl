@@ -2,7 +2,8 @@ __precompile__(true)
 
 module Combinatorics
 
-using Compat, Polynomials, Iterators
+using Polynomials
+using Compat, Compat.Iterators.flatten
 
 import Base: start, next, done, length, eltype
 
