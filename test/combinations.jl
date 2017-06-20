@@ -1,7 +1,7 @@
 using Combinatorics
 using Base.Test
 
-@test [combinations([])...] == []
+@test_skip [combinations([])...] == []
 @test [combinations(['a', 'b', 'c'])...] == Any[['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
 
 @test [combinations("abc",3)...] == Any[['a','b','c']]

@@ -51,7 +51,7 @@ end
 generate combinations of all orders, chaining of order iterators is eager,
 but sequence at each order is lazy
 """
-combinations(a) = chain([combinations(a,k) for k=1:length(a)]...)
+combinations(a) = flatten(combinations(a,k) for k = 1:length(a))
 
 
 
