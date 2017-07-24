@@ -139,11 +139,11 @@ function nthperm!(a::AbstractVector, k::Integer)
     n == 0 && return a
     f = factorial(oftype(k, n-1))
     for i=1:n-1
-        j = div(k, f) + 1
-        k = k % f
-        f = div(f, n-i)
+        j = k ÷ f
+        k -= j * f
+        f ÷= n - i
 
-        j = j+i-1
+        j += i
         elt = a[j]
         for d = j:-1:i+1
             a[d] = a[d-1]
