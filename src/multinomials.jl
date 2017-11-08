@@ -4,8 +4,8 @@
 export multiexponents
 
 struct MultiExponents{T}
-  c::Combinations{T}
-  nterms::Int
+    c::Combinations{T}
+    nterms::Int
 end
 
 start(m::MultiExponents) = start(m.c)
