@@ -8,26 +8,23 @@ struct MultiExponents{T}
   nterms::Int
 end
 
-# transform combination into multinomial exponent
-# using standard stars and bars
-function comb2exp(stars, nterms)
+start(m::MultiExponents) = start(m.c)
+
+function next(m::MultiExponents, s)
+    stars, ss = next(m.c, s)
+
     # stars minus their consecutive
     # position becomes their index
     idx = stars - [0:length(stars)-1;]
 
-    result = zeros(Int, nterms)
+    result = zeros(Int, m.nterms)
     for i in idx
       result[i] += 1
     end
 
-    result
+    result, ss
 end
 
-start(m::MultiExponents) = start(m.c)
-function next(m::MultiExponents, s)
-    item, ss = next(m.c, s)
-    comb2exp(item, m.nterms), ss
-end
 done(m::MultiExponents, s) = done(m.c, s)
 
 length(m::MultiExponents) = length(m.c)
