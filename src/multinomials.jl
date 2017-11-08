@@ -9,6 +9,7 @@ struct MultiExponents{T}
 end
 
 # transform combination into multinomial exponent
+# using standard stars and bars
 function comb2exp(stars, nterms)
     # stars minus their consecutive
     # position becomes their index
@@ -25,7 +26,6 @@ end
 start(m::MultiExponents) = start(m.c)
 function next(m::MultiExponents, s)
     item, ss = next(m.c, s)
-
     comb2exp(item, m.nterms), ss
 end
 done(m::MultiExponents, s) = done(m.c, s)
@@ -51,7 +51,7 @@ has the exponents:
      [0, 0, 2]
 """
 function multiexponents(m, n)
-    # standard stars and bars (nsymbols = m+n-1)
+    # number of symbols = m+n-1
     c = combinations(1:m+n-1, n)
 
     MultiExponents(c, m)
