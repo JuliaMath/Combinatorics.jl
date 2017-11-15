@@ -3,7 +3,7 @@
 
 export multiexponents
 
-struct MultiExponents{T}
+immutable MultiExponents{T}
     c::Combinations{T}
     nterms::Int
 end
