@@ -10,6 +10,7 @@ end
 
 start(m::MultiExponents) = start(m.c)
 
+# standard stars and bars
 function next(m::MultiExponents, s)
     stars, ss = next(m.c, s)
 
@@ -46,7 +47,7 @@ has the exponents:
      [0, 0, 2]
 """
 function multiexponents(m, n)
-    # number of symbols = m+n-1
+    # number of stars and bars = m+n-1
     c = combinations(1:m+n-1, n)
 
     MultiExponents(c, m)
