@@ -10,7 +10,8 @@ end
 
 start(m::MultiExponents) = start(m.c)
 
-# standard stars and bars
+# Standard stars and bars:
+# https://en.wikipedia.org/wiki/Stars_and_bars_(combinatorics)
 function next(m::MultiExponents, s)
     stars, ss = next(m.c, s)
 
