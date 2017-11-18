@@ -15,11 +15,9 @@ function next(m::MultiExponents, s)
 
     # stars minus their consecutive
     # position becomes their index
-    idx = stars - [0:length(stars)-1;]
-
     result = zeros(Int, m.nterms)
-    for i in idx
-      result[i] += 1
+    for (i,s) in enumerate(stars)
+      result[s-i+1] += 1
     end
 
     result, ss
