@@ -1,5 +1,6 @@
 using Combinatorics
-using Base.Test
+using Compat
+using Compat.Test
 
 @test factorial(7,3) == 7*6*5*4
 @test_throws DomainError factorial(3,7)
@@ -31,4 +32,3 @@ using Base.Test
 # primorial
 @test primorial(17) == 510510
 @test_throws DomainError primorial(-1)
-

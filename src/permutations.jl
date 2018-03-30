@@ -9,22 +9,28 @@ export
     permutations
 
 
-immutable Permutations{T}
+struct Permutations{T}
     a::T
     t::Int
 end
 
-eltype{T}(::Type{Permutations{T}}) = Vector{eltype(T)}
+Base.eltype(::Type{Permutations{T}}) where {T} = Vector{eltype(T)}
 
-length(p::Permutations) = (0 <= p.t <= length(p.a))?factorial(length(p.a), length(p.a)-p.t):0
+Base.length(p::Permutations) = (0 <= p.t <= length(p.a)) ? factorial(length(p.a), length(p.a)-p.t) : 0
 
 """
-Generate all permutations of an indexable object. Because the number of permutations can be very large, this function returns an iterator object. Use `collect(permutations(array))` to get an array of all permutations.
+    permutations(a)
+
+Generate all permutations of an indexable object `a`. Because the number of permutations
+can be very large, this function returns an iterator object.
+Use `collect(permutations(a))` to get an array of all permutations.
 """
 permutations(a) = Permutations(a, length(a))
 
 """
-Generate all size t permutations of an indexable object.
+    permutations(a, t)
+
+Generate all size `t` permutations of an indexable object `a`.
 """
 function permutations(a, t::Integer)
     if t < 0
@@ -33,8 +39,8 @@ function permutations(a, t::Integer)
     Permutations(a, t)
 end
 
-start(p::Permutations) = [1:length(p.a);]
-next(p::Permutations, s) = nextpermutation(p.a, p.t ,s)
+Base.start(p::Permutations) = collect(1:length(p.a))
+Base.next(p::Permutations, s) = nextpermutation(p.a, p.t ,s)
 
 function nextpermutation(m, t, state)
     perm = [m[state[i]] for i in 1:t]
@@ -64,21 +70,21 @@ function nextpermutation(m, t, state)
             s[1] = n+1
         end
     end
-    return(perm, s)
+    return (perm, s)
 end
 
-done(p::Permutations, s) = !isempty(s) && max(s[1], p.t) > length(p.a) ||  (isempty(s) && p.t > 0)
+Base.done(p::Permutations, s) = !isempty(s) && max(s[1], p.t) > length(p.a) || (isempty(s) && p.t > 0)
 
-immutable MultiSetPermutations{T}
+struct MultiSetPermutations{T}
     m::T
     f::Vector{Int}
     t::Int
     ref::Vector{Int}
 end
 
-eltype{T}(::Type{MultiSetPermutations{T}}) = Vector{eltype(T)}
+Base.eltype(::Type{MultiSetPermutations{T}}) where {T} = Vector{eltype(T)}
 
-function length(c::MultiSetPermutations)
+function Base.length(c::MultiSetPermutations)
     t = c.t
     if t > length(c.ref)
         return 0
@@ -108,30 +114,38 @@ function length(c::MultiSetPermutations)
     return round(Int, p[t+1])
 end
 
-"generate all permutations of size t from an array a with possibly duplicated elements."
-function multiset_permutations{T<:Integer}(m, f::Vector{T}, t::Integer)
+"""
+    multiset_permutations(m, f, t)
+
+Generate all permutations of size `t` from an array `a` with possibly duplicated elements.
+"""
+function multiset_permutations(a, t::Integer)
+    m = unique(collect(a))
+    f = [sum([c == x for c in a]) for x in m]
+    multiset_permutations(m, f, t)
+end
+
+function multiset_permutations(m, f::Vector{<:Integer}, t::Integer)
     length(m) == length(f) || error("Lengths of m and f are not the same.")
-    ref = length(f) > 0 ? vcat([[i for j in 1:f[i] ] for i in 1:length(f)]...) : Int[]
+    ref = length(f) > 0 ? vcat([[i for j in 1:f[i]] for i in 1:length(f)]...) : Int[]
     if t < 0
         t = length(ref) + 1
     end
     MultiSetPermutations(m, f, t, ref)
 end
 
-function multiset_permutations{T}(a::T, t::Integer)
-    m = unique(collect(a))
-    f = [sum([c == x for c in a]) for x in m]
-    multiset_permutations(m, f, t)
-end
-
-start(p::MultiSetPermutations) = p.ref
-next(p::MultiSetPermutations, s) = nextpermutation(p.m, p.t, s)
-done(p::MultiSetPermutations, s) =
-    !isempty(s) && max(s[1], p.t) > length(p.ref) ||  (isempty(s) && p.t > 0)
+Base.start(p::MultiSetPermutations) = p.ref
+Base.next(p::MultiSetPermutations, s) = nextpermutation(p.m, p.t, s)
+Base.done(p::MultiSetPermutations, s) =
+    !isempty(s) && max(s[1], p.t) > length(p.ref) || (isempty(s) && p.t > 0)
 
 
 
-"In-place version of nthperm."
+"""
+    nthperm!(a, k)
+
+In-place version of [`nthperm`](@ref); the array `a` is overwritten.
+"""
 function nthperm!(a::AbstractVector, k::Integer)
     k -= 1 # make k 1-indexed
     k < 0 && throw(ArgumentError("permutation k must be ≥ 0, got $k"))
@@ -153,11 +167,20 @@ function nthperm!(a::AbstractVector, k::Integer)
     a
 end
 
-"Compute the kth lexicographic permutation of the vector a."
-nthperm(a::AbstractVector, k::Integer) = nthperm!(copy(a),k)
+"""
+    nthperm(a, k)
 
-"Return the `k` that generated permutation `p`. Note that `nthperm(nthperm([1:n], k)) == k` for `1 <= k <= factorial(n)`."
-function nthperm{T<:Integer}(p::AbstractVector{T})
+Compute the `k`th lexicographic permutation of the vector `a`.
+"""
+nthperm(a::AbstractVector, k::Integer) = nthperm!(copy(a), k)
+
+"""
+    nthperm(p)
+
+Return the integer `k` that generated permutation `p`. Note that
+`nthperm(nthperm([1:n], k)) == k` for `1 <= k <= factorial(n)`.
+"""
+function nthperm(p::AbstractVector{<:Integer})
     isperm(p) || throw(ArgumentError("argument is not a permutation"))
     k, n = 1, length(p)
     for i = 1:n-1
@@ -177,14 +200,15 @@ const levicivita_lut = cat(3, [0 0  0;  0 0 1; 0 -1 0],
                               [0 1  0; -1 0 0; 0  0 0])
 
 """
-Levi-Civita symbol of a permutation.
+    levicivita(p)
 
-Returns 1 is the permutation is even, -1 if it is odd and 0 otherwise.
+Compute the Levi-Civita symbol of a permutation `p`. Returns 1 if the permutation
+is even, -1 if it is odd, and 0 otherwise.
 
 The parity is computed by using the fact that a permutation is odd if and
 only if the number of even-length cycles is odd.
 """
-function levicivita{T<:Integer}(p::AbstractVector{T})
+function levicivita(p::AbstractVector{<:Integer})
     n = length(p)
 
     if n == 3
@@ -197,7 +221,7 @@ function levicivita{T<:Integer}(p::AbstractVector{T})
     cycles = flips = 0
 
     while cycles + flips < n
-        first = findnext(todo, first)
+        first = coalesce(findnext(todo, first), 0)
         (todo[first] = !todo[first]) && return 0
         j = p[first]
         (0 < j <= n) || return 0
@@ -214,10 +238,13 @@ function levicivita{T<:Integer}(p::AbstractVector{T})
 end
 
 """
-Computes the parity of a permutation using the levicivita function,
-so you can ask iseven(parity(p)). If p is not a permutation throws an error.
+    parity(p)
+
+Compute the parity of a permutation `p` using the [`levicivita`](@ref) function,
+permitting calls such as `iseven(parity(p))`. If `p` is not a permutation then an
+error is thrown.
 """
-function parity{T<:Integer}(p::AbstractVector{T})
+function parity(p::AbstractVector{<:Integer})
     epsilon = levicivita(p)
     epsilon == 0 && throw(ArgumentError("Not a permutation"))
     epsilon == 1 ? 0 : 1

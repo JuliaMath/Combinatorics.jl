@@ -1,5 +1,6 @@
 using Combinatorics
-using Base.Test
+using Compat
+using Compat.Test
 
 include("numbers.jl")
 include("factorials.jl")
@@ -8,4 +9,3 @@ include("permutations.jl")
 include("partitions.jl")
 include("multinomials.jl")
 include("youngdiagrams.jl")
-

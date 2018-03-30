@@ -1,5 +1,6 @@
 using Combinatorics
-using Base.Test
+using Compat
+using Compat.Test
 
 # catalan
 @test catalannum(5) == 42

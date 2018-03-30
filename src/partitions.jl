@@ -10,28 +10,33 @@ export
 
 #integer partitions
 
-immutable IntegerPartitions
+struct IntegerPartitions
     n::Int
 end
 
-length(p::IntegerPartitions) = npartitions(p.n)
+Base.length(p::IntegerPartitions) = npartitions(p.n)
 
-start(p::IntegerPartitions) = Int[]
-done(p::IntegerPartitions, xs) = length(xs) == p.n
-next(p::IntegerPartitions, xs) = (xs = nextpartition(p.n,xs); (xs,xs))
+Base.start(p::IntegerPartitions) = Int[]
+Base.done(p::IntegerPartitions, xs) = length(xs) == p.n
+Base.next(p::IntegerPartitions, xs) = (xs = nextpartition(p.n,xs); (xs,xs))
 
 """
-Generate all integer arrays that sum to `n`. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(n))` to get an array of all partitions. The number of partitions to generate can be efficiently computed using `length(partitions(n))`.
+    partitions(n)
+
+Generate all integer arrays that sum to `n`. Because the number of partitions can be very
+large, this function returns an iterator object. Use `collect(partitions(n))` to get an
+array of all partitions. The number of partitions to generate can be efficiently computed
+using `length(partitions(n))`.
 """
 partitions(n::Integer) = IntegerPartitions(n)
 
 
 
 function nextpartition(n, as)
-    if isempty(as);  return Int[n];  end
+    isempty(as) && return Int[n]
 
-    xs = similar(as,0)
-    sizehint!(xs,length(as)+1)
+    xs = similar(as, 0)
+    sizehint!(xs, length(as) + 1)
 
     for i = 1:length(as)-1
         if as[i+1] == 1
@@ -68,7 +73,7 @@ let _npartitions = Dict{Int,Int}()
             np = 0
             sgn = 1
             for k = 1:n
-                np += sgn * (npartitions(n-k*(3k-1)>>1) + npartitions(n-k*(3k+1)>>1))
+                np += sgn * (npartitions(n - (k*(3k-1)) >> 1) + npartitions(n - (k*(3k+1)) >> 1))
                 sgn = -sgn
             end
             _npartitions[n] = np
@@ -80,25 +85,33 @@ end
 # Partition n into m parts
 # in colex order (lexicographic by reflected sequence)
 
-immutable FixedPartitions
+struct FixedPartitions
     n::Int
     m::Int
 end
 
-length(f::FixedPartitions) = npartitions(f.n,f.m)
+Base.length(f::FixedPartitions) = npartitions(f.n,f.m)
 
 """
-Generate all arrays of `m` integers that sum to `n`. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(n,m))` to get an array of all partitions. The number of partitions to generate can be efficiently computed using `length(partitions(n,m))`.
-"""
-partitions(n::Integer, m::Integer) = n >= 1 && m >= 1 ? FixedPartitions(n,m) : throw(DomainError())
+    partitions(n, m)
 
-start(f::FixedPartitions) = Int[]
-function done(f::FixedPartitions, s::Vector{Int})
+Generate all arrays of `m` integers that sum to `n`. Because the number of partitions can
+be very large, this function returns an iterator object. Use `collect(partitions(n, m))` to
+get an array of all partitions. The number of partitions to generate can be efficiently
+computed using `length(partitions(n, m))`.
+"""
+partitions(n::Integer, m::Integer) =
+    n >= 1 && m >= 1 ?
+        FixedPartitions(n, m) :
+        throw(DomainError((n, m), "n and m must be positive"))
+
+Base.start(f::FixedPartitions) = Int[]
+function Base.done(f::FixedPartitions, s::Vector{Int})
     f.m <= f.n || return true
     isempty(s) && return false
     return f.m == 1 || s[1]-1 <= s[end]
 end
-next(f::FixedPartitions, s::Vector{Int}) = (xs = nextfixedpartition(f.n,f.m,s); (xs,xs))
+Base.next(f::FixedPartitions, s::Vector{Int}) = (xs = nextfixedpartition(f.n,f.m,s); (xs,xs))
 
 function nextfixedpartition(n, m, bs)
     as = copy(bs)
@@ -111,11 +124,12 @@ function nextfixedpartition(n, m, bs)
         as[2] += 1
     else
         # Iterate
-        local j
+        j = 0
         s = as[1]+as[2]-1
-        for j = 3:m
-            if as[j] < as[1]-1; break; end
-            s += as[j]
+        for jj = 3:m # TODO: use `for outer j = ...` on 0.7
+            j = jj
+            as[jj] < as[1]-1 && break
+            s += as[jj]
         end
         x = as[j] += 1
         for k = j-1:-1:2
@@ -130,7 +144,7 @@ end
 
 let _nipartitions = Dict{Tuple{Int,Int},Int}()
     global npartitions
-    function npartitions(n::Int,m::Int)
+    function npartitions(n::Int, m::Int)
         if n < m || m == 0
             0
         elseif n == m
@@ -138,7 +152,7 @@ let _nipartitions = Dict{Tuple{Int,Int},Int}()
         elseif (np = get(_nipartitions, (n,m), 0)) > 0
             np
         else
-            _nipartitions[(n,m)] = npartitions(n-1,m-1) + npartitions(n-m,m)
+            _nipartitions[(n, m)] = npartitions(n-1, m-1) + npartitions(n-m, m)
         end
     end
 end
@@ -146,42 +160,47 @@ end
 # Algorithm H from TAoCP 7.2.1.5
 # Set partitions
 
-immutable SetPartitions{T<:AbstractVector}
+struct SetPartitions{T<:AbstractVector}
     s::T
 end
 
-length(p::SetPartitions) = nsetpartitions(length(p.s))
+Base.length(p::SetPartitions) = nsetpartitions(length(p.s))
 
 """
-Generate all set partitions of the elements of an array, represented as arrays of arrays. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(array))` to get an array of all partitions. The number of partitions to generate can be efficiently computed using `length(partitions(array))`.
+    partitions(s::AbstractVector)
+
+Generate all set partitions of the elements of an array `s`, represented as arrays of
+arrays. Because the number of partitions can be very large, this function returns an
+iterator object. Use `collect(partitions(s))` to get an array of all partitions. The
+number of partitions to generate can be efficiently computed using
+`length(partitions(s))`.
 """
 partitions(s::AbstractVector) = SetPartitions(s)
 
-start(p::SetPartitions) = (n = length(p.s); (zeros(Int32, n), ones(Int32, n-1), n, 1))
-done(p::SetPartitions, s) = s[1][1] > 0
-next(p::SetPartitions, s) = nextsetpartition(p.s, s...)
+Base.start(p::SetPartitions) = (n = length(p.s); (zeros(Int32, n), ones(Int32, n-1), n, 1))
+Base.done(p::SetPartitions, s) = s[1][1] > 0
+Base.next(p::SetPartitions, s) = nextsetpartition(p.s, s...)
 
 function nextsetpartition(s::AbstractVector, a, b, n, m)
     function makeparts(s, a, m)
-        temp = [ similar(s,0) for k = 0:m ]
+        temp = [similar(s, 0) for k = 0:m]
         for i = 1:n
             push!(temp[a[i]+1], s[i])
         end
-        filter!(x->!isempty(x), temp)
+        filter!(!isempty, temp)
     end
 
-    if isempty(s);  return ([s], ([1], Int[], n, 1));  end
+    isempty(s) && return ([s], ([1], Int[], n, 1))
 
     part = makeparts(s,a,m)
 
     if a[end] != m
         a[end] += 1
     else
-        local j
-        for j = n-1:-1:1
-            if a[j] != b[j]
-                break
-            end
+        j = 0
+        for jj = n-1:-1:1
+            j = jj
+            a[jj] == b[jj] || break
         end
         a[j] += 1
         m = b[j] + (a[j] == b[j])
@@ -193,7 +212,6 @@ function nextsetpartition(s::AbstractVector, a, b, n, m)
     end
 
     return (part, (a,b,n,m))
-
 end
 
 let _nsetpartitions = Dict{Int,Int}()
@@ -215,19 +233,29 @@ let _nsetpartitions = Dict{Int,Int}()
     end
 end
 
-immutable FixedSetPartitions{T<:AbstractVector}
+struct FixedSetPartitions{T<:AbstractVector}
     s::T
     m::Int
 end
 
-length(p::FixedSetPartitions) = nfixedsetpartitions(length(p.s),p.m)
+Base.length(p::FixedSetPartitions) = nfixedsetpartitions(length(p.s),p.m)
 
 """
-Generate all set partitions of the elements of an array into exactly m subsets, represented as arrays of arrays. Because the number of partitions can be very large, this function returns an iterator object. Use `collect(partitions(array,m))` to get an array of all partitions. The number of partitions into m subsets is equal to the Stirling number of the second kind and can be efficiently computed using `length(partitions(array,m))`.
-"""
-partitions(s::AbstractVector,m::Int) = length(s) >= 1 && m >= 1 ? FixedSetPartitions(s,m) : throw(DomainError())
+    partitions(s::AbstractVector, m::Int)
 
-function start(p::FixedSetPartitions)
+Generate all set partitions of the elements of an array `s` into exactly `m` subsets,
+represented as arrays of arrays. Because the number of partitions can be very large,
+this function returns an iterator object. Use `collect(partitions(s, m))` to get
+an array of all partitions. The number of partitions into `m` subsets is equal to the
+Stirling number of the second kind, and can be efficiently computed using
+`length(partitions(s, m))`.
+"""
+partitions(s::AbstractVector, m::Int) =
+    length(s) >= 1 && m >= 1 ?
+        FixedSetPartitions(s, m) :
+        throw(DomainError((length(s), m), "length(s) and m must be positive"))
+
+function Base.start(p::FixedSetPartitions)
     n = length(p.s)
     m = p.m
     m <= n ? (vcat(ones(Int, n-m),1:m), vcat(1,n-m+2:n), n) : (Int[], Int[], n)
@@ -237,12 +265,12 @@ end
 # vector b of length n describing the first index b[i] that belongs to partition i
 # integer n
 
-done(p::FixedSetPartitions, s) = isempty(s[1]) || s[1][1] > 1
-next(p::FixedSetPartitions, s) = nextfixedsetpartition(p.s,p.m, s...)
+Base.done(p::FixedSetPartitions, s) = isempty(s[1]) || s[1][1] > 1
+Base.next(p::FixedSetPartitions, s) = nextfixedsetpartition(p.s,p.m, s...)
 
 function nextfixedsetpartition(s::AbstractVector, m, a, b, n)
     function makeparts(s, a)
-        part = [ similar(s,0) for k = 1:m ]
+        part = [similar(s, 0) for k = 1:m]
         for i = 1:n
             push!(part[a[i]], s[i])
         end
@@ -259,44 +287,47 @@ function nextfixedsetpartition(s::AbstractVector, m, a, b, n)
     if a[end] != m
         a[end] += 1
     else
-        local j, k
-        for j = n-1:-1:1
-            if a[j]<m && b[a[j]+1]<j
+        j = k = 0
+        for jj = n-1:-1:1
+            j = jj
+            if a[j] < m && b[a[j]+1] < j
                 break
             end
         end
-        if j>1
-            a[j]+=1
-            for p=j+1:n
-                if b[a[p]]!=p
-                    a[p]=1
+        if j > 1
+            a[j] += 1
+            for p = j+1:n
+                if b[a[p]] != p
+                    a[p] = 1
                 end
             end
         else
-            for k=m:-1:2
-                if b[k-1]<b[k]-1
+            for kk = m:-1:2
+                k = kk
+                if b[k-1] < b[k] - 1
                     break
                 end
             end
-            b[k]=b[k]-1
-            b[k+1:m]=n-m+k+1:n
-            a[1:n]=1
-            a[b]=1:m
+            b[k] -= 1
+            b[k+1:m] = n-m+k+1:n
+            a[1:n] = 1
+            a[b] = 1:m
         end
     end
 
     return (part, (a,b,n))
 end
 
-function nfixedsetpartitions(n::Int,m::Int)
-    numpart=0
-    for k=0:m
-        numpart+=(-1)^(m-k)*binomial(m,k)*(k^n)
+function nfixedsetpartitions(n::Int, m::Int)
+    numpart = 0
+    for k = 0:m
+        numpart += (-1)^(m-k) * binomial(m, k) * (k^n)
     end
-    numpart=div(numpart,factorial(m))
+    numpart = div(numpart, factorial(m))
     return numpart
 end
 
+# TODO: Base.DSP is no longer a thing in Julia 0.7
 #This function is still defined in Base because it is being used by Base.DSP
 #"""
 #Next integer not less than `n` that can be written as $\prod k_i^{p_i}$ for integers $p_1$, $p_2$, etc.
@@ -343,12 +374,18 @@ end
 #    return Int(best)  # could overflow, but best to have predictable return type
 #end
 
-doc"""
-Previous integer not greater than `n` that can be written as $\prod k_i^{p_i}$ for integers $p_1$, $p_2$, etc.
+"""
+    prevprod(a::Vector{Int}, x)
 
-For a list of integers i1, i2, i3, find the largest
-    i1^n1 * i2^n2 * i3^n3 <= x
-for integer n1, n2, n3
+Previous integer not greater than `x` that can be written as ``\\prod k_i^{p_i}`` for
+integers ``p_1``, ``p_2``, etc.
+
+For integers ``i_1``, ``i_2``, ``i_3``, this is equivalent to finding the largest ``x``
+such that
+```math
+i_1^n_1 i_2^n_2 i_3^n_3 \\leq x
+```
+for integers ``n_1``, ``n_2``, ``n_3``.
 """
 function prevprod(a::Vector{Int}, x)
     if x > typemax(Int)
@@ -389,10 +426,18 @@ function prevprod(a::Vector{Int}, x)
 end
 
 
-"Lists the partitions of the number n, the order is consistent with GAP"
+"""
+    integer_partitions(n)
+
+List the partitions of the integer `n`.
+
+!!! note
+    The order of the resulting array is consistent with that produced by the computational
+    discrete algebra software GAP.
+"""
 function integer_partitions(n::Integer)
     if n < 0
-        throw(DomainError())
+        throw(DomainError(n, "n must be nonnegative"))
     elseif n == 0
         return Vector{Int}[]
     elseif n == 1
@@ -415,6 +460,12 @@ end
 
 #Noncrossing partitions
 
+if VERSION >= v"0.7.0-DEV.3251"
+    const _cmp = cmp
+else
+    const _cmp = lexcmp
+end
+
 #Produces noncrossing partitions of length n
 function ncpartitions(n::Int)
     partitions = Vector{Vector{Int}}[]
@@ -422,28 +473,26 @@ function ncpartitions(n::Int)
     partitions
 end
 
-function _ncpart!(a::Int, b::Int, nn::Int,
-    x::Vector, partitions::Vector)
-
-    n=b-a+1
-    for k=1:n, root in CoolLexCombinations(n, k)
-        root += a-1
+function _ncpart!(a::Int, b::Int, nn::Int, x::Vector, partitions::Vector)
+    n = b - a + 1
+    for k = 1:n, root in CoolLexCombinations(n, k)
+        root .+= a - 1
         #Abort if construction is out of lex order
-        if !isempty(x) && lexcmp(x[end], root)==1 return end
+        !isempty(x) && _cmp(x[end], root) == 1 && return
 
         #Save if we've filled all the holes
         sofar = Vector{Int}[x..., root]
-        ssofaru = sort(union(sofar...))
-        if length(ssofaru)==nn && ssofaru==collect(1:nn)
+        ssofaru = sort!(union(sofar...))
+        if length(ssofaru) == nn && ssofaru == collect(1:nn)
             push!(partitions, sofar)
             return
         end
 
         #otherwise patch all remaining holes
-        blob = [ssofaru; nn+1]
-        for l=1:length(blob)-1
-            ap, bp = blob[l]+1, blob[l+1]-1
-            if ap <= bp _ncpart!(ap, bp, nn, sofar, partitions) end
+        blob = [ssofaru; nn + 1]
+        for l = 1:length(blob)-1
+            ap, bp = blob[l] + 1, blob[l+1] - 1
+            ap <= bp && _ncpart!(ap, bp, nn, sofar, partitions)
         end
     end
 end
