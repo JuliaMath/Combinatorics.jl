@@ -1,7 +1,8 @@
 export combinations,
        CoolLexCombinations,
        multiset_combinations,
-       with_replacement_combinations
+       with_replacement_combinations,
+       powerset
 
 #The Combinations iterator
 
@@ -261,3 +262,19 @@ function Base.next(c::WithReplacementCombinations, s)
     (comb, s)
 end
 Base.done(c::WithReplacementCombinations, s) = !isempty(s) && s[1] > length(c.a) || c.t < 0
+
+## Power set
+
+"""
+    powerset(a, min=0, max=length(a))
+
+Generate all subsets of an indexable object `a` including the empty set, with cardinality
+bounded by `min` and `max`. Because the number of subsets can be very large, this function
+returns an iterator object. Use `collect(powerset(a, min, max))` to get an array of all
+subsets.
+"""
+function powerset(a, min::Integer=0, max::Integer=length(a))
+    itrs = [combinations(a, k) for k = min:max]
+    min < 1 && append!(itrs, eltype(a)[])
+    IterTools.chain(itrs...)
+end
