@@ -172,7 +172,7 @@ end
 
 Compute the `k`th lexicographic permutation of the vector `a`.
 """
-nthperm(a::AbstractVector, k::Integer) = nthperm!(copy(a), k)
+nthperm(a::AbstractVector, k::Integer) = nthperm!(collect(a), k)
 
 """
     nthperm(p)
