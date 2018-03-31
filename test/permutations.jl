@@ -1,6 +1,6 @@
 using Combinatorics
-using Base.Test
 using Compat
+using Compat.Test
 
 # permutations
 @test collect(permutations("abc")) == Any[['a','b','c'],['a','c','b'],['b','a','c'],

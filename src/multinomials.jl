@@ -3,31 +3,31 @@
 
 export multiexponents
 
-immutable MultiExponents{T}
+struct MultiExponents{T}
     c::Combinations{T}
     nterms::Int
 end
 
-start(m::MultiExponents) = start(m.c)
+Base.start(m::MultiExponents) = start(m.c)
 
 # Standard stars and bars:
 # https://en.wikipedia.org/wiki/Stars_and_bars_(combinatorics)
-function next(m::MultiExponents, s)
+function Base.next(m::MultiExponents, s)
     stars, ss = next(m.c, s)
 
     # stars minus their consecutive
     # position becomes their index
     result = zeros(Int, m.nterms)
-    for (i,s) in enumerate(stars)
-      result[s-i+1] += 1
+    for (i, s) in enumerate(stars)
+        result[s-i+1] += 1
     end
 
     result, ss
 end
 
-done(m::MultiExponents, s) = done(m.c, s)
+Base.done(m::MultiExponents, s) = done(m.c, s)
 
-length(m::MultiExponents) = length(m.c)
+Base.length(m::MultiExponents) = length(m.c)
 
 """
     multiexponents(m, n)
