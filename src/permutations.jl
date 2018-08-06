@@ -21,7 +21,7 @@ Base.length(p::Permutations) = (0 <= p.t <= length(p.a)) ? factorial(length(p.a)
 """
     permutations(a)
 
-Generate all permutations of an indexable object `a`. Because the number of permutations
+Generate all permutations of an indexable object `a` in lexicographic order. Because the number of permutations
 can be very large, this function returns an iterator object.
 Use `collect(permutations(a))` to get an array of all permutations.
 """
