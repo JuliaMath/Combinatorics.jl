@@ -473,11 +473,7 @@ end
 
 #Noncrossing partitions
 
-if VERSION >= v"0.7.0-DEV.3251"
-    const _cmp = cmp
-else
-    const _cmp = lexcmp
-end
+const _cmp = cmp
 
 #Produces noncrossing partitions of length n
 function ncpartitions(n::Int)
