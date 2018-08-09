@@ -11,8 +11,15 @@ struct Combinations{T}
     t::Int
 end
 
-Base.start(c::Combinations) = collect(1:c.t)
-function Base.next(c::Combinations, s)
+function Base.iterate(c::Combinations)
+    s = collect(1:c.t)
+    !isempty(s) && s[1] > length(c.a) - c.t + 1 && return nothing
+
+    comb = [c.a[si] for si in s]
+    return comb, s
+end
+function Base.iterate(c::Combinations, s)
+    !isempty(s) && s[1] > length(c.a) - c.t + 1 && return nothing
     comb = [c.a[si] for si in s]
     if c.t == 0
         # special case to generate 1 result for t==0
@@ -31,7 +38,6 @@ function Base.next(c::Combinations, s)
     end
     (comb, s)
 end
-Base.done(c::Combinations, s) = !isempty(s) && s[1] > length(c.a) - c.t + 1
 
 Base.length(c::Combinations) = binomial(length(c.a), c.t)
 
@@ -59,7 +65,7 @@ end
 Generate combinations of the elements of `a` of all orders. Chaining of order iterators
 is eager, but the sequence at each order is lazy.
 """
-combinations(a) = IterTools.chain([combinations(a, k) for k = 1:length(a)]...)
+combinations(a) = Iterators.flatten([combinations(a, k) for k = 1:length(a)])
 
 
 
