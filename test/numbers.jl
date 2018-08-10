@@ -1,7 +1,3 @@
-using Combinatorics
-using Compat
-using Compat.Test
-
 # catalan
 @test catalannum(5) == 42
 @test catalannum(30) == parse(BigInt,"3814986502092304")

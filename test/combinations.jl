@@ -1,7 +1,3 @@
-using Combinatorics
-using Compat
-using Compat.Test
-
 @test [combinations([])...] == []
 @test [combinations(['a', 'b', 'c'])...] == Any[['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
 

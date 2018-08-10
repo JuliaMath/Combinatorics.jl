@@ -2,7 +2,6 @@ VERSION < v"0.7.0-beta2.199" && __precompile__()
 
 module Combinatorics
 
-using Compat
 using Polynomials
 
 include("numbers.jl")
