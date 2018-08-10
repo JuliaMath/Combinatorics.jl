@@ -11,8 +11,11 @@ struct Combinations{T}
     t::Int
 end
 
-function Base.iterate(c::Combinations, s = collect(1:c.t))
-    (!isempty(s) && s[1] > length(c.a) - c.t + 1) && return nothing
+Base.first(c::Combinations) = collect(1:c.t)
+combinations_done(c::Combinations, s) = (!isempty(s) && s[1] > length(c.a) - c.t + 1)
+
+function Base.iterate(c::Combinations, s = first(c))
+    combinations_done(c, s) && return nothing
     comb = [c.a[si] for si in s]
     if c.t == 0
         # special case to generate 1 result for t==0
