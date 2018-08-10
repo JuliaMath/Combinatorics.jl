@@ -11,8 +11,11 @@ struct Combinations{T}
     t::Int
 end
 
-Base.start(c::Combinations) = collect(1:c.t)
-function Base.next(c::Combinations, s)
+Base.first(c::Combinations) = collect(1:c.t)
+combinations_done(c::Combinations, s) = (!isempty(s) && s[1] > length(c.a) - c.t + 1)
+
+function Base.iterate(c::Combinations, s = first(c))
+    combinations_done(c, s) && return nothing
     comb = [c.a[si] for si in s]
     if c.t == 0
         # special case to generate 1 result for t==0
@@ -31,7 +34,6 @@ function Base.next(c::Combinations, s)
     end
     (comb, s)
 end
-Base.done(c::Combinations, s) = !isempty(s) && s[1] > length(c.a) - c.t + 1
 
 Base.length(c::Combinations) = binomial(length(c.a), c.t)
 
@@ -59,7 +61,7 @@ end
 Generate combinations of the elements of `a` of all orders. Chaining of order iterators
 is eager, but the sequence at each order is lazy.
 """
-combinations(a) = IterTools.chain([combinations(a, k) for k = 1:length(a)]...)
+combinations(a) = Iterators.flatten([combinations(a, k) for k = 1:length(a)])
 
 
 
@@ -87,7 +89,7 @@ struct CoolLexIterState{T<:Integer}
     R3::T
 end
 
-function Base.start(C::CoolLexCombinations)
+function _first_CoolLexCombinations(C::CoolLexCombinations)
     if C.n < 0
         throw(DomainError(C.n))
     end
@@ -105,7 +107,11 @@ function Base.start(C::CoolLexCombinations)
     CoolLexIterState{T}(0, 0, T(1) << C.n, (T(1) << C.t) - 1)
 end
 
-function Base.next(C::CoolLexCombinations, S::CoolLexIterState)
+function Base.iterate(C::CoolLexCombinations,
+    S::CoolLexIterState = _first_CoolLexCombinations(C))
+    # Done?
+    (S.R3 & S.R2 != 0) && return nothing
+
     R0 = S.R0
     R1 = S.R1
     R2 = S.R2
@@ -133,8 +139,6 @@ function _cool_lex_visit(X::Integer)
     end
     subset
 end
-
-Base.done(C::CoolLexCombinations, S::CoolLexIterState) = (S.R3 & S.R2 != 0)
 
 Base.length(C::CoolLexCombinations) = max(0, binomial(C.n, C.t))
 
@@ -189,8 +193,8 @@ function multiset_combinations(a, t::Integer)
     multiset_combinations(m, f, t)
 end
 
-Base.start(c::MultiSetCombinations) = c.ref
-function Base.next(c::MultiSetCombinations, s)
+function Base.iterate(c::MultiSetCombinations, s = c.ref)
+    _done_MultisetCombinations(c, s) && return nothing
     ref = c.ref
     n = length(ref)
     t = c.t
@@ -218,7 +222,7 @@ function Base.next(c::MultiSetCombinations, s)
     end
     (comb, s)
 end
-Base.done(c::MultiSetCombinations, s) =
+_done_MultisetCombinations(c::MultiSetCombinations, s) =
     (!isempty(s) && max(s[1], c.t) > length(c.ref)) || (isempty(s) && c.t > 0)
 
 struct WithReplacementCombinations{T}
@@ -237,8 +241,10 @@ Generate all combinations with replacement of size `t` from an array `a`.
 """
 with_replacement_combinations(a, t::Integer) = WithReplacementCombinations(a, t)
 
-Base.start(c::WithReplacementCombinations) = [1 for i in 1:c.t]
-function Base.next(c::WithReplacementCombinations, s)
+function Base.iterate(c::WithReplacementCombinations, s = [1 for i in 1:c.t])
+    # Done?
+    (!isempty(s) && s[1] > length(c.a) || c.t < 0) && return nothing
+    # Iterate
     n = length(c.a)
     t = c.t
     comb = [c.a[si] for si in s]
@@ -261,7 +267,7 @@ function Base.next(c::WithReplacementCombinations, s)
     end
     (comb, s)
 end
-Base.done(c::WithReplacementCombinations, s) = !isempty(s) && s[1] > length(c.a) || c.t < 0
+
 
 ## Power set
 
@@ -276,5 +282,5 @@ subsets.
 function powerset(a, min::Integer=0, max::Integer=length(a))
     itrs = [combinations(a, k) for k = min:max]
     min < 1 && append!(itrs, eltype(a)[])
-    IterTools.chain(itrs...)
+    Iterators.flatten(itrs)
 end

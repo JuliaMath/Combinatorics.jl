@@ -8,12 +8,15 @@ struct MultiExponents{T}
     nterms::Int
 end
 
-Base.start(m::MultiExponents) = start(m.c)
+Base.first(m::MultiExponents) = first(m.c)
 
 # Standard stars and bars:
 # https://en.wikipedia.org/wiki/Stars_and_bars_(combinatorics)
-function Base.next(m::MultiExponents, s)
-    stars, ss = next(m.c, s)
+function Base.iterate(m::MultiExponents, s = first(m))
+    # Done?
+    combinations_done(m.c, s) && return nothing
+    # Iterate
+    stars, ss = iterate(m.c, s)
 
     # stars minus their consecutive
     # position becomes their index
@@ -24,8 +27,6 @@ function Base.next(m::MultiExponents, s)
 
     result, ss
 end
-
-Base.done(m::MultiExponents, s) = done(m.c, s)
 
 Base.length(m::MultiExponents) = length(m.c)
 
