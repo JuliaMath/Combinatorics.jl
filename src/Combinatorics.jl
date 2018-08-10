@@ -4,7 +4,6 @@ module Combinatorics
 
 using Compat
 using Polynomials
-using IterTools
 
 include("numbers.jl")
 include("factorials.jl")

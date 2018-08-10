@@ -2,7 +2,8 @@ language: julia
 os:
     - linux
 julia:
-    - 0.6
+    - 0.7
+    - 1.0
     - nightly
 sudo: false
 notifications:
