@@ -16,9 +16,11 @@ end
 
 Base.length(p::IntegerPartitions) = npartitions(p.n)
 
-Base.start(p::IntegerPartitions) = Int[]
-Base.done(p::IntegerPartitions, xs) = length(xs) == p.n
-Base.next(p::IntegerPartitions, xs) = (xs = nextpartition(p.n,xs); (xs,xs))
+function Base.iterate(p::IntegerPartitions, xs = Int[])
+    length(xs) == p.n && return
+    xs = nextpartition(p.n,xs)
+    (xs, xs)
+end
 
 """
     partitions(n)
@@ -105,13 +107,15 @@ partitions(n::Integer, m::Integer) =
         FixedPartitions(n, m) :
         throw(DomainError((n, m), "n and m must be positive"))
 
-Base.start(f::FixedPartitions) = Int[]
-function Base.done(f::FixedPartitions, s::Vector{Int})
-    f.m <= f.n || return true
-    isempty(s) && return false
-    return f.m == 1 || s[1]-1 <= s[end]
+function Base.iterate(f::FixedPartitions, s::Vector{Int} = Int[])
+    f.m <= f.n || return
+    if !isempty(s)
+        (f.m == 1 || s[1]-1 <= s[end]) && return
+    end
+
+    xs = nextfixedpartition(f.n,f.m,s)
+    (xs, xs)
 end
-Base.next(f::FixedPartitions, s::Vector{Int}) = (xs = nextfixedpartition(f.n,f.m,s); (xs,xs))
 
 function nextfixedpartition(n, m, bs)
     as = copy(bs)
@@ -177,9 +181,14 @@ number of partitions to generate can be efficiently computed using
 """
 partitions(s::AbstractVector) = SetPartitions(s)
 
-Base.start(p::SetPartitions) = (n = length(p.s); (zeros(Int32, n), ones(Int32, n-1), n, 1))
-Base.done(p::SetPartitions, s) = s[1][1] > 0
-Base.next(p::SetPartitions, s) = nextsetpartition(p.s, s...)
+function Base.iterate(p::SetPartitions)
+    n = length(p.s)
+    iterate(p, (zeros(Int32, n), ones(Int32, n-1), n, 1))
+end
+function Base.iterate(p::SetPartitions, s)
+    s[1][1] > 0 && return
+    nextsetpartition(p.s, s...)
+end
 
 function nextsetpartition(s::AbstractVector, a, b, n, m)
     function makeparts(s, a, m)
@@ -255,18 +264,22 @@ partitions(s::AbstractVector, m::Int) =
         FixedSetPartitions(s, m) :
         throw(DomainError((length(s), m), "length(s) and m must be positive"))
 
-function Base.start(p::FixedSetPartitions)
+function Base.iterate(p::FixedSetPartitions)
     n = length(p.s)
     m = p.m
-    m <= n ? (vcat(ones(Int, n-m),1:m), vcat(1,n-m+2:n), n) : (Int[], Int[], n)
-end
-# state consists of:
-# vector a of length n describing to which partition every element of s belongs
-# vector b of length n describing the first index b[i] that belongs to partition i
-# integer n
+    state = m <= n ? (vcat(ones(Int, n-m),1:m), vcat(1,n-m+2:n), n) : (Int[], Int[], n)
+    # state consists of:
+    # vector a of length n describing to which partition every element of s belongs
+    # vector b of length n describing the first index b[i] that belongs to partition i
+    # integer n
 
-Base.done(p::FixedSetPartitions, s) = isempty(s[1]) || s[1][1] > 1
-Base.next(p::FixedSetPartitions, s) = nextfixedsetpartition(p.s,p.m, s...)
+    iterate(p, state)
+end
+
+function Base.iterate(p::FixedSetPartitions, s)
+    (isempty(s[1]) || s[1][1] > 1) && return
+    nextfixedsetpartition(p.s,p.m, s...)
+end
 
 function nextfixedsetpartition(s::AbstractVector, m, a, b, n)
     function makeparts(s, a)
@@ -310,7 +323,7 @@ function nextfixedsetpartition(s::AbstractVector, m, a, b, n)
             end
             b[k] -= 1
             b[k+1:m] = n-m+k+1:n
-            a[1:n] = 1
+            a[1:n] .= 1
             a[b] = 1:m
         end
     end
@@ -496,4 +509,3 @@ function _ncpart!(a::Int, b::Int, nn::Int, x::Vector, partitions::Vector)
         end
     end
 end
-

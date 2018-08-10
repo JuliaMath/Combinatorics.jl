@@ -1,13 +1,9 @@
-using Combinatorics
-using Compat
-using Compat.Test
-
 # permutations
 @test collect(permutations("abc")) == Any[['a','b','c'],['a','c','b'],['b','a','c'],
                                           ['b','c','a'],['c','a','b'],['c','b','a']]
 
-@test collect(Compat.Iterators.filter(x->(iseven(x[1])),permutations([1,2,3]))) == Any[[2,1,3],[2,3,1]]
-@test collect(Compat.Iterators.filter(x->(iseven(x[3])),permutations([1,2,3]))) == Any[[1,3,2],[3,1,2]]
+@test collect(Iterators.filter(x->(iseven(x[1])),permutations([1,2,3]))) == Any[[2,1,3],[2,3,1]]
+@test collect(Iterators.filter(x->(iseven(x[3])),permutations([1,2,3]))) == Any[[1,3,2],[3,1,2]]
 
 @test length(permutations(0)) == 1
 

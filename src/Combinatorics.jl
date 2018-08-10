@@ -2,9 +2,7 @@ VERSION < v"0.7.0-beta2.199" && __precompile__()
 
 module Combinatorics
 
-using Compat
 using Polynomials
-using IterTools
 
 include("numbers.jl")
 include("factorials.jl")

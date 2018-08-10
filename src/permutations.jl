@@ -39,8 +39,10 @@ function permutations(a, t::Integer)
     Permutations(a, t)
 end
 
-Base.start(p::Permutations) = collect(1:length(p.a))
-Base.next(p::Permutations, s) = nextpermutation(p.a, p.t ,s)
+function Base.iterate(p::Permutations, s = collect(1:length(p.a)))
+    (!isempty(s) && max(s[1], p.t) > length(p.a) || (isempty(s) && p.t > 0)) && return
+    nextpermutation(p.a, p.t ,s)
+end
 
 function nextpermutation(m, t, state)
     perm = [m[state[i]] for i in 1:t]
@@ -72,8 +74,6 @@ function nextpermutation(m, t, state)
     end
     return (perm, s)
 end
-
-Base.done(p::Permutations, s) = !isempty(s) && max(s[1], p.t) > length(p.a) || (isempty(s) && p.t > 0)
 
 struct MultiSetPermutations{T}
     m::T
@@ -134,11 +134,10 @@ function multiset_permutations(m, f::Vector{<:Integer}, t::Integer)
     MultiSetPermutations(m, f, t, ref)
 end
 
-Base.start(p::MultiSetPermutations) = p.ref
-Base.next(p::MultiSetPermutations, s) = nextpermutation(p.m, p.t, s)
-Base.done(p::MultiSetPermutations, s) =
-    !isempty(s) && max(s[1], p.t) > length(p.ref) || (isempty(s) && p.t > 0)
-
+function Base.iterate(p::MultiSetPermutations, s = p.ref)
+    (!isempty(s) && max(s[1], p.t) > length(p.ref) || (isempty(s) && p.t > 0)) && return
+    nextpermutation(p.m, p.t, s)
+end
 
 
 """
@@ -195,9 +194,9 @@ end
 
 # Parity of permutations
 
-const levicivita_lut = cat(3, [0 0  0;  0 0 1; 0 -1 0],
-                              [0 0 -1;  0 0 0; 1  0 0],
-                              [0 1  0; -1 0 0; 0  0 0])
+const levicivita_lut = cat([0 0  0;  0 0 1; 0 -1 0],
+                           [0 0 -1;  0 0 0; 1  0 0],
+                           [0 1  0; -1 0 0; 0  0 0]; dims=3)
 
 """
     levicivita(p)

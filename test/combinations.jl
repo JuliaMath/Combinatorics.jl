@@ -1,7 +1,3 @@
-using Combinatorics
-using Compat
-using Compat.Test
-
 @test [combinations([])...] == []
 @test [combinations(['a', 'b', 'c'])...] == Any[['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
 
@@ -38,7 +34,7 @@ using Compat.Test
 @test_throws DomainError [CoolLexCombinations(-1, 1)...]
 @test_throws DomainError [CoolLexCombinations(5, 0)...]
 @test [CoolLexCombinations(4,2)...] == Vector[[1,2], [2,3], [1,3], [2,4], [3,4], [1,4]]
-@test isa(start(CoolLexCombinations(1000, 20)), Combinatorics.CoolLexIterState{BigInt})
+@test isa(iterate(CoolLexCombinations(1000, 20))[2], Combinatorics.CoolLexIterState{BigInt})
 
 # Power set
 @test collect(powerset([])) == Any[[]]

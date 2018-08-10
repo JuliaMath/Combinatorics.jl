@@ -1,7 +1,3 @@
-using Combinatorics
-using Compat
-using Compat.Test
-
 @test collect(partitions(4)) ==  Any[[4], [3,1], [2,2], [2,1,1], [1,1,1,1]]
 @test collect(partitions(8,3)) == Any[[6,1,1], [5,2,1], [4,3,1], [4,2,2], [3,3,2]]
 @test collect(partitions(8, 1)) == Any[[8]]

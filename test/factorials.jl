@@ -1,7 +1,3 @@
-using Combinatorics
-using Compat
-using Compat.Test
-
 @test factorial(7,3) == 7*6*5*4
 @test_throws DomainError factorial(3,7)
 @test_throws DomainError factorial(-3,-7)

@@ -1,6 +1,5 @@
 using Combinatorics
-using Compat
-using Compat.Test
+using Test
 
 include("numbers.jl")
 include("factorials.jl")

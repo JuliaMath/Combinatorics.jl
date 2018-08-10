@@ -1,7 +1,4 @@
-using Combinatorics
-using Compat
-using Compat.Test
-using Compat.LinearAlgebra
+using LinearAlgebra
 
 # degenerate cases (x₁ + x₂ + ⋯ + xₘ)¹
 @test [multiexponents(1,1)...] == [[1]]

@@ -1,7 +1,3 @@
-using Combinatorics
-using Compat
-using Compat.Test
-
 let λ = Partition([5,4,2,2]), μ = Partition([2,1])
     @test λ \ μ == SkewDiagram(λ, μ)
     @test leglength(λ, μ) == leglength(λ \ μ) == 3

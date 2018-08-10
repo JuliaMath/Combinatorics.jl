@@ -52,10 +52,10 @@ function isrimhook(ξ::SkewDiagram)
     l = maximum(λ.x)
     youngdiagram = zeros(Int, m, l)
     for i = 1:n
-        youngdiagram[i, μ[i]+1:λ[i]] = 1
+        youngdiagram[i, μ[i]+1:λ[i]] .= 1
     end
     for i = n+1:m
-        youngdiagram[i, 1:λ[i]] = 1
+        youngdiagram[i, 1:λ[i]] .= 1
     end
     #Condition 1. Must be edgewise connected
     youngdiagramList = Any[]
@@ -114,10 +114,10 @@ function leglength(ξ::SkewDiagram)
     l = maximum(λ.x)
     youngdiagram = zeros(Int, m, l)
     for i = 1:n
-        youngdiagram[i, μ[i]+1:λ[i]] = 1
+        youngdiagram[i, μ[i]+1:λ[i]] .= 1
     end
     for i = n+1:m
-        youngdiagram[i, 1:λ[i]] = 1
+        youngdiagram[i, 1:λ[i]] .= 1
     end
     for i = m:-1:1
         any(==(1), youngdiagram[i,:]) && return i-1
