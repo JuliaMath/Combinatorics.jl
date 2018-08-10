@@ -11,14 +11,7 @@ struct Combinations{T}
     t::Int
 end
 
-function Base.iterate(c::Combinations)
-    s = collect(1:c.t)
-    !isempty(s) && s[1] > length(c.a) - c.t + 1 && return nothing
-
-    comb = [c.a[si] for si in s]
-    return comb, s
-end
-function Base.iterate(c::Combinations, s)
+function Base.iterate(c::Combinations, s = collect(1:c.t))
     !isempty(s) && s[1] > length(c.a) - c.t + 1 && return nothing
     comb = [c.a[si] for si in s]
     if c.t == 0
