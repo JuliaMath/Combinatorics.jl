@@ -56,6 +56,19 @@
 @test stirlings2(6, 6) == 1
 
 # bell
-@test bellnum(7) == 877
+@test bellnum.(0:10) == [
+      1
+      1
+      2
+      5
+     15
+     52
+    203
+    877
+   4140
+  21147
+ 115975
+ ]
+
 @test bellnum(42) == parse(BigInt,"35742549198872617291353508656626642567")
-@test_throws DomainError bellnum(-1)
+@test_throws DomainError(-1) bellnum(-1)
