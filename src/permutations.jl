@@ -152,9 +152,9 @@ function nthperm!(a::AbstractVector, k::Integer)
     0 < k <= f || throw(ArgumentError("permutation k must satisfy 0 < k ≤ $f, got $k"))
     k -= 1 # make k 1-indexed
     for i=1:n-1
+        f ÷= n - i + 1
         j = k ÷ f
         k -= j * f
-        f ÷= n - i
         j += i
         elt = a[j]
         for d = j:-1:i+1
