@@ -1,7 +1,7 @@
 # Combinatorics
 
-[![Combinatorics](http://pkg.julialang.org/badges/Combinatorics_0.5.svg)](http://pkg.julialang.org/?pkg=Combinatorics)
 [![Combinatorics](http://pkg.julialang.org/badges/Combinatorics_0.6.svg)](http://pkg.julialang.org/?pkg=Combinatorics)
+[![Combinatorics](http://pkg.julialang.org/badges/Combinatorics_0.7.svg)](http://pkg.julialang.org/?pkg=Combinatorics)
 [![Build Status](https://travis-ci.org/JuliaMath/Combinatorics.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/Combinatorics.jl)
 [![Coverage Status](https://coveralls.io/repos/github/JuliaMath/Combinatorics.jl/badge.svg?branch=master)](https://coveralls.io/github/JuliaMath/Combinatorics.jl?branch=master)
 [![Codecov](https://codecov.io/gh/JuliaMath/Combinatorics.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaMath/Combinatorics.jl)
@@ -25,10 +25,12 @@ This library provides the following functions:
  - `lucasnum(n)`: the n-th Lucas number; always returns a `BigInt`;
  - `multifactorial(n)`: returns the m-multifactorial n(!^m); always returns a `BigInt`;
  - `multinomial(k...)`: receives a tuple of `k_1, ..., k_n` and calculates the multinomial coefficient `(n k)`, where `n = sum(k)`; returns a `BigInt` only if given a `BigInt`;
+ - `multiexponents(m,n)`: returns the exponents in the multinomial expansion (x₁ + x₂ + ... + xₘ)ⁿ;
  - `primorial(n)`: returns the product of all positive prime numbers <= n; always returns a `BigInt`;
  - `stirlings1(n, k, signed=false)`: returns the `(n,k)`-th Stirling number of the first kind; the number is signed if `signed` is true; returns a `BigInt` only if given a `BigInt`.
  - `stirlings2(n, k)`: returns the `(n,k)`-th Stirling number of the second kind; returns a `BigInt` only if given a `BigInt`.
  - `nthperm(a, k)`: Compute the `k`th lexicographic permutation of the vector `a`.
+ - `permutations(a)`: Generate all permutations of an indexable object `a` in lexicographic order.
 
 Young diagrams
 --------------
