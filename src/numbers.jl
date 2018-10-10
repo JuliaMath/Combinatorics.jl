@@ -15,23 +15,23 @@ export bellnum,
 
 Compute the ``n``th Bell number.
 """
-function bellnum(bn::Integer)
-    if bn < 0
-        throw(DomainError(bn, "n must be nonnegative"))
-    else
-        n = BigInt(bn)
+function bellnum(n::Integer)
+    if n < 0
+        throw(DomainError(n))
+    elseif n < 2
+        return 1
     end
-    list = Vector{BigInt}(undef, div(n*(n+1), 2))
+    list = Vector{BigInt}(undef, n)
     list[1] = 1
     for i = 2:n
-        beg = div(i*(i-1),2)
-        list[beg+1] = list[beg]
-        for j = 2:i
-            list[beg+j] = list[beg+j-1]+list[beg+j-i]
+        for j = 1:i - 2
+            list[i - j - 1] += list[i - j]
         end
+        list[i] = list[1] + list[i - 1]
     end
-    return list[end]
+    return list[n]
 end
+
 
 """
     catalannum(n)
