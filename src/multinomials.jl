@@ -4,7 +4,7 @@
 export multiexponents
 
 struct MultiExponents{T}
-    c::Combinations{T}
+    c::T
     nterms::Int
 end
 
