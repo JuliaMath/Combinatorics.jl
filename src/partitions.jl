@@ -15,6 +15,7 @@ struct IntegerPartitions
 end
 
 Base.length(p::IntegerPartitions) = npartitions(p.n)
+Base.eltype(p::IntegerPartitions) = Vector{Int}
 
 function Base.iterate(p::IntegerPartitions, xs = Int[])
     length(xs) == p.n && return
@@ -93,6 +94,7 @@ struct FixedPartitions
 end
 
 Base.length(f::FixedPartitions) = npartitions(f.n,f.m)
+Base.eltype(f::FixedPartitions) = Vector{Int}
 
 """
     partitions(n, m)
@@ -121,7 +123,7 @@ function nextfixedpartition(n, m, bs)
     as = copy(bs)
     if isempty(as)
         # First iteration
-        as = [n-m+1; ones(Int, m-1)]
+        as = ones(Int, m); as[1] = n - m + 1
     elseif as[2] < as[1]-1
         # Most common iteration
         as[1] -= 1
@@ -169,6 +171,7 @@ struct SetPartitions{T<:AbstractVector}
 end
 
 Base.length(p::SetPartitions) = nsetpartitions(length(p.s))
+Base.eltype(p::SetPartitions) = Vector{Vector{eltype(p.s)}}
 
 """
     partitions(s::AbstractVector)
@@ -199,7 +202,7 @@ function nextsetpartition(s::AbstractVector, a, b, n, m)
         filter!(!isempty, temp)
     end
 
-    isempty(s) && return ([s], ([1], Int[], n, 1))
+    if isempty(s);  return ([s], (eltype(a)[1], eltype(b)[], n, 1));  end
 
     part = makeparts(s,a,m)
 
@@ -212,7 +215,7 @@ function nextsetpartition(s::AbstractVector, a, b, n, m)
             a[jj] == b[jj] || break
         end
         a[j] += 1
-        m = b[j] + (a[j] == b[j])
+        m = Int(b[j]) + (a[j] == b[j])
         for k = j+1:n-1
             a[k] = 0
             b[k] = m
@@ -248,6 +251,7 @@ struct FixedSetPartitions{T<:AbstractVector}
 end
 
 Base.length(p::FixedSetPartitions) = nfixedsetpartitions(length(p.s),p.m)
+Base.eltype(p::FixedSetPartitions) = Vector{Vector{eltype(p.s)}}
 
 """
     partitions(s::AbstractVector, m::Int)
@@ -267,7 +271,7 @@ partitions(s::AbstractVector, m::Int) =
 function Base.iterate(p::FixedSetPartitions)
     n = length(p.s)
     m = p.m
-    state = m <= n ? (vcat(ones(Int, n-m),1:m), vcat(1,n-m+2:n), n) : (Int[], Int[], n)
+    state = m <= n ? (vcat(ones(Int, n-m),1:m), vcat(1:1,n-m+2:n), n) : (Int[], Int[], n)
     # state consists of:
     # vector a of length n describing to which partition every element of s belongs
     # vector b of length n describing the first index b[i] that belongs to partition i
@@ -283,7 +287,7 @@ end
 
 function nextfixedsetpartition(s::AbstractVector, m, a, b, n)
     function makeparts(s, a)
-        part = [similar(s, 0) for k = 1:m]
+        local part = [ similar(s,0) for k = 1:m ]
         for i = 1:n
             push!(part[a[i]], s[i])
         end
