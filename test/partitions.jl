@@ -8,6 +8,16 @@
 @test collect(partitions([1,2,3,4],1)) == Any[Any[[1, 2, 3, 4]]]
 @test collect(partitions([1,2,3,4],5)) == []
 
+@inferred first(partitions(4))
+@inferred first(partitions(8,3))
+@inferred first(partitions([1,2,3]))
+@inferred first(partitions([1,2,3,4],3))
+
+@test isa(collect(partitions(4)), Vector{Vector{Int}})
+@test isa(collect(partitions(8,3)), Vector{Vector{Int}})
+@test isa(collect(partitions([1,2,3])), Vector{Vector{Vector{Int}}})
+@test isa(collect(partitions([1,2,3,4], 3)), Vector{Vector{Vector{Int}}})
+
 @test length(partitions(0)) == 1
 @test length(partitions(-1)) == 0
 @test length(collect(partitions(30))) == length(partitions(30))
