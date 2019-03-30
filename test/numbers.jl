@@ -8,6 +8,16 @@
 @test fibonaccinum(101) == parse(BigInt,"573147844013817084101")
 @test_throws DomainError fibonaccinum(-1)
 
+# lobb
+@test lobbnum(2,3) == 5 
+@test lobbnum(50,100) == parse(BigInt,"303574146822833458064977353764024400258025594128")
+@test_throws DomainError lobbnum(-1,2)
+
+# narayana
+@test narayana(8,5) == 490
+@test narayana(100,50) == parse(BigInt, "99794739256977899071474889425225225330079579752931446368")
+@test_throws DomainError narayana(-1,-1)
+
 # lassalle
 @test lassallenum(14) == parse(BigInt,"270316008395632253340")
 
