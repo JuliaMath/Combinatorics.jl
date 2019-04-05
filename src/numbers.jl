@@ -2,6 +2,8 @@
 
 export bellnum,
     catalannum,
+    lobbnum,
+    narayana,
     fibonaccinum,
     jacobisymbol,
     lassallenum,
@@ -45,6 +47,38 @@ function catalannum(bn::Integer)
         n = BigInt(bn)
     end
     div(binomial(2*n, n), (n + 1))
+end
+
+"""
+    lobbnum(m,n)
+
+Compute the Lobb number `L(m,n)`, or the generalised Catalan number given by ``\\frac{2m+1}{m+n+1} \\binom{2n}{m+n}``.
+Wikipedia : https://en.wikipedia.org/wiki/Lobb_number
+"""
+function lobbnum(bm::Integer,bn::Integer)
+    if !(0 <= bm <= bn)
+        throw(DomainError("m and n must be non-negative"))
+    else
+        m = BigInt(bm)
+        n = BigInt(bn)
+    end
+    div(binomial(2*n, m + n)*(2*m + 1), (m + n + 1))
+end
+
+"""
+    narayana(n,k)
+
+Compute the Narayana number `N(n,k)`` given by ``\\frac{1}{n}\\binom{n}{k}\\binom{n}{k-1}``
+Wikipedia : https://en.wikipedia.org/wiki/Narayana_number
+"""
+function narayana(bn::Integer,bk::Integer)
+    if !(1 <= bk <= bn)
+        throw(DomainError("Domain is 1 <= k <= n"))
+    else
+        n = BigInt(bn)
+        k = BigInt(bk)
+    end
+    div(binomial(n, k)*binomial(n, k - 1) , n)
 end
 
 function fibonaccinum(n::Integer)
