@@ -15,7 +15,8 @@ This library provides the following functions:
  - `catalannum(n)`: returns the n-th Catalan number; always returns a `BigInt`;
  - `lobbnum(m,n)`: returns the generalised Catalan number at `m` and `n`; always returns a `BigInt`;
  - `narayana(n,k)`: returns the general Narayana number at any given `n` and `k`; always returns a `BigInt`;
- - `combinations(a)`: returns combinations of all order by chaining calls to `Base.combinations(a,n)`;
+ - `combinations(a,n)`: returns all combinations of `n` elements of indexable object `a`;
+ - `combinations(a)`: returns combinations of all order by chaining calls to `combinations(a,n)`;
  - `derangement(n)`/`subfactorial(n)`: returns the number of permutations of n with no fixed points; always returns a `BigInt`;
  - `doublefactorial(n)`: returns the double factorial n!!; always returns a `BigInt`;
  - `fibonaccinum(n)`: the n-th Fibonacci number; always returns a `BigInt`;
