@@ -2,7 +2,7 @@
 
 export
     derangement,
-	partialderangement,
+    partialderangement,
     factorial,
     subfactorial,
     doublefactorial,
@@ -54,20 +54,20 @@ function doublefactorial(n::Integer)
 end
 
 """
-	partialderangement(n, k)
-	
+    partialderangement(n, k)
+    
 Compute the number of permutations of `n` with exactly k fixed points.
 """
 function partialderangement(n::Integer, k::Integer)
-	if n < 0
-		throw(DomainError(n))
-	end
-	if k < 0 || k > n
-		throw(DomainError(k))
-	end
-	a = BigInt(n)
-	b = BigInt(k)
-	return subfactorial(n - k) * binomial(n, k)
+    if n < 0
+        throw(DomainError(n))
+    end
+    if k < 0 || k > n
+        throw(DomainError(k))
+    end
+    a = BigInt(n)
+    b = BigInt(k)
+    return subfactorial(n - k) * binomial(n, k)
 end
 
 # Hyperfactorial
