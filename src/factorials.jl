@@ -67,7 +67,7 @@ function partialderangement(n::Integer, k::Integer)
     end
     a = BigInt(n)
     b = BigInt(k)
-    return subfactorial(n - k) * binomial(n, k)
+    return subfactorial(a - b) * binomial(a, b)
 end
 
 # Hyperfactorial
