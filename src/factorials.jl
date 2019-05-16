@@ -2,6 +2,7 @@
 
 export
     derangement,
+    partialderangement,
     factorial,
     subfactorial,
     doublefactorial,
@@ -50,6 +51,23 @@ function doublefactorial(n::Integer)
     z = Ref{BigInt}(0)
     ccall((:__gmpz_2fac_ui, :libgmp), Cvoid, (Ref{BigInt}, UInt), z, UInt(n))
     return z[]
+end
+
+"""
+    partialderangement(n, k)
+    
+Compute the number of permutations of `n` with exactly k fixed points.
+"""
+function partialderangement(n::Integer, k::Integer)
+    if n < 0
+        throw(DomainError(n))
+    end
+    if k < 0 || k > n
+        throw(DomainError(k))
+    end
+    a = BigInt(n)
+    b = BigInt(k)
+    return subfactorial(a - b) * binomial(a, b)
 end
 
 # Hyperfactorial
