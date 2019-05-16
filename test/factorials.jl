@@ -11,6 +11,11 @@
 @test derangement(4) == subfactorial(4) == 9
 @test derangement(24) == parse(BigInt,"228250211305338670494289")
 
+# partialderangement
+@test partialderangement(7, 3) == 315
+@test_throws DomainError partialderangement(8, 9)
+@test_throws DomainError partialderangement(-8, 0)
+
 # doublefactorial
 @test doublefactorial(70) == parse(BigInt,"355044260642859198243475901411974413130137600000000")
 @test_throws DomainError doublefactorial(-1)
