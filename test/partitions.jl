@@ -19,15 +19,14 @@
 @test isa(collect(partitions([1,2,3,4], 3)), Vector{Vector{Vector{Int}}})
 
 @test length(partitions(0)) == 1
-@test length(partitions(-1)) == 0
 @test length(collect(partitions(30))) == length(partitions(30))
 @test length(collect(partitions(90,4))) == length(partitions(90,4))
 @test length(collect(partitions('a':'h'))) == length(partitions('a':'h'))
 @test length(collect(partitions('a':'h',5))) == length(partitions('a':'h',5))
 
 # integer_partitions
-@test integer_partitions(0) == []
-@test integer_partitions(5) == Any[[1, 1, 1, 1, 1], [2, 1, 1, 1], [2, 2, 1], [3, 1, 1], [3, 2], [4, 1], [5]]
+@test integer_partitions(0) == [[]]
+@test integer_partitions(5) == reverse(Any[[1, 1, 1, 1, 1], [2, 1, 1, 1], [2, 2, 1], [3, 1, 1], [3, 2], [4, 1], [5]])
 @test_throws DomainError integer_partitions(-1)
 
 @test_throws ArgumentError prevprod([2,3,5],Int128(typemax(Int))+1)
