@@ -125,7 +125,7 @@ function lucasnum(n::Integer)
     return z[]
 end
 
-function stirlings1(n::Int, k::Int, signed::Bool=false)
+function stirlings1(n, k, signed::Bool=false)
     if signed == true
         return (-1)^(n - k) * stirlings1(n, k)
     end
@@ -151,7 +151,7 @@ function stirlings1(n::Int, k::Int, signed::Bool=false)
     return (n - 1) * stirlings1(n - 1, k) + stirlings1(n - 1, k - 1)
 end
 
-function stirlings2(n::Int, k::Int)
+function stirlings2(n, k)
     if n < 0
         throw(DomainError(n, "n must be nonnegative"))
     elseif n == k == 0
