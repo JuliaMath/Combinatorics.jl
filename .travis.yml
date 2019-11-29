@@ -1,16 +1,11 @@
 language: julia
 os:
-    - linux
+  - linux
 julia:
-    - 0.7
-    - 1.0
-    - nightly
-sudo: false
+  - 1.0
+  - 1.3
+  - nightly
 notifications:
-    email: false
-#script:
-#    - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-#    - julia -e 'Pkg.clone(pwd())'
-#    - julia -e 'Pkg.test("Combinatorics", coverage=true)'
-after_success:
-    - julia -e 'Pkg.add("Coverage"); cd(Pkg.dir("Combinatorics")); using Coverage; Coveralls.submit(Coveralls.process_folder()); Codecov.submit(process_folder())'
+  email: false
+codecov: true
+coveralls: true
