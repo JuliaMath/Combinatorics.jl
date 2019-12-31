@@ -13,6 +13,11 @@
 @test lobbnum(50,100) == parse(BigInt,"303574146822833458064977353764024400258025594128")
 @test_throws DomainError lobbnum(-1,2)
 
+#Delannoy
+@test dealnnoy(3,4) == 129
+@test dealnnoy(4,5) == 681
+@test_throws DomainError dealnnoy(-1,2)
+
 # narayana
 @test narayana(8,5) == 490
 @test narayana(100,50) == parse(BigInt, "99794739256977899071474889425225225330079579752931446368")
