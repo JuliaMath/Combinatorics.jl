@@ -250,7 +250,7 @@ struct FixedSetPartitions{T<:AbstractVector}
     m::Int
 end
 
-Base.length(p::FixedSetPartitions) = nfixedsetpartitions(length(p.s),p.m)
+Base.length(p::FixedSetPartitions) = stirlings2(length(p.s),p.m)
 Base.eltype(p::FixedSetPartitions) = Vector{Vector{eltype(p.s)}}
 
 """
@@ -333,15 +333,6 @@ function nextfixedsetpartition(s::AbstractVector, m, a, b, n)
     end
 
     return (part, (a,b,n))
-end
-
-function nfixedsetpartitions(n::Int, m::Int)
-    numpart = 0
-    for k = 0:m
-        numpart += (-1)^(m-k) * binomial(m, k) * (k^n)
-    end
-    numpart = div(numpart, factorial(m))
-    return numpart
 end
 
 # TODO: Base.DSP is no longer a thing in Julia 0.7
