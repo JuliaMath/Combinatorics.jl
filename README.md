@@ -32,7 +32,7 @@ This library provides the following functions:
  - `multiexponents(m,n)`: returns the exponents in the multinomial expansion (x₁ + x₂ + ... + xₘ)ⁿ;
  - `primorial(n)`: returns the product of all positive prime numbers <= n; always returns a `BigInt`;
  - `stirlings1(n, k, signed=false)`: returns the `(n,k)`-th Stirling number of the first kind; the number is signed if `signed` is true; returns a `BigInt` only if given a `BigInt`.
- - `stirlings2(n, k)`: returns the `(n,k)`-th Stirling number of the second kind; returns a `BigInt` only if given a `BigInt`.
+ - `stirlings2(n, k)`: returns the `(n,k)`-th Stirling number of the second kind; may returns a `BigInt`, always when `3 <= k <= n-2`.
  - `nthperm(a, k)`: Compute the `k`th lexicographic permutation of the vector `a`.
  - `permutations(a)`: Generate all permutations of an indexable object `a` in lexicographic order.
 
