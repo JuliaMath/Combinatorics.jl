@@ -156,10 +156,10 @@ function stirlings2(n::Integer, k::Integer)
 
     if      n == k == 0;            one(n)
     elseif  n == 0 || k == 0;       zero(n)
-    elseif  k == 1;                 zero(n)
+    elseif  k == 1;                 one(n)
     elseif  k == 2;                 2^(n-1)-1
     elseif  k == n-1;               binomial(n, 2)
-    elseif  k == n;                 zero(n)
+    elseif  k == n;                 one(n)
     else
         # note: summing on itr leads to silent overflow without bigint
         (bn, bk) = (big(n), big(k))
