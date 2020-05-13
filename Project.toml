@@ -1,6 +1,6 @@
 name = "Combinatorics"
 uuid = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
-version = "1.0.1"
+version = "1.0.2"
 
 [compat]
 julia = "1"
