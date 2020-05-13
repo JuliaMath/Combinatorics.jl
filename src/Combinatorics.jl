@@ -1,8 +1,6 @@
 
 module Combinatorics
 
-using Polynomials
-
 include("numbers.jl")
 include("factorials.jl")
 include("combinations.jl")
