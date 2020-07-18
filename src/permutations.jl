@@ -41,7 +41,7 @@ end
 
 function Base.iterate(p::Permutations, s = collect(1:length(p.a)))
     (!isempty(s) && max(s[1], p.t) > length(p.a) || (isempty(s) && p.t > 0)) && return
-    nextpermutation(p.a, p.t ,s)
+    nextpermutation(p.a, p.t, s)
 end
 
 function nextpermutation(m, t, state)
