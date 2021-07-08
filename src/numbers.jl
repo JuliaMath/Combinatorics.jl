@@ -151,18 +151,23 @@ function stirlings1(n::Int, k::Int, signed::Bool=false)
     return (n - 1) * stirlings1(n - 1, k) + stirlings1(n - 1, k - 1)
 end
 
-function stirlings2(n::Int, k::Int)
-    if n < 0
-        throw(DomainError(n, "n must be nonnegative"))
-    elseif n == k == 0
-        return 1
-    elseif n == 0 || k == 0
-        return 0
-    elseif k == n - 1
-        return binomial(n, 2)
-    elseif k == 2
-        return 2^(n-1) - 1
-    end
+function stirlings2(n::Integer, k::Integer)
+    n >= 0 || throw(DomainError("n"))
 
-    return k * stirlings2(n - 1, k) + stirlings2(n - 1, k - 1)
+    if      n == k == 0;            one(n)
+    elseif  n == 0 || k == 0;       zero(n)
+    elseif  k == 1;                 one(n)
+    elseif  k == 2;                 2^(n-1)-1
+    elseif  k == n-1;               binomial(n, 2)
+    elseif  k == n;                 one(n)
+    else
+        # note: summing on itr leads to silent overflow without bigint
+        (bn, bk) = (big(n), big(k))
+        div(
+            sum(
+                ((-1)^(bk-i) * binomial(bk,i) * i^n
+                for i in 0:bk)),
+            factorial(bk))
+    end
 end
+

@@ -64,6 +64,7 @@
 @test stirlings2(6, 4) == 65
 @test stirlings2(6, 5) == 15
 @test stirlings2(6, 6) == 1
+@test stirlings2(25, 7) == 227832482998716310
 
 # bell
 @test bellnum.(0:10) == [
