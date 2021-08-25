@@ -1,3 +1,5 @@
+@test collect(partitions(-1)) == []
+@test collect(partitions(0)) == [Int[]]
 @test collect(partitions(4)) ==  Any[[4], [3,1], [2,2], [2,1,1], [1,1,1,1]]
 @test collect(partitions(8,3)) == Any[[6,1,1], [5,2,1], [4,3,1], [4,2,2], [3,3,2]]
 @test collect(partitions(8, 1)) == Any[[8]]
@@ -14,6 +16,7 @@
 @inferred first(partitions([1,2,3,4],3))
 
 @test isa(collect(partitions(4)), Vector{Vector{Int}})
+@test isa(collect(partitions(Int8(4))), Vector{Vector{Int8}})
 @test isa(collect(partitions(8,3)), Vector{Vector{Int}})
 @test isa(collect(partitions([1,2,3])), Vector{Vector{Vector{Int}}})
 @test isa(collect(partitions([1,2,3,4], 3)), Vector{Vector{Vector{Int}}})
@@ -26,9 +29,9 @@
 @test length(collect(partitions('a':'h',5))) == length(partitions('a':'h',5))
 
 # integer_partitions
-@test integer_partitions(0) == []
-@test integer_partitions(5) == Any[[1, 1, 1, 1, 1], [2, 1, 1, 1], [2, 2, 1], [3, 1, 1], [3, 2], [4, 1], [5]]
-@test_throws DomainError integer_partitions(-1)
+@test integer_partitions(0, warn=false) == []
+@test integer_partitions(5, warn=false) == Any[[1, 1, 1, 1, 1], [2, 1, 1, 1], [2, 2, 1], [3, 1, 1], [3, 2], [4, 1], [5]]
+@test_throws DomainError integer_partitions(-1, warn=false)
 
 @test_throws ArgumentError prevprod([2,3,5],Int128(typemax(Int))+1)
 @test prevprod([2,3,5],30) == 30

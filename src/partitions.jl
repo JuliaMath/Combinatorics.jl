@@ -10,17 +10,46 @@ export
 
 #integer partitions
 
-struct IntegerPartitions
-    n::Int
+struct IntegerPartitions{T <: Integer}
+    n::T
 end
 
-Base.length(p::IntegerPartitions) = npartitions(p.n)
-Base.eltype(p::IntegerPartitions) = Vector{Int}
+Base.length(p::IntegerPartitions) = npartitions(Int(p.n))
+Base.eltype(p::IntegerPartitions{T}) where T <: Integer = Vector{T}
 
-function Base.iterate(p::IntegerPartitions, xs = Int[])
-    length(xs) == p.n && return
-    xs = nextpartition(p.n,xs)
-    (xs, xs)
+function _spread!(rem::T, m::T, k::Int, part::Vector{T}) where T <: Integer
+    # spread rem as m,m,m,... starting from part[k+1]
+    # return the last index
+    while rem >= m
+        part[k += 1] = m
+        rem -= m
+    end
+    if rem > 0
+        part[k += 1] = rem
+    end
+    return k
+end
+
+@inline function Base.iterate(p::IntegerPartitions{T}) where T <: Integer
+    p.n < 0 && return
+    part = Vector{T}(undef, p.n)
+    k = _spread!(p.n, max(p.n, one(T)), 0, part)
+    return (part[1:k], (k, part))
+end
+
+@inline function Base.iterate(p::IntegerPartitions{T}, state::Tuple{Int, Vector{T}}) where T <: Integer
+    k, part = state
+    k == p.n && return
+    # find the last entry that's not 1 and lower it by 1,
+    # then spread the remaining value
+    rem = zero(T)
+    while part[k] == 1
+        rem += part[k]
+        k -= 1
+    end
+    part[k] -= 1
+    k = _spread!(rem + one(T), part[k], k, part)
+    return (part[1:k], (k, part))
 end
 
 """
@@ -32,36 +61,6 @@ array of all partitions. The number of partitions to generate can be efficiently
 using `length(partitions(n))`.
 """
 partitions(n::Integer) = IntegerPartitions(n)
-
-
-
-function nextpartition(n, as)
-    isempty(as) && return Int[n]
-
-    xs = similar(as, 0)
-    sizehint!(xs, length(as) + 1)
-
-    for i = 1:length(as)-1
-        if as[i+1] == 1
-            x = as[i]-1
-            push!(xs, x)
-            n -= x
-            while n > x
-                push!(xs, x)
-                n -= x
-            end
-            push!(xs, n)
-
-            return xs
-        end
-        push!(xs, as[i])
-        n -= as[i]
-    end
-    push!(xs, as[end]-1)
-    push!(xs, 1)
-
-    xs
-end
 
 let _npartitions = Dict{Int,Int}()
     global npartitions
@@ -452,7 +451,10 @@ List the partitions of the integer `n`.
     The order of the resulting array is consistent with that produced by the computational
     discrete algebra software GAP.
 """
-function integer_partitions(n::Integer)
+function integer_partitions(n::Integer; warn=true)
+    if warn
+        @warn "`integer_partitions` is slow and should be considered as deprecated. Use `collect(partitions(n))` instead."
+    end
     if n < 0
         throw(DomainError(n, "n must be nonnegative"))
     elseif n == 0
@@ -463,7 +465,7 @@ function integer_partitions(n::Integer)
 
     list = Vector{Int}[]
 
-    for p in integer_partitions(n-1)
+    for p in integer_partitions(n-1, warn=false)
         push!(list, [p; 1])
         if length(p) == 1 || p[end] < p[end-1]
             push!(list, [p[1:end-1]; p[end]+1])
