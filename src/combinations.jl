@@ -36,11 +36,11 @@ Base.length(c::Combinations) = binomial(c.n, c.t)
 Base.eltype(::Type{Combinations}) = Vector{Int}
 
 """
-    combinations(a, n)
+    combinations(a, k)
 
-Generate all combinations of `n` elements from an indexable object `a`. Because the number
+Generate all combinations of `k` elements from an indexable object `a`. Because the number
 of combinations can be very large, this function returns an iterator object.
-Use `collect(combinations(a, n))` to get an array of all combinations.
+Use `collect(combinations(a, k))` to get an array of all combinations.
 """
 function combinations(a, t::Integer)
     if t < 0
