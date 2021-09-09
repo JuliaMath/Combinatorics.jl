@@ -36,6 +36,30 @@
 @test [CoolLexCombinations(4,2)...] == Vector[[1,2], [2,3], [1,3], [2,4], [3,4], [1,4]]
 @test isa(iterate(CoolLexCombinations(1000, 20))[2], Combinatorics.CoolLexIterState{BigInt})
 
+
+# multichoose
+@test multichoose(0, 1) == 0
+@test multichoose(0, 2) == 0
+@test multichoose(0, 3) == 0
+@test multichoose(1, 1) == 1
+@test multichoose(1, 2) == 1
+@test multichoose(1, 3) == 1
+@test multichoose(2, 1) == 2
+@test multichoose(2, 2) == 3
+@test multichoose(2, 3) == 4
+@test multichoose(3, 0) == 1
+@test multichoose(3, 1) == 3
+@test multichoose(3, 2) == 6
+@test multichoose(3, 3) == 10
+@test multichoose(10, 8) == 24310
+
+# multicombinations
+@test [multicombinations("abc", 0)...] == [Char[]]
+@test [multicombinations("abc", 1)...] == [['a'], ['b'], ['c']]
+@test [multicombinations("abc", 2)...] == [['a','a'], ['a','b'], ['a','c'], ['b','b'], ['b','c'], ['c','c']]
+@test [multicombinations("abc", 3)...] == [['a','a','a'], ['a','a','b'], ['a','a','c'], ['a','b','b'],
+    ['a','b','c'], ['a','c','c'], ['b','b','b'], ['b','b','c'], ['b','c','c'], ['c','c','c']]
+    
 # Power set
 @test collect(powerset([])) == Any[[]]
 @test collect(powerset(['a', 'b', 'c'])) == Any[[],['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]

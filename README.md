@@ -25,6 +25,8 @@ This library provides the following functions:
  - `lassallenum(n)`: returns the nth Lassalle number A<sub>n</sub> defined in [arXiv:1009.4225](http://arxiv.org/abs/1009.4225) ([OEIS A180874](http://oeis.org/A180874)); always returns a `BigInt`;
  - `legendresymbol(a,p)`: returns the Legendre symbol (a/p);
  - `lucasnum(n)`: the n-th Lucas number; always returns a `BigInt`;
+ - `multichoose(n,k)`: number of ways to choose `k` elements from a `n` element set with duplicates but without order;
+ - `multicombinations(a,k)`: returns all combinations of `n` elements of indexable object `a`;;
  - `multifactorial(n)`: returns the m-multifactorial n(!^m); always returns a `BigInt`;
  - `multinomial(k...)`: receives a tuple of `k_1, ..., k_n` and calculates the multinomial coefficient `(n k)`, where `n = sum(k)`; returns a `BigInt` only if given a `BigInt`;
  - `multiexponents(m,n)`: returns the exponents in the multinomial expansion (x₁ + x₂ + ... + xₘ)ⁿ;
