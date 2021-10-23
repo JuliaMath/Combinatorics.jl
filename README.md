@@ -8,6 +8,12 @@ A combinatorics library for Julia, focusing mostly (as of now) on enumerative
 combinatorics and permutations.  As overflows are expected even for low values,
 most of the functions always return `BigInt`, and are marked as such below.
 
+## Installation
+
+In the Julia REPL, type `]add Combinatorics` and then `using Combinatorics` to access the below functions.
+
+## Usage
+
 This library provides the following functions:
  - `bellnum(n)`: returns the n-th Bell number; always returns a `BigInt`;
  - `catalannum(n)`: returns the n-th Catalan number; always returns a `BigInt`;
