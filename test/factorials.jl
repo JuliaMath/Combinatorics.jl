@@ -22,6 +22,9 @@
 
 # hyperfactorial
 @test hyperfactorial(8) == parse(BigInt,"55696437941726556979200000")
+@test hyperfactorial(0) == parse(BigInt,"1")
+@test hyperfactorial(1) == parse(BigInt,"1")
+@test hyperfactorial(2) == parse(BigInt,"4")
 
 # multifactorial
 @test multifactorial(40,2) == doublefactorial(40)
