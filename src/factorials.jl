@@ -71,7 +71,8 @@ function partialderangement(n::Integer, k::Integer)
 end
 
 # Hyperfactorial
-hyperfactorial(n::Integer) = prod(i->i^i, BigInt(2):n)
+hyperfactorial(n::Integer) = n==0 ? BigInt(1) : prod(i->i^i, BigInt(1):n)
+
 
 function multifactorial(n::Integer, m::Integer)
     if n < 0
