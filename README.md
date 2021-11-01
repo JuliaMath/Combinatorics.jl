@@ -1,7 +1,7 @@
 # Combinatorics
 
 [![Build Status](https://travis-ci.org/JuliaMath/Combinatorics.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/Combinatorics.jl)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://gdalle.github.io/Combinatorics.jl/dev)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](http://juliamath.github.io/Combinatorics.jl/)
 [![Coverage Status](https://coveralls.io/repos/github/JuliaMath/Combinatorics.jl/badge.svg?branch=master)](https://coveralls.io/github/JuliaMath/Combinatorics.jl?branch=master)
 [![Codecov](https://codecov.io/gh/JuliaMath/Combinatorics.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaMath/Combinatorics.jl)
 
@@ -15,4 +15,4 @@ In the Julia REPL, type `]add Combinatorics` and then `using Combinatorics` to a
 
 ## Documentation
 
-Go to https://gdalle.github.io/Combinatorics.jl/dev to see the list of exported functions and their meanings.
+Go to http://juliamath.github.io/Combinatorics.jl/ to see the list of exported functions and their meanings.
