@@ -5,7 +5,7 @@ DocMeta.setdocmeta!(Combinatorics, :DocTestSetup, :(using Combinatorics); recurs
 
 makedocs(
     sitename="Combinatorics.jl",
-    repo="github.com/gdalle/Combinatorics.jl/",
+    repo="github.com/JuliaMath/Combinatorics.jl/",
     format = Documenter.HTML(
         prettyurls = get(ENV, "CI", nothing) == "true"
     ),
@@ -13,6 +13,6 @@ makedocs(
 )
 
 deploydocs(;
-    repo="github.com/gdalle/Combinatorics.jl",
+    repo="github.com/JuliaMath/Combinatorics.jl",
     devbranch="master",
 )
