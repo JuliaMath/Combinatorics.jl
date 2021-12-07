@@ -17,7 +17,12 @@ end
 Base.length(p::IntegerPartitions) = npartitions(p.n)
 Base.eltype(p::IntegerPartitions) = Vector{Int}
 
-function Base.iterate(p::IntegerPartitions, xs = Int[])
+function Base.iterate(p::IntegerPartitions)
+   p.n == 0 && return (Int[], Int[])
+  return iterate(p, Int[])
+end
+
+function Base.iterate(p::IntegerPartitions, xs)
     length(xs) == p.n && return
     xs = nextpartition(p.n,xs)
     (xs, xs)
@@ -31,7 +36,10 @@ large, this function returns an iterator object. Use `collect(partitions(n))` to
 array of all partitions. The number of partitions to generate can be efficiently computed
 using `length(partitions(n))`.
 """
-partitions(n::Integer) = IntegerPartitions(n)
+function partitions(n::Integer)
+    n<0 && throw(DomainError(n, "n must be nonnegative"))
+    return IntegerPartitions(n)
+end
 
 
 
@@ -344,6 +352,9 @@ function nfixedsetpartitions(n::Int, m::Int)
     return numpart
 end
 
+# This should maybe be depricated. But for now it's updated 
+integer_partitions(n::Int) = collect(partitions(n))
+
 # TODO: Base.DSP is no longer a thing in Julia 0.7
 #This function is still defined in Base because it is being used by Base.DSP
 #"""
@@ -441,39 +452,6 @@ function prevprod(a::Vector{Int}, x)
     best = x >= p > best ? p : best
     return Int(best)
 end
-
-
-"""
-    integer_partitions(n)
-
-List the partitions of the integer `n`.
-
-!!! note
-    The order of the resulting array is consistent with that produced by the computational
-    discrete algebra software GAP.
-"""
-function integer_partitions(n::Integer)
-    if n < 0
-        throw(DomainError(n, "n must be nonnegative"))
-    elseif n == 0
-        return Vector{Int}[]
-    elseif n == 1
-        return Vector{Int}[[1]]
-    end
-
-    list = Vector{Int}[]
-
-    for p in integer_partitions(n-1)
-        push!(list, [p; 1])
-        if length(p) == 1 || p[end] < p[end-1]
-            push!(list, [p[1:end-1]; p[end]+1])
-        end
-    end
-
-    list
-end
-
-
 
 #Noncrossing partitions
 
