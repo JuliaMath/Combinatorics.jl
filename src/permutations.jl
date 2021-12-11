@@ -30,7 +30,7 @@ permutations(a) = Permutations(a, length(a))
 """
     permutations(a, t)
 
-Generate all size `t` permutations of an indexable object `a`.
+Generate all size `t` permutations of an indexable object `a` using Heap's algorithm.
 """
 function permutations(a, t::Integer)
     if t < 0
@@ -39,40 +39,26 @@ function permutations(a, t::Integer)
     Permutations(a, t)
 end
 
-function Base.iterate(p::Permutations, s = collect(1:length(p.a)))
-    (!isempty(s) && max(s[1], p.t) > length(p.a) || (isempty(s) && p.t > 0)) && return
-    nextpermutation(p.a, p.t ,s)
-end
-
-function nextpermutation(m, t, state)
-    perm = [m[state[i]] for i in 1:t]
-    n = length(state)
-    if t <= 0
-        return(perm, [n+1])
-    end
-    s = copy(state)
-    if t < n
-        j = t + 1
-        while j <= n &&  s[t] >= s[j]; j+=1; end
-    end
-    if t < n && j <= n
-        s[t], s[j] = s[j], s[t]
-    else
-        if t < n
-            reverse!(s, t+1)
-        end
-        i = t - 1
-        while i>=1 && s[i] >= s[i+1]; i -= 1; end
-        if i > 0
-            j = n
-            while j>i && s[i] >= s[j]; j -= 1; end
-            s[i], s[j] = s[j], s[i]
-            reverse!(s, i+1)
+function Base.iterate(p::Permutations, state=(ones(Int, length(p.a) ), 0) )
+    c, i = state
+    if i == 0
+        return (p.a[1:p.t], (c, 1) )
+    elseif i < p.t + 1
+        if c[i] < length(c) - i + 1
+            if i % 2 != 0
+                p.a[1], p.a[i] = p.a[i], p.a[1]
+            else
+                p.a[c[i]], p.a[i] = p.a[i], p.a[c[i]]
+            end
+            c[i] = c[i] + 1
+            i    = 1
+            return (p.a[1:p.t], (c, i))
         else
-            s[1] = n+1
+            c[i] = 1
+            return Base.iterate(p, (c, i+1))
         end
     end
-    return (perm, s)
+    return nothing
 end
 
 struct MultiSetPermutations{T}
