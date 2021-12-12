@@ -39,20 +39,19 @@ function permutations(a, t::Integer)
     Permutations(a, t)
 end
 
-function Base.iterate(p::Permutations, state=(ones(Int, length(p.a) ), 0) )
+function Base.iterate(p::Permutations, state=(ones(Int, length(p.a)) , 0 ))
     c, i = state
     if i == 0
         return (p.a[1:p.t], (c, 1) )
-    elseif i < p.t + 1
+    elseif i < p.t
         if c[i] < length(c) - i + 1
             if i % 2 != 0
-                p.a[1], p.a[i] = p.a[i], p.a[1]
+                p.a[1], p.a[i]    = p.a[i], p.a[1]
             else
                 p.a[c[i]], p.a[i] = p.a[i], p.a[c[i]]
             end
             c[i] = c[i] + 1
-            i    = 1
-            return (p.a[1:p.t], (c, i))
+            return (p.a[1:p.t], (c, 1))
         else
             c[i] = 1
             return Base.iterate(p, (c, i+1))
