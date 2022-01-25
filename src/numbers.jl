@@ -10,7 +10,8 @@ export bellnum,
     legendresymbol,
     lucasnum,
     stirlings1,
-    stirlings2
+    stirlings2,
+    dealnnoy
 
 """
     bellnum(n)
@@ -165,4 +166,30 @@ function stirlings2(n::Int, k::Int)
     end
 
     return k * stirlings2(n - 1, k) + stirlings2(n - 1, k - 1)
+end
+
+"""
+Delannoy number  describes the number of paths from the southwest corner (0, 0) of a rectangular grid
+to the northeast corner (m, n), using only single steps north, northeast, or east
+"""
+function dealnnoy(m::Integer,n::Integer)
+    if m<0
+        throw(DomainError(m, "m must be nonnegative"))
+    end
+    if n<0
+        throw(DomainError(n, "n must be nonnegative"))
+    end
+    A = ones(BigInt, m+1, n+1)
+    for i = 1:m+1
+        A[i,1] = 1
+    end
+    for i = 1:n+1
+        A[1,i] = 1
+    end
+    for i = 2:m+1
+        for j = 2:n+1
+            A[i,j] = A[i-1,j] + A[i-1,j-1] + A[i,j-1]
+        end
+    end
+    return(A[m+1,n+1])
 end
