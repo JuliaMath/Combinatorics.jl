@@ -81,10 +81,6 @@ function permutations(a, t::Integer)
     PermutationIterator(a, t)
 end
 
-function Base.iterate(p::PermutationIterator, s=collect(1:length(p.a)))
-    (!isempty(s) && max(s[1], p.t) > length(p.a) || (isempty(s) && p.t > 0)) && return
-    nextpermutation(p.a, p.t, s)
-end
 
 function nextpermutation(m, t, state)
     perm = [m[state[i]] for i in 1:t]
