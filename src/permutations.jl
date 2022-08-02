@@ -14,7 +14,7 @@ struct PermutationIterator{T}
     length::Int
 end
 
-function has_repeats(state)
+function has_repeats(state::Vector{Int})
     for outer in 1:length(state)
         for inner in (outer+1):length(state)
             if state[outer] == state[inner]
@@ -25,7 +25,7 @@ function has_repeats(state)
     return false
 end
 
-function increment!(state, max)
+function increment!(state::Vector{Int}, max::Int)
     state[end] += 1
     for i in length(state):-1:2
         if state[i] > max
@@ -35,7 +35,7 @@ function increment!(state, max)
     end
 end
 
-function next_permutation!(state, max)
+function next_permutation!(state::Vector{Int}, max::Int)
     while true
         increment!(state, max)
         if !has_repeats(state)
@@ -44,7 +44,7 @@ function next_permutation!(state, max)
     end
 end
 
-function Base.iterate(p::PermutationIterator, state=ones(Int, p.length))
+function Base.iterate(p::PermutationIterator, state::Vector{Int}=ones(Int, p.length))
     next_permutation!(state, length(p.data))
     if state[1] > length(p.data)
         return nothing
@@ -65,12 +65,19 @@ Use `collect(permutations(a))` to get an array of all permutations.
 """
 permutations(a) = permutations(a, length(a))
 
+"Need special case for strings because we require 1-based indexing, and there is no `size(::String)`"
+permutations(a::AbstractString) = permutations(collect(a), length(a))
+
+"Need special case for strings because we require 1-based indexing, and there is no `size(::String)`"
+permutations(a::AbstractString, t::Integer) = permutations(collect(a), t)
+
 """
     permutations(a, t)
 
 Generate all size `t` permutations of an indexable object `a`.
 """
 function permutations(a, t::Integer)
+    Base.require_one_based_indexing(a)
     if t < 0
         return []
     elseif t > length(a)
