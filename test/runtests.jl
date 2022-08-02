@@ -1,5 +1,7 @@
 using Combinatorics
 using Test
+using PyCall: pyimport
+pyitertools = pyimport("itertools")
 
 include("numbers.jl")
 include("factorials.jl")
