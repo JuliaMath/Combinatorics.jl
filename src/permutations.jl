@@ -42,12 +42,21 @@ function next_permutation!(state::Vector{Int}, min::Int, max::Int)
     end
 end
 
-function Base.iterate(p::PermutationIterator, state::Vector{Int}=fill(firstindex(p.data), p.length))
-    next_permutation!(state, firstindex(p.data), lastindex(p.data))
-    if state[firstindex(state)] > lastindex(p.data)
-        return nothing
+function Base.iterate(p::PermutationIterator, state::Vector{Int}=Int[])
+    if isempty(state)
+        # case for invalid t; iterator is empty
+        p.length > length(p.data) && return nothing
+        state = fill(firstindex(p.data), p.length)
     end
-    [p.data[i] for i in state], state
+    # this is a special case if t=0 we return state [1] below which allows us to terminate early here
+    length(state) == 1 && p.length == 0 && return nothing
+    if !isempty(state)
+        next_permutation!(state, firstindex(p.data), lastindex(p.data))
+        if state[firstindex(state)] > lastindex(p.data)
+            return nothing
+        end
+    end
+    return [p.data[i] for i in state], p.length == 0 ? [1] : state
 end
 
 Base.length(p::PermutationIterator) = Int(div(factorial(big(length(p.data))), factorial(big(length(p.data) - p.length))))
