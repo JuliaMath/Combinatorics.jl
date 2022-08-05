@@ -25,27 +25,25 @@ function has_repeats(state::Vector{Int})
     return false
 end
 
-function increment!(state::Vector{Int}, max::Int)
+function increment!(state::Vector{Int}, min::Int, max::Int)
     state[end] += 1
     for i in reverse(eachindex(state))[begin:end-1]
         if state[i] > max
-            state[i] = 1
+            state[i] = min
             state[i-1] += 1
         end
     end
 end
 
-function next_permutation!(state::Vector{Int}, max::Int)
+function next_permutation!(state::Vector{Int}, min::Int, max::Int)
     while true
-        increment!(state, max)
-        if !has_repeats(state)
-            break
-        end
+        increment!(state, min, max)
+        has_repeats(state) || break
     end
 end
 
 function Base.iterate(p::PermutationIterator, state::Vector{Int}=fill(firstindex(p.data), p.length))
-    next_permutation!(state, lastindex(p.data))
+    next_permutation!(state, firstindex(p.data), lastindex(p.data))
     if state[begin] > lastindex(p.data)
         return nothing
     end
