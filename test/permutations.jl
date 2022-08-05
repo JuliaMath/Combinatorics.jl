@@ -1,3 +1,5 @@
+using OffsetArrays
+
 @testset "permutations" begin
     @test collect(permutations("abc")) == Any[['a', 'b', 'c'], ['a', 'c', 'b'], ['b', 'a', 'c'],
         ['b', 'c', 'a'], ['c', 'a', 'b'], ['c', 'b', 'a']]
@@ -17,6 +19,15 @@
     @test collect(permutations("", -1)) == Any[]
 
     @inferred first(permutations("abc", 2))
+
+    @testset "offset arrays" begin
+        v = [1, 2, 3]
+        ov = OffsetArray(v, -1:1)
+        @test collect(permutations(v, 2)) == collect(permutations(ov, 2)) broken=true
+
+        # This test gets stuck in an infinite loop
+        @test collect(permutations(v)) == collect(permutations(ov)) skip=true
+    end
 
     # multiset_permutations
     @test collect(multiset_permutations("aabc", 5)) == Any[]
