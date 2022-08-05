@@ -27,7 +27,7 @@ end
 
 function increment!(state::Vector{Int}, min::Int, max::Int)
     state[end] += 1
-    for i in reverse(eachindex(state))[begin:end-1]
+    for i in reverse(eachindex(state))[firstindex(state):end-1]
         if state[i] > max
             state[i] = min
             state[i-1] += 1
@@ -44,7 +44,7 @@ end
 
 function Base.iterate(p::PermutationIterator, state::Vector{Int}=fill(firstindex(p.data), p.length))
     next_permutation!(state, firstindex(p.data), lastindex(p.data))
-    if state[begin] > lastindex(p.data)
+    if state[firstindex(state)] > lastindex(p.data)
         return nothing
     end
     [p.data[i] for i in state], state
