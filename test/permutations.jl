@@ -23,10 +23,10 @@ using OffsetArrays
     @testset "offset arrays" begin
         v = [1, 2, 3]
         ov = OffsetArray(v, -1:1)
-        @test collect(permutations(v, 2)) == collect(permutations(ov, 2)) broken=true
+        @test collect(permutations(v, 2)) == collect(permutations(ov, 2))
 
         # This test gets stuck in an infinite loop
-        @test collect(permutations(v)) == collect(permutations(ov)) skip=true
+        @test collect(permutations(v)) == collect(permutations(ov))
     end
 
     # multiset_permutations
