@@ -236,8 +236,9 @@ end
 # Parity of permutations
 
 const levicivita_lut = cat([0 0 0; 0 0 1; 0 -1 0],
-    [0 0 -1; 0 0 0; 1 0 0],
-    [0 1 0; -1 0 0; 0 0 0]; dims=3)
+                           [0 0 -1; 0 0 0; 1 0 0],
+                           [0 1 0; -1 0 0; 0 0 0];
+                           dims=3)
 
 """
     levicivita(p)
