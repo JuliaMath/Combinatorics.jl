@@ -47,6 +47,12 @@ function Base.iterate(p::PermutationIterator, state::Vector{Int}=Int[])
         # case for invalid t; iterator is empty
         p.length > length(p.data) && return nothing
         state = fill(firstindex(p.data), p.length)
+        # In the case p.length == 1, need to bump back the state so the iteration 
+        # algorithm works properly. As example, try running permutations(1:3, 1) without
+        # the below `if` statement and see how it returns [[2], [3], #undef]
+        if length(state) == 1
+            state[1] -= 1
+        end
     end
     # this is a special case if t=0 we return state [1] below which allows us to terminate early here
     length(state) == 1 && p.length == 0 && return nothing
@@ -59,8 +65,14 @@ function Base.iterate(p::PermutationIterator, state::Vector{Int}=Int[])
     return [p.data[i] for i in state], p.length == 0 ? [1] : state
 end
 
-Base.length(p::PermutationIterator) = Int(div(factorial(big(length(p.data))), factorial(big(length(p.data) - p.length))))
+function Base.length(p::PermutationIterator)
+    length(p.data) < p.length && return 0
+    return Int(prod(big(length(p.data) - p.length + 1):big(length(p.data))))
+end
+
 Base.eltype(p::PermutationIterator) = Vector{eltype(p.data)}
+
+Base.IteratorSize(p::PermutationIterator) = Base.HasLength()
 
 
 """
@@ -69,6 +81,7 @@ Base.eltype(p::PermutationIterator) = Vector{eltype(p.data)}
 Generate all permutations of an indexable object `a` in lexicographic order. Because the number of permutations
 can be very large, this function returns an iterator object.
 Use `collect(permutations(a))` to get an array of all permutations.
+Only works for `a` with defined length. 
 """
 permutations(a) = permutations(a, length(a))
 
@@ -76,16 +89,13 @@ permutations(a) = permutations(a, length(a))
     permutations(a, t)
 
 Generate all size `t` permutations of an indexable object `a`.
+Only works for `a` with defined length. 
 """
 function permutations(a, t::Integer)
     if t < 0
-        return []
-    elseif t > length(a)
-        return []
-    elseif t == 0
-        return [Vector{eltype(a)}()]
+        t = length(a) + 1
     end
-    PermutationIterator(a, t)
+    return PermutationIterator(a, t)
 end
 
 

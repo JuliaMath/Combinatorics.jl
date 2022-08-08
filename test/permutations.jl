@@ -1,5 +1,10 @@
 using OffsetArrays
 
+struct PermutationIterator{T}
+    data::T
+    length::Int
+end
+
 @testset "permutations" begin
     @test collect(permutations("abc")) == Any[['a', 'b', 'c'], ['a', 'c', 'b'], ['b', 'a', 'c'],
         ['b', 'c', 'a'], ['c', 'a', 'b'], ['c', 'b', 'a']]
@@ -12,6 +17,7 @@ using OffsetArrays
     @test collect(permutations("abc", 4)) == Any[]
     @test collect(permutations("abc", 2)) == Any[['a', 'b'], ['a', 'c'], ['b', 'a'],
         ['b', 'c'], ['c', 'a'], ['c', 'b']]
+    @test collect(permutations(1:5, 1)) == [[x] for x in 1:5]
     @test collect(permutations("abc", 0)) == Any[Char[]]
     @test collect(permutations("abc", -1)) == Any[]
     @test collect(permutations("", 1)) == Any[]
@@ -19,6 +25,41 @@ using OffsetArrays
     @test collect(permutations("", -1)) == Any[]
 
     @inferred first(permutations("abc", 2))
+
+    # check if all works for empty collections and various t
+    @test collect(permutations([], -1)) == Any[]
+    @test collect(permutations([], 0)) == Any[Any[]]
+    @test collect(permutations([], 1)) == Any[]
+    @inferred PermutationIterator{Int} permutations(Vector{Int}[], 0)
+    @inferred PermutationIterator{Int} permutations(Vector{Int}[], -1)
+    @inferred PermutationIterator{Int} permutations(Vector{Int}[], 1)
+    @inferred Vector{Int} collect(permutations(Vector{Int}[], 0))
+    @inferred Vector{Int} collect(permutations(Vector{Int}[], -1))
+    @inferred Vector{Int} collect(permutations(Vector{Int}[], 1))
+
+    # check if all works for non-empty collections and various t
+    @inferred PermutationIterator{Int} permutations([1, 2, 3], -1)
+    @inferred PermutationIterator{Int} permutations([1, 2, 3], 0)
+    @inferred PermutationIterator{Int} permutations([1, 2, 3], 1)
+    @inferred Vector{Int} collect(permutations([1, 2, 3], 2))
+    @inferred Vector{Int} collect(permutations([1, 2, 3], -1))
+    @inferred Vector{Int} collect(permutations([1, 2, 3], 0))
+    @inferred Vector{Int} collect(permutations([1, 2, 3], 5))
+
+    @testset "permutation lengths" begin
+        expected_lengths = [1, 5, 20, 60, 120, 120]
+        ks = 0:5
+        for (el, k) in zip(expected_lengths, ks)
+            @test length(permutations(1:5, k)) == el
+        end
+    end
+
+    @testset "permutation eltype" begin
+        @test eltype(permutations(1:5)) == Vector{Int64}
+        @test eltype(permutations("abc")) == Vector{Char}
+        @test eltype(permutations([1.0, 2.0])) == Vector{Float64}
+        @test eltype(permutations([big(x) for x in 1:3])) == Vector{BigInt}
+    end
 
     @testset "offset arrays" begin
         v = [1, 2, 3]
