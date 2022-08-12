@@ -62,7 +62,7 @@ function Base.iterate(p::PermutationIterator, state::Vector{Int}=Int[])
             return nothing
         end
     end
-    return [p.data[i] for i in state], p.length == 0 ? [1] : state
+    [p.data[i] for i in state], state
 end
 
 function Base.length(p::PermutationIterator)
@@ -81,7 +81,7 @@ Base.IteratorSize(p::PermutationIterator) = Base.HasLength()
 Generate all permutations of an indexable object `a` in lexicographic order. Because the number of permutations
 can be very large, this function returns an iterator object.
 Use `collect(permutations(a))` to get an array of all permutations.
-Only works for `a` with defined length. 
+Only works for `a` with defined length.
 """
 permutations(a) = permutations(a, length(a))
 
@@ -90,10 +90,11 @@ permutations(a) = permutations(a, length(a))
 
 Generate all size `t` permutations of an indexable object `a`.
 Only works for `a` with defined length. 
+If `(t <= 0) || (t > length(a))`, then returns an empty vector of eltype of `a`
 """
 function permutations(a, t::Integer)
-    if t < 0
-        t = length(a) + 1
+    if (t <= 0) || (t > length(a))
+        return Vector{eltype(a)}()
     end
     return PermutationIterator(a, t)
 end
