@@ -69,11 +69,48 @@ end
         zip(x, Iterators.drop(x, 1))
     end
     s = "abcdefghijklmnopqrstu"
-    s2 = pairwise(s)
+    s2 = collect(pairwise(s))
     k = 3
     for (jl, py) in zip(
         combinations(s2, k),
         pyitertools.combinations(s2, k),
+    )
+        @test jl == collect(py)
+    end
+end
+
+@testset "with_replacement_combinations fuzzing n=10, k=5" begin
+    n = 1:10
+    k = 5
+    for (jl, py) in zip(
+        with_replacement_combinations(n, k),
+        pyitertools.combinations_with_replacement(n, k),
+    )
+        @test jl == collect(py)
+    end
+end
+
+@testset "with_replacement_combinations fuzzing n=100, k=2" begin
+    n = 1:100
+    k = 2
+    for (jl, py) in zip(
+        with_replacement_combinations(n, k),
+        pyitertools.combinations_with_replacement(n, k),
+    )
+        @test jl == collect(py)
+    end
+end
+
+@testset "string with_replacement_combinations fuzzing n=20, k=3" begin
+    function pairwise(x)
+        zip(x, Iterators.drop(x, 1))
+    end
+    s = "abcdefghijklmnopqrstu"
+    s2 = collect(pairwise(s))
+    k = 3
+    for (jl, py) in zip(
+        with_replacement_combinations(s2, k),
+        pyitertools.combinations_with_replacement(s2, k),
     )
         @test jl == collect(py)
     end
