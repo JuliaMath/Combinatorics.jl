@@ -42,25 +42,10 @@ function next_permutation!(state::Vector{Int}, min::Int, max::Int)
     end
 end
 
-function Base.iterate(p::PermutationIterator, state::Vector{Int}=Int[])
-    if isempty(state)
-        # case for invalid t; iterator is empty
-        p.length > length(p.data) && return nothing
-        state = fill(firstindex(p.data), p.length)
-        # In the case p.length == 1, need to bump back the state so the iteration 
-        # algorithm works properly. As example, try running permutations(1:3, 1) without
-        # the below `if` statement and see how it returns [[2], [3], #undef]
-        if length(state) == 1
-            state[1] -= 1
-        end
-    end
-    # this is a special case if t=0 we return state [1] below which allows us to terminate early here
-    length(state) == 1 && p.length == 0 && return nothing
-    if !isempty(state)
-        next_permutation!(state, firstindex(p.data), lastindex(p.data))
-        if state[firstindex(state)] > lastindex(p.data)
-            return nothing
-        end
+function Base.iterate(p::PermutationIterator, state::Vector{Int}=fill(firstindex(p.data), p.length))
+    next_permutation!(state, firstindex(p.data), lastindex(p.data))
+    if state[firstindex(state)] > lastindex(p.data)
+        return nothing
     end
     [p.data[i] for i in state], state
 end
@@ -95,6 +80,8 @@ If `(t <= 0) || (t > length(a))`, then returns an empty vector of eltype of `a`
 function permutations(a, t::Integer)
     if (t <= 0) || (t > length(a))
         return Vector{eltype(a)}()
+    elseif t == 1
+        return ([ai] for ai in a)
     end
     return PermutationIterator(a, t)
 end
