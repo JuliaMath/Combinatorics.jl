@@ -18,21 +18,21 @@ end
     @test collect(permutations("abc", 2)) == Any[['a', 'b'], ['a', 'c'], ['b', 'a'],
         ['b', 'c'], ['c', 'a'], ['c', 'b']]
     @test collect(permutations(1:5, 1)) == [[x] for x in 1:5]
-    @test collect(permutations("abc", 0)) == Char[]
+    @test collect(permutations("abc", 0)) == [Char[]]
     @test collect(permutations("abc", -1)) == Any[]
     @test collect(permutations("", 1)) == Any[]
-    @test collect(permutations("", 0)) == Char[]
+    @test collect(permutations("", 0)) == [Char[]]
     @test collect(permutations("", -1)) == Any[]
 
     @inferred first(permutations("abc", 2))
 
     # check if all works for empty collections and various t
     @test collect(permutations([], -1)) == Any[]
-    @test collect(permutations([], 0)) == Any[]
+    @test collect(permutations([], 0)) == [Any[]]
     @test collect(permutations([], 1)) == Any[]
     
     @testset "permutation lengths" begin
-        expected_lengths = [0, 5, 20, 60, 120, 120]
+        expected_lengths = [1, 5, 20, 60, 120, 120]
         ks = 0:5
         for (el, k) in zip(expected_lengths, ks)
             @test length(permutations(1:5, k)) == el
@@ -103,6 +103,6 @@ end
     end
 
     @test Combinatorics.nsetpartitions(-1) == 0
-    @test collect(permutations([])) == []
+    @test collect(permutations([])) == [[]]
 
 end

@@ -78,10 +78,12 @@ Only works for `a` with defined length.
 If `(t <= 0) || (t > length(a))`, then returns an empty vector of eltype of `a`
 """
 function permutations(a, t::Integer)
-    if (t <= 0) || (t > length(a))
-        return Vector{eltype(a)}()
+    if t == 0
+        return [Vector{eltype(a)}() for _ in 1:1]
     elseif t == 1
-        return ([ai] for ai in a)
+        return [[ai] for ai in a]
+    elseif (t < 0) || (t > length(a))
+        return Vector{Vector{eltype(a)}}()
     end
     return PermutationIterator(a, t)
 end
