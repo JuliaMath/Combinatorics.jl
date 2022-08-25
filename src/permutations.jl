@@ -79,10 +79,13 @@ If `(t <= 0) || (t > length(a))`, then returns an empty vector of eltype of `a`
 """
 function permutations(a, t::Integer)
     if t == 0
-        return [Vector{eltype(a)}() for _ in 1:1]
+        # Correct behavior for a permutation of length 0 is a vector containing a single empty vector 
+        return [Vector{eltype(a)}()]
     elseif t == 1
+        # Easy case, just return each element in it's own vector
         return [[ai] for ai in a]
     elseif (t < 0) || (t > length(a))
+        # Correct behavior for a permutation of these lengths is a an empty vector (of the correct type)
         return Vector{Vector{eltype(a)}}()
     end
     return PermutationIterator(a, t)
