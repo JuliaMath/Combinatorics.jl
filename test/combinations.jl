@@ -1,10 +1,10 @@
 @test [combinations([])...] == []
-@test [combinations(['a', 'b', 'c'])...] == Any[['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
+@test [combinations(['a', 'b', 'c'])...] == [['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
 
-@test [combinations("abc",3)...] == Any[['a','b','c']]
-@test [combinations("abc",2)...] == Any[['a','b'],['a','c'],['b','c']]
-@test [combinations("abc",1)...] == Any[['a'],['b'],['c']]
-@test [combinations("abc",0)...] == Any[[]]
+@test [combinations("abc",3)...] == [['a','b','c']]
+@test [combinations("abc",2)...] == [['a','b'],['a','c'],['b','c']]
+@test [combinations("abc",1)...] == [['a'],['b'],['c']]
+@test [combinations("abc",0)...] == [[]]
 @test [combinations("abc",-1)...] == []
 
 @test filter(x->iseven(x[1]),[combinations([1,2,3],2)...]) == Any[[2,3]]

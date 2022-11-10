@@ -146,17 +146,16 @@ end
 In-place version of [`nthperm`](@ref); the array `a` is overwritten.
 """
 function nthperm!(a::AbstractVector, k::Integer)
-    k -= 1 # make k 1-indexed
-    k < 0 && throw(ArgumentError("permutation k must be ≥ 0, got $k"))
     n = length(a)
     n == 0 && return a
-    f = factorial(oftype(k, n-1))
+    f = factorial(oftype(k, n))
+    0 < k <= f || throw(ArgumentError("permutation k must satisfy 0 < k ≤ $f, got $k"))
+    k -= 1 # make k 1-indexed
     for i=1:n-1
-        j = div(k, f) + 1
-        k = k % f
-        f = div(f, n-i)
-
-        j = j+i-1
+        f ÷= n - i + 1
+        j = k ÷ f
+        k -= j * f
+        j += i
         elt = a[j]
         for d = j:-1:i+1
             a[d] = a[d-1]

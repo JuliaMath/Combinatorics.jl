@@ -1,8 +1,5 @@
-VERSION < v"0.7.0-beta2.199" && __precompile__()
 
 module Combinatorics
-
-using Polynomials
 
 include("numbers.jl")
 include("factorials.jl")

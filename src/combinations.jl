@@ -5,37 +5,33 @@ export combinations,
        powerset
 
 #The Combinations iterator
-
-struct Combinations{T}
-    a::T
+struct Combinations
+    n::Int
     t::Int
 end
 
-@inline function Base.iterate(c::Combinations, s = collect(1:c.t))
-    (!isempty(s) && s[1] > length(c.a) - c.t + 1) && return
-
-    comb = [c.a[si] for si in s]
-    if c.t == 0
-        # special case to generate 1 result for t==0
-        return (comb, [length(c.a)+2])
+@inline function Base.iterate(c::Combinations, s = [min(c.t - 1, i) for i in 1:c.t])
+    if c.t == 0 # special case to generate 1 result for t==0
+        isempty(s) && return (s, [1])
+        return
     end
-    s = copy(s)
-    for i = length(s):-1:1
+    for i in c.t:-1:1
         s[i] += 1
-        if s[i] > (length(c.a) - (length(s) - i))
+        if s[i] > (c.n - (c.t - i))
             continue
         end
-        for j = i+1:lastindex(s)
-            s[j] = s[j-1]+1
+        for j in i+1:c.t
+            s[j] = s[j-1] + 1
         end
         break
     end
-    (comb, s)
+    s[1] > c.n - c.t + 1 && return
+    (s, s)
 end
 
-Base.length(c::Combinations) = binomial(length(c.a), c.t)
+Base.length(c::Combinations) = binomial(c.n, c.t)
 
-Base.eltype(::Type{Combinations{T}}) where {T} = Vector{eltype(T)}
+Base.eltype(::Type{Combinations}) = Vector{Int}
 
 """
     combinations(a, n)
@@ -49,7 +45,8 @@ function combinations(a, t::Integer)
         # generate 0 combinations for negative argument
         t = length(a) + 1
     end
-    Combinations(a, t)
+    reorder(c) = [a[ci] for ci in c]
+    (reorder(c) for c in Combinations(length(a), t))
 end
 
 

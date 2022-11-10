@@ -2,6 +2,8 @@
 
 export bellnum,
     catalannum,
+    lobbnum,
+    narayana,
     fibonaccinum,
     jacobisymbol,
     lassallenum,
@@ -15,23 +17,23 @@ export bellnum,
 
 Compute the ``n``th Bell number.
 """
-function bellnum(bn::Integer)
-    if bn < 0
-        throw(DomainError(bn, "n must be nonnegative"))
-    else
-        n = BigInt(bn)
+function bellnum(n::Integer)
+    if n < 0
+        throw(DomainError(n))
+    elseif n < 2
+        return 1
     end
-    list = Vector{BigInt}(undef, div(n*(n+1), 2))
+    list = Vector{BigInt}(undef, n)
     list[1] = 1
     for i = 2:n
-        beg = div(i*(i-1),2)
-        list[beg+1] = list[beg]
-        for j = 2:i
-            list[beg+j] = list[beg+j-1]+list[beg+j-i]
+        for j = 1:i - 2
+            list[i - j - 1] += list[i - j]
         end
+        list[i] = list[1] + list[i - 1]
     end
-    return list[end]
+    return list[n]
 end
+
 
 """
     catalannum(n)
@@ -45,6 +47,38 @@ function catalannum(bn::Integer)
         n = BigInt(bn)
     end
     div(binomial(2*n, n), (n + 1))
+end
+
+"""
+    lobbnum(m,n)
+
+Compute the Lobb number `L(m,n)`, or the generalised Catalan number given by ``\\frac{2m+1}{m+n+1} \\binom{2n}{m+n}``.
+Wikipedia : https://en.wikipedia.org/wiki/Lobb_number
+"""
+function lobbnum(bm::Integer,bn::Integer)
+    if !(0 <= bm <= bn)
+        throw(DomainError("m and n must be non-negative"))
+    else
+        m = BigInt(bm)
+        n = BigInt(bn)
+    end
+    div(binomial(2*n, m + n)*(2*m + 1), (m + n + 1))
+end
+
+"""
+    narayana(n,k)
+
+Compute the Narayana number `N(n,k)` given by ``\\frac{1}{n}\\binom{n}{k}\\binom{n}{k-1}``
+Wikipedia : https://en.wikipedia.org/wiki/Narayana_number
+"""
+function narayana(bn::Integer,bk::Integer)
+    if !(1 <= bk <= bn)
+        throw(DomainError("Domain is 1 <= k <= n"))
+    else
+        n = BigInt(bn)
+        k = BigInt(bk)
+    end
+    div(binomial(n, k)*binomial(n, k - 1) , n)
 end
 
 function fibonaccinum(n::Integer)
