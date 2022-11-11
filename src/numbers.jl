@@ -68,7 +68,7 @@ end
 """
     narayana(n,k)
 
-Compute the Narayana number `N(n,k)` given by ``\\frac{1}{n}\\binom{n}{k}\\binom{n}{k-1}``
+Compute the Narayana number `N(n,k)`` given by ``\\frac{1}{n}\\binom{n}{k}\\binom{n}{k-1}``
 Wikipedia : https://en.wikipedia.org/wiki/Narayana_number
 """
 function narayana(bn::Integer,bk::Integer)
@@ -125,19 +125,23 @@ function lucasnum(n::Integer)
     return z[]
 end
 
-function stirlings1(n::Int, k::Int, signed::Bool=false)
+stirlings1cache = Dict()
+
+function stirlings1(n::Integer, k::Integer, signed::Bool=false)
     if signed == true
         return (-1)^(n - k) * stirlings1(n, k)
     end
 
-    if n < 0
+    if haskey(stirlings1cache, Pair(n, k))
+        return stirlings1cache[Pair(n, k)]
+    elseif n < 0
         throw(DomainError(n, "n must be nonnegative"))
     elseif n == k == 0
-        return 1
+        return one(n)
     elseif n == 0 || k == 0
-        return 0
+        return zero(n)
     elseif n == k
-        return 1
+        return one(n)
     elseif k == 1
         return factorial(n-1)
     elseif k == n - 1
@@ -148,21 +152,29 @@ function stirlings1(n::Int, k::Int, signed::Bool=false)
         return binomial(n, 2) * binomial(n, 4)
     end
 
-    return (n - 1) * stirlings1(n - 1, k) + stirlings1(n - 1, k - 1)
+    ret = (n - 1) * stirlings1(n - 1, k) + stirlings1(n - 1, k - 1)
+    stirlings1cache[Pair(n, k)] = ret
+    return ret
 end
 
-function stirlings2(n::Int, k::Int)
+stirlings2cache = Dict()
+
+function stirlings2(n::Integer, k::Integer)
     if n < 0
         throw(DomainError(n, "n must be nonnegative"))
+    elseif haskey(stirlings2cache, Pair(n, k))
+        return stirlings2cache[Pair(n, k)]
     elseif n == k == 0
-        return 1
+        return one(n)
     elseif n == 0 || k == 0
-        return 0
+        return zero(n)
     elseif k == n - 1
         return binomial(n, 2)
     elseif k == 2
         return 2^(n-1) - 1
     end
 
-    return k * stirlings2(n - 1, k) + stirlings2(n - 1, k - 1)
+    ret = k * stirlings2(n - 1, k) + stirlings2(n - 1, k - 1)
+    stirlings2cache[Pair(n, k)] = ret
+    ret
 end
