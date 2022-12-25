@@ -1,6 +1,3 @@
-using Combinatorics
-using Base.Test
-
 @test factorial(7,3) == 7*6*5*4
 @test_throws DomainError factorial(3,7)
 @test_throws DomainError factorial(-3,-7)
@@ -14,12 +11,20 @@ using Base.Test
 @test derangement(4) == subfactorial(4) == 9
 @test derangement(24) == parse(BigInt,"228250211305338670494289")
 
+# partialderangement
+@test partialderangement(7, 3) == 315
+@test_throws DomainError partialderangement(8, 9)
+@test_throws DomainError partialderangement(-8, 0)
+
 # doublefactorial
 @test doublefactorial(70) == parse(BigInt,"355044260642859198243475901411974413130137600000000")
 @test_throws DomainError doublefactorial(-1)
 
 # hyperfactorial
 @test hyperfactorial(8) == parse(BigInt,"55696437941726556979200000")
+@test hyperfactorial(0) == parse(BigInt,"1")
+@test hyperfactorial(1) == parse(BigInt,"1")
+@test hyperfactorial(2) == parse(BigInt,"4")
 
 # multifactorial
 @test multifactorial(40,2) == doublefactorial(40)
@@ -31,4 +36,3 @@ using Base.Test
 # primorial
 @test primorial(17) == 510510
 @test_throws DomainError primorial(-1)
-
