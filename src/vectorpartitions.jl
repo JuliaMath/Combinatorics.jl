@@ -34,14 +34,14 @@ function vector_partitions(vector::Vector{Int64},min=zeros(Integer,length(vector
         throw(DomainError(max, "vector must have nonnegative entries"))
     end
   
-    vpartitions=Vector{Vector{Vector{Int64}}}[]
+    vpartitions=[]
   
     if min == zeros(Integer,length(vector))
         min = lexicographic_nonzero_minimum(vector)
     end
   
     if vector == zeros(Integer,length(vector))
-        vpartitions = []
+        vpartitions=[]
     else
         for vec in lexicographic_summand_range(vector,min)
             if vec == vector
