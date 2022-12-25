@@ -1,6 +1,3 @@
-using Combinatorics
-using Base.Test
-
 # catalan
 @test catalannum(5) == 42
 @test catalannum(30) == parse(BigInt,"3814986502092304")
@@ -10,6 +7,16 @@ using Base.Test
 @test fibonaccinum(5) == 5
 @test fibonaccinum(101) == parse(BigInt,"573147844013817084101")
 @test_throws DomainError fibonaccinum(-1)
+
+# lobb
+@test lobbnum(2,3) == 5 
+@test lobbnum(50,100) == parse(BigInt,"303574146822833458064977353764024400258025594128")
+@test_throws DomainError lobbnum(-1,2)
+
+# narayana
+@test narayana(8,5) == 490
+@test narayana(100,50) == parse(BigInt, "99794739256977899071474889425225225330079579752931446368")
+@test_throws DomainError narayana(-1,-1)
 
 # lassalle
 @test lassallenum(14) == parse(BigInt,"270316008395632253340")
@@ -59,6 +66,19 @@ using Base.Test
 @test stirlings2(6, 6) == 1
 
 # bell
-@test bellnum(7) == 877
+@test bellnum.(0:10) == [
+      1
+      1
+      2
+      5
+     15
+     52
+    203
+    877
+   4140
+  21147
+ 115975
+ ]
+
 @test bellnum(42) == parse(BigInt,"35742549198872617291353508656626642567")
-@test_throws DomainError bellnum(-1)
+@test_throws DomainError(-1) bellnum(-1)
