@@ -8,5 +8,6 @@
 @test collect(vector_partitions([2,1],[3,2])) == []
 
 @test_throws DomainError vector_partitions([-3,2])
+@test_throws DomainError vector_partitions([3,2],[-2,-3])
 
 @test length(vector_partitions([1,1],[2,3])) == 0
