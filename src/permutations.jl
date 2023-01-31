@@ -84,9 +84,9 @@ function permutations(a, t::Integer)
         # Correct behavior for a permutation of length 0 is a vector containing a single empty vector 
         return [Vector{eltype(a)}()]
     elseif t == 1
-        # Easy case, just return each element in it's own vector
+        # Easy case, just return each element in its own vector
         return [[ai] for ai in a]
-    elseif (t < 0) || (t > length(a))
+    elseif t < 0 || t > length(a)
         # Correct behavior for a permutation of these lengths is a an empty vector (of the correct type)
         return Vector{Vector{eltype(a)}}()
     end
