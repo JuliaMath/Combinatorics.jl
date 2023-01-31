@@ -46,7 +46,7 @@ end
 
 function Base.iterate(p::Permutations, state::Vector{Int}=fill(firstindex(p.data), p.length))
     next_permutation!(state, firstindex(p.data), lastindex(p.data))
-    if state[firstindex(state)] > lastindex(p.data)
+    if first(state) > lastindex(p.data)
         return nothing
     end
     [p.data[i] for i in state], state
