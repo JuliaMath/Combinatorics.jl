@@ -18,7 +18,7 @@ function has_repeats(state::Vector{Int})
     # This can be safely marked inbounds because of the type restriction in the signature.
     # If the type restriction is ever loosened, please check safety of the `@inbounds`
     @inbounds for outer in eachindex(state)
-        @inbounds for inner in (outer+1):lastindex(state)
+        for inner in (outer+1):lastindex(state)
             if state[outer] == state[inner]
                 return true
             end
