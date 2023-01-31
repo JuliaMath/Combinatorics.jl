@@ -9,7 +9,7 @@ export
     permutations
 
 
-struct PermutationIterator{T}
+struct Permutations{T}
     data::T
     length::Int
 end
@@ -44,7 +44,7 @@ function next_permutation!(state::Vector{Int}, min::Int, max::Int)
     end
 end
 
-function Base.iterate(p::PermutationIterator, state::Vector{Int}=fill(firstindex(p.data), p.length))
+function Base.iterate(p::Permutations, state::Vector{Int}=fill(firstindex(p.data), p.length))
     next_permutation!(state, firstindex(p.data), lastindex(p.data))
     if state[firstindex(state)] > lastindex(p.data)
         return nothing
@@ -52,14 +52,14 @@ function Base.iterate(p::PermutationIterator, state::Vector{Int}=fill(firstindex
     [p.data[i] for i in state], state
 end
 
-function Base.length(p::PermutationIterator)
+function Base.length(p::Permutations)
     length(p.data) < p.length && return 0
     return Int(prod(big(length(p.data) - p.length + 1):big(length(p.data))))
 end
 
-Base.eltype(p::PermutationIterator) = Vector{eltype(p.data)}
+Base.eltype(p::Permutations) = Vector{eltype(p.data)}
 
-Base.IteratorSize(p::PermutationIterator) = Base.HasLength()
+Base.IteratorSize(p::Permutations) = Base.HasLength()
 
 
 """
@@ -90,7 +90,7 @@ function permutations(a, t::Integer)
         # Correct behavior for a permutation of these lengths is a an empty vector (of the correct type)
         return Vector{Vector{eltype(a)}}()
     end
-    return PermutationIterator(a, t)
+    return Permutations(a, t)
 end
 
 

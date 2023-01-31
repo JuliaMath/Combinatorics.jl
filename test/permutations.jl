@@ -1,6 +1,6 @@
 using OffsetArrays
 
-struct PermutationIterator{T}
+struct Permutations{T}
     data::T
     length::Int
 end
