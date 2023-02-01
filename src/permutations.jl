@@ -10,13 +10,57 @@ export
 
 
 struct Permutations{T}
-    a::T
-    t::Int
+    data::T
+    length::Int
 end
 
-Base.eltype(::Type{Permutations{T}}) where {T} = Vector{eltype(T)}
+function has_repeats(state::Vector{Int})
+    # This can be safely marked inbounds because of the type restriction in the signature.
+    # If the type restriction is ever loosened, please check safety of the `@inbounds`
+    @inbounds for outer in eachindex(state)
+        for inner in (outer+1):lastindex(state)
+            if state[outer] == state[inner]
+                return true
+            end
+        end
+    end
+    return false
+end
 
-Base.length(p::Permutations) = (0 <= p.t <= length(p.a)) ? factorial(length(p.a), length(p.a)-p.t) : 0
+function increment!(state::Vector{Int}, min::Int, max::Int)
+    state[end] += 1
+    for i in reverse(eachindex(state))[firstindex(state):end-1]
+        if state[i] > max
+            state[i] = min
+            state[i-1] += 1
+        end
+    end
+end
+
+function next_permutation!(state::Vector{Int}, min::Int, max::Int)
+    while true
+        increment!(state, min, max)
+        has_repeats(state) || break
+    end
+end
+
+function Base.iterate(p::Permutations, state::Vector{Int}=fill(firstindex(p.data), p.length))
+    next_permutation!(state, firstindex(p.data), lastindex(p.data))
+    if first(state) > lastindex(p.data)
+        return nothing
+    end
+    [p.data[i] for i in state], state
+end
+
+function Base.length(p::Permutations)
+    length(p.data) < p.length && return 0
+    return Int(prod(length(p.data) - p.length + 1:length(p.data)))
+end
+
+Base.eltype(p::Permutations) = Vector{eltype(p.data)}
+
+Base.IteratorSize(p::Permutations) = Base.HasLength()
+
 
 """
     permutations(a)
@@ -24,52 +68,64 @@ Base.length(p::Permutations) = (0 <= p.t <= length(p.a)) ? factorial(length(p.a)
 Generate all permutations of an indexable object `a` in lexicographic order. Because the number of permutations
 can be very large, this function returns an iterator object.
 Use `collect(permutations(a))` to get an array of all permutations.
+Only works for `a` with defined length.
 """
-permutations(a) = Permutations(a, length(a))
+permutations(a) = permutations(a, length(a))
 
 """
     permutations(a, t)
 
 Generate all size `t` permutations of an indexable object `a`.
+Only works for `a` with defined length. 
+If `(t <= 0) || (t > length(a))`, then returns an empty vector of eltype of `a`
 """
 function permutations(a, t::Integer)
-    if t < 0
-        t = length(a) + 1
+    if t == 0
+        # Correct behavior for a permutation of length 0 is a vector containing a single empty vector 
+        return [Vector{eltype(a)}()]
+    elseif t == 1
+        # Easy case, just return each element in its own vector
+        return [[ai] for ai in a]
+    elseif t < 0 || t > length(a)
+        # Correct behavior for a permutation of these lengths is a an empty vector (of the correct type)
+        return Vector{Vector{eltype(a)}}()
     end
-    Permutations(a, t)
+    return Permutations(a, t)
 end
 
-function Base.iterate(p::Permutations, s = collect(1:length(p.a)))
-    (!isempty(s) && max(s[1], p.t) > length(p.a) || (isempty(s) && p.t > 0)) && return
-    nextpermutation(p.a, p.t ,s)
-end
 
 function nextpermutation(m, t, state)
     perm = [m[state[i]] for i in 1:t]
     n = length(state)
     if t <= 0
-        return(perm, [n+1])
+        return (perm, [n + 1])
     end
     s = copy(state)
     if t < n
         j = t + 1
-        while j <= n &&  s[t] >= s[j]; j+=1; end
+        while j <= n && s[t] >= s[j]
+            j += 1
+        end
     end
     if t < n && j <= n
         s[t], s[j] = s[j], s[t]
     else
         if t < n
-            reverse!(s, t+1)
+            reverse!(s, t + 1)
         end
         i = t - 1
-        while i>=1 && s[i] >= s[i+1]; i -= 1; end
+        while i >= 1 && s[i] >= s[i+1]
+            i -= 1
+        end
         if i > 0
             j = n
-            while j>i && s[i] >= s[j]; j -= 1; end
+            while j > i && s[i] >= s[j]
+                j -= 1
+            end
             s[i], s[j] = s[j], s[i]
-            reverse!(s, i+1)
+            reverse!(s, i + 1)
         else
-            s[1] = n+1
+            s[1] = n + 1
         end
     end
     return (perm, s)
@@ -94,18 +150,18 @@ function Base.length(c::MultiSetPermutations)
     else
         g = [factorial(i) for i in 0:t]
     end
-    p = [g[t+1]; zeros(Float64,t)]
+    p = [g[t+1]; zeros(Float64, t)]
     for i in 1:length(c.f)
         f = c.f[i]
         if i == 1
             for j in 1:min(f, t)
-                p[j+1] = g[t+1]/g[j+1]
+                p[j+1] = g[t+1] / g[j+1]
             end
         else
             for j in t:-1:1
                 q = 0
-                for k in (j+1):-1:max(1,j+1-f)
-                    q += p[k]/g[j+2-k]
+                for k in (j+1):-1:max(1, j + 1 - f)
+                    q += p[k] / g[j+2-k]
                 end
                 p[j+1] = q
             end
@@ -134,7 +190,7 @@ function multiset_permutations(m, f::Vector{<:Integer}, t::Integer)
     MultiSetPermutations(m, f, t, ref)
 end
 
-function Base.iterate(p::MultiSetPermutations, s = p.ref)
+function Base.iterate(p::MultiSetPermutations, s=p.ref)
     (!isempty(s) && max(s[1], p.t) > length(p.ref) || (isempty(s) && p.t > 0)) && return
     nextpermutation(p.m, p.t, s)
 end
@@ -151,7 +207,7 @@ function nthperm!(a::AbstractVector, k::Integer)
     f = factorial(oftype(k, n))
     0 < k <= f || throw(ArgumentError("permutation k must satisfy 0 < k ≤ $f, got $k"))
     k -= 1 # make k 1-indexed
-    for i=1:n-1
+    for i = 1:n-1
         f ÷= n - i + 1
         j = k ÷ f
         k -= j * f
@@ -182,7 +238,7 @@ function nthperm(p::AbstractVector{<:Integer})
     isperm(p) || throw(ArgumentError("argument is not a permutation"))
     k, n = 1, length(p)
     for i = 1:n-1
-        f = factorial(n-i)
+        f = factorial(n - i)
         for j = i+1:n
             k += ifelse(p[j] < p[i], f, 0)
         end
@@ -193,9 +249,10 @@ end
 
 # Parity of permutations
 
-const levicivita_lut = cat([0 0  0;  0 0 1; 0 -1 0],
-                           [0 0 -1;  0 0 0; 1  0 0],
-                           [0 1  0; -1 0 0; 0  0 0]; dims=3)
+const levicivita_lut = cat([0 0 0; 0 0 1; 0 -1 0],
+                           [0 0 -1; 0 0 0; 1 0 0],
+                           [0 1 0; -1 0 0; 0 0 0];
+                           dims=3)
 
 """
     levicivita(p)
