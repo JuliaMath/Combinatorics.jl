@@ -43,7 +43,7 @@
     @test collect(powerset(['a', 'b', 'c'], 1)) == Any[['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
     @test collect(powerset(['a', 'b', 'c'], 1, 2)) == Any[['a'],['b'],['c'],['a','b'],['a','c'],['b','c']]
 
-    @testset "combinations fuzzing n=10, k=5" begin
+    @testset "combinations prop test n=10, k=5" begin
         n = 1:10
         k = 5
         for (jl, py) in zip(
@@ -54,7 +54,7 @@
         end
     end
 
-    @testset "combinations fuzzing n=100, k=2" begin
+    @testset "combinations prop test n=100, k=2" begin
         n = 1:100
         k = 2
         for (jl, py) in zip(
@@ -65,7 +65,7 @@
         end
     end
 
-    @testset "string combinations fuzzing n=20, k=3" begin
+    @testset "string combinations prop test n=20, k=3" begin
         s = collect("abcdefghijklmnopqrstu")
         k = 3
         for (jl, py) in zip(
@@ -76,7 +76,7 @@
         end
     end
 
-    @testset "with_replacement_combinations fuzzing n=10, k=5" begin
+    @testset "with_replacement_combinations prop test n=10, k=5" begin
         n = 1:10
         k = 5
         for (jl, py) in zip(
@@ -87,7 +87,7 @@
         end
     end
 
-    @testset "with_replacement_combinations fuzzing n=100, k=2" begin
+    @testset "with_replacement_combinations prop test n=100, k=2" begin
         n = 1:100
         k = 2
         for (jl, py) in zip(
@@ -98,7 +98,7 @@
         end
     end
 
-    @testset "string with_replacement_combinations fuzzing n=20, k=3" begin
+    @testset "string with_replacement_combinations prop test n=20, k=3" begin
         s = collect("abcdefghijklmnopqrstu")
         k = 3
         for (jl, py) in zip(
