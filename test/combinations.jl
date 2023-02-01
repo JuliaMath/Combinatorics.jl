@@ -39,9 +39,9 @@
 
     # Power set
     @test collect(powerset([])) == Any[[]]
-    @test collect(powerset(['a', 'b', 'c'])) == Any[[],['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
-    @test collect(powerset(['a', 'b', 'c'], 1)) == Any[['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
-    @test collect(powerset(['a', 'b', 'c'], 1, 2)) == Any[['a'],['b'],['c'],['a','b'],['a','c'],['b','c']]
+    @test collect(powerset(['a', 'b', 'c'])) == Any[[], ['a'], ['b'], ['c'], ['a', 'b'], ['a', 'c'], ['b', 'c'], ['a', 'b', 'c']]
+    @test collect(powerset(['a', 'b', 'c'], 1)) == Any[['a'], ['b'], ['c'], ['a', 'b'], ['a', 'c'], ['b', 'c'], ['a', 'b', 'c']]
+    @test collect(powerset(['a', 'b', 'c'], 1, 2)) == Any[['a'], ['b'], ['c'], ['a', 'b'], ['a', 'c'], ['b', 'c']]
 
     @testset "combinations prop test n=10, k=5" begin
         n = 1:10
