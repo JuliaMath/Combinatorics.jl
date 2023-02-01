@@ -37,82 +37,76 @@
     @test [CoolLexCombinations(4, 2)...] == Vector[[1, 2], [2, 3], [1, 3], [2, 4], [3, 4], [1, 4]]
     @test isa(iterate(CoolLexCombinations(1000, 20))[2], Combinatorics.CoolLexIterState{BigInt})
 
-# Power set
-@test collect(powerset([])) == Any[[]]
-@test collect(powerset(['a', 'b', 'c'])) == Any[[],['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
-@test collect(powerset(['a', 'b', 'c'], 1)) == Any[['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
-@test collect(powerset(['a', 'b', 'c'], 1, 2)) == Any[['a'],['b'],['c'],['a','b'],['a','c'],['b','c']]
+    # Power set
+    @test collect(powerset([])) == Any[[]]
+    @test collect(powerset(['a', 'b', 'c'])) == Any[[],['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
+    @test collect(powerset(['a', 'b', 'c'], 1)) == Any[['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
+    @test collect(powerset(['a', 'b', 'c'], 1, 2)) == Any[['a'],['b'],['c'],['a','b'],['a','c'],['b','c']]
 
-@testset "combinations fuzzing n=10, k=5" begin
-    n = 1:10
-    k = 5
-    for (jl, py) in zip(
-        combinations(n, k),
-        pyitertools.combinations(n, k),
-    )
-        @test jl == collect(py)
+    @testset "combinations fuzzing n=10, k=5" begin
+        n = 1:10
+        k = 5
+        for (jl, py) in zip(
+            combinations(n, k),
+            pyitertools.combinations(n, k),
+        )
+            @test jl == collect(py)
+        end
     end
-end
 
-@testset "combinations fuzzing n=100, k=2" begin
-    n = 1:100
-    k = 2
-    for (jl, py) in zip(
-        combinations(n, k),
-        pyitertools.combinations(n, k),
-    )
-        @test jl == collect(py)
+    @testset "combinations fuzzing n=100, k=2" begin
+        n = 1:100
+        k = 2
+        for (jl, py) in zip(
+            combinations(n, k),
+            pyitertools.combinations(n, k),
+        )
+            @test jl == collect(py)
+        end
     end
-end
 
-@testset "string combinations fuzzing n=20, k=3" begin
-    function pairwise(x)
-        zip(x, Iterators.drop(x, 1))
+    @testset "string combinations fuzzing n=20, k=3" begin
+        s = collect("abcdefghijklmnopqrstu")
+        k = 3
+        for (jl, py) in zip(
+            combinations(s, k),
+            pyitertools.combinations(s, k),
+        )
+            @test jl == collect(py)
+        end
     end
-    s = "abcdefghijklmnopqrstu"
-    s2 = collect(pairwise(s))
-    k = 3
-    for (jl, py) in zip(
-        combinations(s2, k),
-        pyitertools.combinations(s2, k),
-    )
-        @test jl == collect(py)
-    end
-end
 
-@testset "with_replacement_combinations fuzzing n=10, k=5" begin
-    n = 1:10
-    k = 5
-    for (jl, py) in zip(
-        with_replacement_combinations(n, k),
-        pyitertools.combinations_with_replacement(n, k),
-    )
-        @test jl == collect(py)
+    @testset "with_replacement_combinations fuzzing n=10, k=5" begin
+        n = 1:10
+        k = 5
+        for (jl, py) in zip(
+            with_replacement_combinations(n, k),
+            pyitertools.combinations_with_replacement(n, k),
+        )
+            @test jl == collect(py)
+        end
     end
-end
 
-@testset "with_replacement_combinations fuzzing n=100, k=2" begin
-    n = 1:100
-    k = 2
-    for (jl, py) in zip(
-        with_replacement_combinations(n, k),
-        pyitertools.combinations_with_replacement(n, k),
-    )
-        @test jl == collect(py)
+    @testset "with_replacement_combinations fuzzing n=100, k=2" begin
+        n = 1:100
+        k = 2
+        for (jl, py) in zip(
+            with_replacement_combinations(n, k),
+            pyitertools.combinations_with_replacement(n, k),
+        )
+            @test jl == collect(py)
+        end
     end
-end
 
-@testset "string with_replacement_combinations fuzzing n=20, k=3" begin
-    function pairwise(x)
-        zip(x, Iterators.drop(x, 1))
+    @testset "string with_replacement_combinations fuzzing n=20, k=3" begin
+        s = collect("abcdefghijklmnopqrstu")
+        k = 3
+        for (jl, py) in zip(
+            with_replacement_combinations(s, k),
+            pyitertools.combinations_with_replacement(s, k),
+        )
+            @test jl == collect(py)
+        end
     end
-    s = "abcdefghijklmnopqrstu"
-    s2 = collect(pairwise(s))
-    k = 3
-    for (jl, py) in zip(
-        with_replacement_combinations(s2, k),
-        pyitertools.combinations_with_replacement(s2, k),
-    )
-        @test jl == collect(py)
-    end
+
 end
