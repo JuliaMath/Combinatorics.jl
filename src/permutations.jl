@@ -29,7 +29,7 @@ end
 
 function increment!(state::Vector{Int}, min::Int, max::Int)
     state[end] += 1
-    for i in lastindex(state):-1:(firstindex(state) - 1)
+    for i in reverse(eachindex(state))[firstindex(state):end-1]
         if state[i] > max
             state[i] = min
             state[i-1] += 1
@@ -54,7 +54,7 @@ end
 
 function Base.length(p::Permutations)
     length(p.data) < p.length && return 0
-    return Int(prod(big(length(p.data) - p.length + 1):big(length(p.data))))
+    return Int(prod(length(p.data) - p.length + 1:length(p.data)))
 end
 
 Base.eltype(p::Permutations) = Vector{eltype(p.data)}
