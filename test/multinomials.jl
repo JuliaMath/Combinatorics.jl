@@ -25,4 +25,7 @@ using LinearAlgebra
     @test [multiexponents(2, 2)...] == [[2, 0], [1, 1], [0, 2]]
     @test [multiexponents(3, 3)...] == [[3, 0, 0], [2, 1, 0], [2, 0, 1], [1, 2, 0], [1, 1, 1], [1, 0, 2], [0, 3, 0], [0, 2, 1], [0, 1, 2], [0, 0, 3]]
 
+    # type-stability
+    @test typeof([multiexponents(1, 1)...]) == typeof([[1]])
+    @test eltype(multiexponents(1, 1)) == eltype([[1]])
 end
