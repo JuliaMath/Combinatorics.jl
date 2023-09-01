@@ -172,6 +172,7 @@ end
 
 """
     multiset_permutations(m, f, t)
+    multiset_permutations(a, t)
 
 Generate all permutations of size `t` from an array `a` with possibly duplicated elements.
 """
