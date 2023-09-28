@@ -123,7 +123,7 @@ Base.length(c::Composition)     = binomial(c.n - 1, c.k - 1)
 Base.length(w::WeakComposition) = binomial(w.n + w.k - 1, w.n)
 
 # Base.eltype specialization
-Base.eltype(::AbstractComposition) = Vector{Int}
+Base.eltype(::Type{<:AbstractComposition}) = Vector{Int}
 
 """
     composition(n, k)

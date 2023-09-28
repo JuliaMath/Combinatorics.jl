@@ -77,6 +77,9 @@
         # check non-positive k throws an error
         @test_throws DomainError composition(1, 0)
 
+        # test eltype
+        @test eltype(composition(1, 1)) == Vector{Int}
+
     end
 
     # test weak compositions
@@ -154,6 +157,9 @@
 
         # check non-positive k throws an error
         @test_throws DomainError weak_composition(1, 0)
+
+        # test eltype
+        @test eltype(weak_composition(1, 1)) == Vector{Int}
 
     end
 
