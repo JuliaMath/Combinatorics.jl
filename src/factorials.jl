@@ -38,9 +38,17 @@ Base.factorial(n::Integer, k::Integer) = factorial(promote(n, k)...)
 Compute the number of permutations of `n` with no fixed points, also known as the
 subfactorial. An alias `subfactorial` for this function is provided for convenience.
 """
-function derangement(sn::Integer)
-    n = BigInt(sn)
-    return numerator(factorial(n) * sum([(-1)^k // factorial(k) for k = 0:n]))
+function derangement(n::Integer)
+    if n < 0
+        throw(DomainError(n, "n must be nonnegative"))
+    elseif n <= 1
+        return BigInt(1-n)
+    end
+    a, b = BigInt(1), BigInt(0)
+    for i in 2:n
+        a, b = b, (i-1)*(a+b)
+    end
+    return b
 end
 const subfactorial = derangement
 
