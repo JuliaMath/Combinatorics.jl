@@ -44,11 +44,17 @@ function derangement(n::Integer)
     elseif n <= 1
         return BigInt(1-n)
     end
-    a, b = BigInt(1), BigInt(0)
+    d = BigInt(0)
     for i in 2:n
-        a, b = b, (i-1)*(a+b)
+        # d = i * d + (iseven(i) ? 1 : -1)
+        Base.GMP.MPZ.mul_ui!(d, i)
+        if iseven(i)
+            Base.GMP.MPZ.add_ui!(d, 1)
+        else
+            Base.GMP.MPZ.sub_ui!(d, 1)
+        end
     end
-    return b
+    return d
 end
 const subfactorial = derangement
 
