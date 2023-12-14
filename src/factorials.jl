@@ -29,6 +29,17 @@ function Base.factorial(n::T, k::T) where T<:Integer
     end
     return f
 end
+function Base.factorial(n::BigInt, k::BigInt)
+    if k < 0 || n < 0 || k > n
+        throw(DomainError((n, k), "n and k must be nonnegative with k ≤ n"))
+    end
+    f = BigInt(1)
+    while n > k
+        Base.GMP.MPZ.mul!(f, n)
+        Base.GMP.MPZ.sub_ui!(n, 1)
+    end
+    return f
+end
 Base.factorial(n::Integer, k::Integer) = factorial(promote(n, k)...)
 
 
