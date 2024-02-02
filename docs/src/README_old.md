@@ -1,6 +1,6 @@
 # Combinatorics
 
-[![Build Status](https://travis-ci.org/JuliaMath/Combinatorics.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/Combinatorics.jl)
+[![CI](https://github.com/JuliaMath/Combinatorics.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/JuliaMath/Combinatorics.jl/actions/workflows/CI.yml)
 [![Coverage Status](https://coveralls.io/repos/github/JuliaMath/Combinatorics.jl/badge.svg?branch=master)](https://coveralls.io/github/JuliaMath/Combinatorics.jl?branch=master)
 [![Codecov](https://codecov.io/gh/JuliaMath/Combinatorics.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaMath/Combinatorics.jl)
 
