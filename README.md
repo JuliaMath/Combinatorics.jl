@@ -4,7 +4,7 @@
 [![deps](https://juliahub.com/docs/General/Combinatorics/stable/deps.svg)](https://juliahub.com/ui/Packages/General/Combinatorics?t=2)
 [![CI](https://github.com/JuliaMath/Combinatorics.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/JuliaMath/Combinatorics.jl/actions/workflows/CI.yml)
 [![Coverage Status](https://coveralls.io/repos/github/JuliaMath/Combinatorics.jl/badge.svg?branch=master)](https://coveralls.io/github/JuliaMath/Combinatorics.jl?branch=master)
-[![Codecov](https://codecov.io/gh/JuliaMath/Combinatorics.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaMath/Combinatorics.jl)
+[![codecov](https://codecov.io/gh/JuliaMath/Combinatorics.jl/graph/badge.svg?token=ov65P61lvZ)](https://codecov.io/gh/JuliaMath/Combinatorics.jl)
 
 A combinatorics library for Julia, focusing mostly (as of now) on enumerative
 combinatorics and permutations.  As overflows are expected even for low values,
