@@ -1,4 +1,5 @@
 name: CI
+
 on:
   pull_request:
   push:
@@ -6,6 +7,7 @@ on:
       - master
       - main
     tags: '*'
+
 jobs:
   test:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
@@ -17,7 +19,7 @@ jobs:
           - '1.0'
           - '1.6'
           - '1'
-#          - 'nightly'
+          # - 'nightly'
         os:
           - ubuntu-latest
           - macOS-latest
@@ -51,14 +53,30 @@ jobs:
     name: Documentation
     runs-on: ubuntu-latest
     permissions:
+      actions: write # needed to allow julia-actions/cache to proactively delete old caches that it has created
       contents: write
+      statuses: write
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v1
         with:
           version: '1'
           show-versioninfo: true
+      - uses: julia-actions/cache@v1
+      - name: Configure doc environment
+        shell: julia --project=docs --color=yes {0}
+        run: |
+          using Pkg
+          Pkg.develop(PackageSpec(path=pwd()))
+          Pkg.instantiate()
       - uses: julia-actions/julia-buildpkg@v1
+      - name: Run doctests
+        shell: julia --project=docs --color=yes {0}
+        run: |
+          using Documenter: DocMeta, doctest
+          using Combinatorics
+          DocMeta.setdocmeta!(Combinatorics, :DocTestSetup, :(using Combinatorics); recursive=true)
+          doctest(Combinatorics)
       - uses: julia-actions/julia-docdeploy@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
