@@ -30,7 +30,7 @@ end
     @test collect(permutations([], -1)) == Any[]
     @test collect(permutations([], 0)) == [Any[]]
     @test collect(permutations([], 1)) == Any[]
-    
+
     @testset "permutation lengths" begin
         expected_lengths = [1, 5, 20, 60, 120, 120]
         ks = 0:5
@@ -104,5 +104,38 @@ end
 
     @test Combinatorics.nsetpartitions(-1) == 0
     @test collect(permutations([])) == [[]]
+
+    @testset "permutations prop test n=10, k=5" begin
+        n = 1:10
+        k = 5
+        for (jl, py) in zip(
+            permutations(n, k),
+            pyitertools.permutations(n, k),
+        )
+            @test jl == collect(py)
+        end
+    end
+
+    @testset "permutations prop test n=100, k=2" begin
+        n = 1:100
+        k = 2
+        for (jl, py) in zip(
+            permutations(n, k),
+            pyitertools.permutations(n, k),
+        )
+            @test jl == collect(py)
+        end
+    end
+
+    @testset "string permutations prop test n=20, k=3" begin
+        s = collect("abcdefghijklmnopqrstu")
+        k = 3
+        for (jl, py) in zip(
+            permutations(s, k),
+            pyitertools.permutations(s, k),
+        )
+            @test jl == collect(py)
+        end
+    end
 
 end

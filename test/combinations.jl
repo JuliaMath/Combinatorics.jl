@@ -43,4 +43,70 @@
     @test collect(powerset(['a', 'b', 'c'], 1)) == Any[['a'], ['b'], ['c'], ['a', 'b'], ['a', 'c'], ['b', 'c'], ['a', 'b', 'c']]
     @test collect(powerset(['a', 'b', 'c'], 1, 2)) == Any[['a'], ['b'], ['c'], ['a', 'b'], ['a', 'c'], ['b', 'c']]
 
+    @testset "combinations prop test n=10, k=5" begin
+        n = 1:10
+        k = 5
+        for (jl, py) in zip(
+            combinations(n, k),
+            pyitertools.combinations(n, k),
+        )
+            @test jl == collect(py)
+        end
+    end
+
+    @testset "combinations prop test n=100, k=2" begin
+        n = 1:100
+        k = 2
+        for (jl, py) in zip(
+            combinations(n, k),
+            pyitertools.combinations(n, k),
+        )
+            @test jl == collect(py)
+        end
+    end
+
+    @testset "string combinations prop test n=20, k=3" begin
+        s = collect("abcdefghijklmnopqrstu")
+        k = 3
+        for (jl, py) in zip(
+            combinations(s, k),
+            pyitertools.combinations(s, k),
+        )
+            @test jl == collect(py)
+        end
+    end
+
+    @testset "with_replacement_combinations prop test n=10, k=5" begin
+        n = 1:10
+        k = 5
+        for (jl, py) in zip(
+            with_replacement_combinations(n, k),
+            pyitertools.combinations_with_replacement(n, k),
+        )
+            @test jl == collect(py)
+        end
+    end
+
+    @testset "with_replacement_combinations prop test n=100, k=2" begin
+        n = 1:100
+        k = 2
+        for (jl, py) in zip(
+            with_replacement_combinations(n, k),
+            pyitertools.combinations_with_replacement(n, k),
+        )
+            @test jl == collect(py)
+        end
+    end
+
+    @testset "string with_replacement_combinations prop test n=20, k=3" begin
+        s = collect("abcdefghijklmnopqrstu")
+        k = 3
+        for (jl, py) in zip(
+            with_replacement_combinations(s, k),
+            pyitertools.combinations_with_replacement(s, k),
+        )
+            @test jl == collect(py)
+        end
+    end
+
 end
