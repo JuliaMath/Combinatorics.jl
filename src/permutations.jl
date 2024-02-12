@@ -1,6 +1,7 @@
 #Permutations
 
 export
+    derangements,
     levicivita,
     multiset_permutations,
     nthperm!,
@@ -92,6 +93,16 @@ function permutations(a, t::Integer)
     end
     return Permutations(a, t)
 end
+
+"""
+    derangements(a)
+
+Generate all derangements of an indexable object `a` in lexicographic order.
+Because the number of derangements can be very large, this function returns an iterator object.
+Use `collect(derangements(a))` to get an array of all derangements.
+Only works for `a` with defined length.
+"""
+derangements(a) = (d for d in multiset_permutations(a, length(a)) if all(t -> t[1] != t[2], zip(a, d)))
 
 
 function nextpermutation(m, t, state)

@@ -66,6 +66,13 @@ end
     @test collect(multiset_permutations("", -1)) == Any[]
     @test length(multiset_permutations("aaaaaaaaaaaaaaaaaaaaab", 21)) == 22
 
+    # derangements
+    @test collect(derangements(Int[])) == [[]]
+    @test length(collect(derangements(1:4))) == 9
+    @test length(collect(derangements(1:8))) == derangement(8) == 14833
+    @test collect(derangements([1, 1, 2, 2])) == [[2, 2, 1, 1]]
+    @test collect(map(join, derangements("abbac"))) == ["baacb", "bacba", "bcaba", "caabb"]
+
     #nthperm!
     for n = 0:7, k = 1:factorial(n)
         p = nthperm!([1:n;], k)
