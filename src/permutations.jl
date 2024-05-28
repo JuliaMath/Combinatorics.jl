@@ -170,10 +170,22 @@ function Base.length(c::MultiSetPermutations)
     return round(Int, p[t+1])
 end
 
+
+"""
+    multiset_permutations(a)
+
+Generate all permutations of an array `a` where `a` may have duplicated elements.
+"""
+function multiset_permutations(a)
+    m = unique(collect(a))
+    f = [sum([c == x for c in a]) for x in m]
+    multiset_permutations(m, f, length(a))
+end
+
 """
     multiset_permutations(a, t)
 
-Generate all permutations of size `t` from an array `a` with possibly duplicated elements.
+Generate all permutations of size `t` from an array `a` where `a` may have duplicated elements.
 """
 function multiset_permutations(a, t::Integer)
     m = unique(collect(a))

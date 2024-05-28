@@ -59,6 +59,8 @@ end
     @test collect(multiset_permutations("aabc", 5)) == Any[]
     @test collect(multiset_permutations("aabc", 2)) == Any[['a', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'a'],
         ['b', 'c'], ['c', 'a'], ['c', 'b']]
+    @test collect(multiset_permutations("aabcc", 5)) == collect(multiset_permutations("aabcc"))
+    @test collect(multiset_permutations("aabc")) == Any[Char[]]
     @test collect(multiset_permutations("aabc", 0)) == Any[Char[]]
     @test collect(multiset_permutations("aabc", -1)) == Any[]
     @test collect(multiset_permutations("", 1)) == Any[]
