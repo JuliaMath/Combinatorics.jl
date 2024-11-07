@@ -178,7 +178,7 @@ Generate all permutations of an array `a` where `a` may have duplicated elements
 """
 function multiset_permutations(a)
     m = unique(collect(a))
-    f = [sum([c == x for c in a]) for x in m]
+    f = [count(==(x), a) for x in m]
     multiset_permutations(m, f, length(a))
 end
 
