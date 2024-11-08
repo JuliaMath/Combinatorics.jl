@@ -34,7 +34,7 @@
     # multinomial
     @test multinomial(1, 4, 4, 2) == 34650
     @test multinomial([1, 4, 4, 2]) == multinomial(1, 4, 4, 2)
-    @test @inferred multinomial(big"1", big"4") isa BigInt
+    @test (@inferred multinomial(big"1", big"4")) isa BigInt
 
     # primorial
     @test primorial(17) == 510510
