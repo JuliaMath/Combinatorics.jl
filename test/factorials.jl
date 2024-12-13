@@ -32,6 +32,11 @@
     @test_throws DomainError multifactorial(-1, 1)
 
     @testset "multinomial" begin
+        # > For k=0,1, the multinomial coefficient is defined to be 1
+        # https://dlmf.nist.gov/26.4#i.p1
+        @test multinomial() == 1
+        @test multinomial(0) == 1
+
         @test multinomial(1, 4, 4, 2) == 34650
         # wolfram:  Multinomial[10, 10, 10, 5]
         @test multinomial(10, 10, 10, 5) == 1_802_031_190_366_286_880
