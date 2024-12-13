@@ -31,8 +31,17 @@
     @test multifactorial(40, 2) == doublefactorial(40)
     @test_throws DomainError multifactorial(-1, 1)
 
-    # multinomial
-    @test multinomial(1, 4, 4, 2) == 34650
+    @testset "multinomial" begin
+        @test multinomial(1, 4, 4, 2) == 34650
+        # wolfram:  Multinomial[10, 10, 10, 5]
+        @test multinomial(10, 10, 10, 5) == 1_802_031_190_366_286_880
+
+        # checked_mul overflowed for type Int64
+        @test_throws OverflowError multinomial(10, 10, 10, 6)
+        @test_throws OverflowError multinomial(10, 10, 10, 10)
+        # binomial(200, 100) overflows
+        @test_throws OverflowError multinomial(100, 100)  
+    end
 
     # primorial
     @test primorial(17) == 510510
