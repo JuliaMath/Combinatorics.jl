@@ -103,7 +103,7 @@ function multinomial(k...)
     @inbounds for i in k
         s += i
         bi = binomial(s, i)
-        result = Base.checked_mul(result, bi)
+        result = Base.Checked.checked_mul(result, bi)
     end
     result
 end
