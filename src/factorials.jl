@@ -93,16 +93,18 @@ function primorial(n::Integer)
 end
 
 """
-    multinomial(k...)
+    multinomial(k)
+    multinomial(k::Integer...)
 
-Multinomial coefficient where `n = sum(k)`.
+Multinomial coefficient ```(n, (k[1], k[2], … ))``` with `n = sum(k)`.
 """
-function multinomial(k...)
-    s = 0
-    result = 1
+function multinomial(k)
+    s = zero(eltype(k))
+    result = one(eltype(k))
     @inbounds for i in k
         s += i
         result *= binomial(s, i)
     end
     result
 end
+multinomial(k::T...) where T<:Integer = multinomial(k)
