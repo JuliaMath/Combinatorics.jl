@@ -69,6 +69,26 @@ Generate all permutations of an indexable object `a` in lexicographic order. Bec
 can be very large, this function returns an iterator object.
 Use `collect(permutations(a))` to get an array of all permutations.
 Only works for `a` with defined length.
+
+# Examples
+```jldoctest
+julia> permutations(1:2)
+Combinatorics.Permutations{UnitRange{Int64}}(1:2, 2)
+
+julia> collect(permutations(1:2))
+2-element Vector{Vector{Int64}}:
+ [1, 2]
+ [2, 1]
+
+julia> collect(permutations(1:3))
+6-element Vector{Vector{Int64}}:
+ [1, 2, 3]
+ [1, 3, 2]
+ [2, 1, 3]
+ [2, 3, 1]
+ [3, 1, 2]
+ [3, 2, 1]
+```
 """
 permutations(a) = permutations(a, length(a))
 
@@ -78,6 +98,27 @@ permutations(a) = permutations(a, length(a))
 Generate all size `t` permutations of an indexable object `a`.
 Only works for `a` with defined length. 
 If `(t <= 0) || (t > length(a))`, then returns an empty vector of eltype of `a`
+
+# Examples
+```jldoctest
+julia> [ (len, permutations(1:3, len)) for len in -1:4 ]
+6-element Vector{Tuple{Int64, Any}}:
+ (-1, Vector{Int64}[])
+ (0, [Int64[]])
+ (1, [[1], [2], [3]])
+ (2, Combinatorics.Permutations{UnitRange{Int64}}(1:3, 2))
+ (3, Combinatorics.Permutations{UnitRange{Int64}}(1:3, 3))
+ (4, Vector{Int64}[])
+
+julia> [ (len, collect(permutations(1:3, len))) for len in -1:4 ]
+6-element Vector{Tuple{Int64, Vector{Vector{Int64}}}}:
+ (-1, [])
+ (0, [[]])
+ (1, [[1], [2], [3]])
+ (2, [[1, 2], [1, 3], [2, 1], [2, 3], [3, 1], [3, 2]])
+ (3, [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]])
+ (4, [])
+```
 """
 function permutations(a, t::Integer)
     if t == 0
@@ -174,6 +215,28 @@ end
     multiset_permutations(a, t)
 
 Generate all permutations of size `t` from an array `a` with possibly duplicated elements.
+
+# Examples
+```jldoctest
+julia> collect(permutations([1,1,1], 2))
+6-element Vector{Vector{Int64}}:
+ [1, 1]
+ [1, 1]
+ [1, 1]
+ [1, 1]
+ [1, 1]
+ [1, 1]
+
+julia> collect(multiset_permutations([1,1,1], 2))
+1-element Vector{Vector{Int64}}:
+ [1, 1]
+
+julia> collect(multiset_permutations([1,1,2], 3))
+3-element Vector{Vector{Int64}}:
+ [1, 1, 2]
+ [1, 2, 1]
+ [2, 1, 1]
+```
 """
 function multiset_permutations(a, t::Integer)
     m = unique(collect(a))
@@ -200,6 +263,36 @@ end
     nthperm!(a, k)
 
 In-place version of [`nthperm`](@ref); the array `a` is overwritten.
+
+# Examples
+```jldoctest
+julia> a = [1, 2, 3];
+
+julia> collect(permutations(a))
+6-element Vector{Vector{Int64}}:
+ [1, 2, 3]
+ [1, 3, 2]
+ [2, 1, 3]
+ [2, 3, 1]
+ [3, 1, 2]
+ [3, 2, 1]
+
+julia> nthperm!(a, 3); a
+3-element Vector{Int64}:
+ 2
+ 1
+ 3
+
+julia> nthperm!(a, 4); a
+3-element Vector{Int64}:
+ 1
+ 3
+ 2
+
+julia> nthperm!(a, 0)
+ERROR: ArgumentError: permutation k must satisfy 0 < k ≤ 6, got 0
+[...]
+```
 """
 function nthperm!(a::AbstractVector, k::Integer)
     n = length(a)
@@ -225,6 +318,28 @@ end
     nthperm(a, k)
 
 Compute the `k`th lexicographic permutation of the vector `a`.
+
+# Examples
+```jldoctest
+julia> collect(permutations([1,2]))
+2-element Vector{Vector{Int64}}:
+ [1, 2]
+ [2, 1]
+
+julia> nthperm([1,2], 1)
+2-element Vector{Int64}:
+ 1
+ 2
+
+julia> nthperm([1,2], 2)
+2-element Vector{Int64}:
+ 2
+ 1
+
+julia> nthperm([1,2], 3)
+ERROR: ArgumentError: permutation k must satisfy 0 < k ≤ 2, got 3
+[...]
+```
 """
 nthperm(a::AbstractVector, k::Integer) = nthperm!(collect(a), k)
 
@@ -233,6 +348,37 @@ nthperm(a::AbstractVector, k::Integer) = nthperm!(collect(a), k)
 
 Return the integer `k` that generated permutation `p`. Note that
 `nthperm(nthperm([1:n], k)) == k` for `1 <= k <= factorial(n)`.
+
+# Examples
+```jldoctest
+julia> nthperm(nthperm([1:3...], 4))
+4
+
+julia> collect(permutations([1, 2, 3]))
+6-element Vector{Vector{Int64}}:
+ [1, 2, 3]
+ [1, 3, 2]
+ [2, 1, 3]
+ [2, 3, 1]
+ [3, 1, 2]
+ [3, 2, 1]
+
+julia> nthperm([1, 2, 3])
+1
+
+julia> nthperm([3, 2, 1])
+6
+
+julia> nthperm([1, 1, 1])
+ERROR: ArgumentError: argument is not a permutation
+[...]
+
+julia> nthperm(collect(1:10))
+1
+
+julia> nthperm(collect(10:-1:1))
+3628800
+```
 """
 function nthperm(p::AbstractVector{<:Integer})
     isperm(p) || throw(ArgumentError("argument is not a permutation"))
@@ -262,6 +408,24 @@ is even, -1 if it is odd, and 0 otherwise.
 
 The parity is computed by using the fact that a permutation is odd if and
 only if the number of even-length cycles is odd.
+
+# Examples
+```jldoctest
+julia> levicivita([1, 2, 3])
+1
+
+julia> levicivita([3, 2, 1])
+-1
+
+julia> levicivita([1, 1, 1])
+0
+
+julia> levicivita(collect(1:100))
+1
+
+julia> levicivita(ones(Int, 100))
+0
+````
 """
 function levicivita(p::AbstractVector{<:Integer})
     n = length(p)
@@ -298,6 +462,22 @@ end
 Compute the parity of a permutation `p` using the [`levicivita`](@ref) function,
 permitting calls such as `iseven(parity(p))`. If `p` is not a permutation then an
 error is thrown.
+
+# Examples
+```jldoctest
+julia> parity([1, 2, 3])
+0
+
+julia> parity([3, 2, 1])
+1
+
+julia> parity([1, 1, 1])
+ERROR: ArgumentError: Not a permutation
+[...]
+
+julia> parity((collect(1:100)))
+0
+```
 """
 function parity(p::AbstractVector{<:Integer})
     epsilon = levicivita(p)
