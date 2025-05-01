@@ -96,7 +96,7 @@
     end
 
     @testset "integer partitions" begin
-        @test_broken integer_partitions(0) == [[]]
+        @test integer_partitions(0) == [Int[]]
         @test integer_partitions(1) == [[1]]
         @test integer_partitions(2) == [[1, 1], [2]]
         @test integer_partitions(3) == [[1, 1, 1], [2, 1], [3]]
