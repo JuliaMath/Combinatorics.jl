@@ -10,6 +10,8 @@
 
     # derangement
     @test derangement(4) == subfactorial(4) == 9
+    @test derangement(0) == 1
+    @test derangement(1) == 0
     @test derangement(24) == parse(BigInt, "228250211305338670494289")
     @test_throws DomainError derangement(-1)
 
