@@ -34,6 +34,7 @@ function Base.factorial(n::BigInt, k::BigInt)
         throw(DomainError((n, k), "n and k must be nonnegative with k ≤ n"))
     end
     f = BigInt(1)
+    n = deepcopy(n)  # avoid mutating input
     while n > k
         Base.GMP.MPZ.mul!(f, n)
         Base.GMP.MPZ.sub_ui!(n, 1)
