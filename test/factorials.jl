@@ -3,6 +3,9 @@
     @test_throws DomainError factorial(3, 7)
     @test_throws DomainError factorial(-3, -7)
     @test_throws DomainError factorial(-7, -3)
+    @test_throws DomainError factorial(big"3", big"7")
+    @test_throws DomainError factorial(big"-3", big"7")
+    @test_throws DomainError factorial(big"3", big"-7")
     #JuliaLang/julia#9943
     @test factorial(big(100), (80)) == 1303995018204712451095685346159820800000
     #JuliaLang/julia#9950
