@@ -425,7 +425,7 @@ julia> levicivita(collect(1:100))
 
 julia> levicivita(ones(Int, 100))
 0
-````
+```
 """
 function levicivita(p::AbstractVector{<:Integer})
     n = length(p)
