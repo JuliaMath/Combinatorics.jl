@@ -8,7 +8,6 @@ export
     doublefactorial,
     hyperfactorial,
     multifactorial,
-    gamma,
     primorial,
     multinomial
 
