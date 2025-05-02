@@ -217,11 +217,7 @@ end
 
 Generate all permutations of an array `a` where `a` may have duplicated elements.
 """
-function multiset_permutations(a)
-    m = unique(collect(a))
-    f = [count(==(x), a) for x in m]
-    multiset_permutations(m, f, length(a))
-end
+multiset_permutations(a) = multiset_permutations(a, length(a))
 
 """
     multiset_permutations(a, t)
