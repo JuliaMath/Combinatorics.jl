@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   test:
-    name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
+    name: Julia ${{ matrix.version }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     permissions: # needed to allow julia-actions/cache to proactively delete old caches that it has created
@@ -28,31 +28,34 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '1.0'
-          - '1.6'
-          - '1'
-          # - 'nightly'
+          - '1.0'  # compat
+          - 'lts'
+          - 'nightly'
         os:
           - ubuntu-latest
-          - macOS-latest
+          - macOS-latest  # Apple silicon
           - windows-latest
-        arch:
-          - x64
+        exclude:
+          # Apple Silicon need julia >= v1.8
+          - os: macos-latest
+            version: '1.0'
+        include:
+          - os: macos-13  # Intel
+            version: '1.0'
     steps:
       - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.version }}
-          arch: ${{ matrix.arch }}
-      - uses: julia-actions/cache@v1
+      - uses: julia-actions/cache@v2
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
       - uses: julia-actions/julia-processcoverage@v1
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # required
           fail_ci_if_error: true
-          file: lcov.info
+          files: lcov.info
 
   docs:
     name: Documentation
@@ -63,11 +66,11 @@ jobs:
       statuses: write
     steps:
       - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
         with:
           version: '1'
           show-versioninfo: true
-      - uses: julia-actions/cache@v1
+      - uses: julia-actions/cache@v2
       - name: Configure doc environment
         shell: julia --project=docs --color=yes {0}
         run: |
