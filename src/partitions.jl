@@ -261,6 +261,8 @@ The number of partitions of an `n`-element set
 is given by the n-th Bell number `Bn`:
 `length(partitions(s)) == catalannum(legnth(s))`.
 
+See also: [`bellnum`](@ref)
+
 # Examples
 ```jldoctest
 julia> collect(partitions([1, 1]))
