@@ -35,25 +35,32 @@
     @test prevprod([2, 3, 5], 30) == 30
     @test prevprod([2, 3, 5], 33) == 32
 
-    # noncrossing partitions
-    let nc4 = ncpartitions(4)
-        @test nc4 == Any[
-            Any[[1], [2], [3], [4]],
-            Any[[1], [2], [3, 4]],
-            Any[[1], [2, 3], [4]],
-            Any[[1], [2, 4], [3]],
-            Any[[1], [2, 3, 4]],
-            Any[[1, 2], [3], [4]],
-            Any[[1, 2], [3, 4]],
-            Any[[1, 3], [2], [4]],
-            Any[[1, 4], [2], [3]],
-            Any[[1, 4], [2, 3]],
-            Any[[1, 2, 3], [4]],
-            Any[[1, 3, 4], [2]],
-            Any[[1, 2, 4], [3]],
-            Any[[1, 2, 3, 4]],
+    @testset "noncrossing partitions" begin
+        @test ncpartitions(0) == []
+        @test ncpartitions(1) == [[[1]]]
+        @test ncpartitions(2) == [[[1], [2]], [[1, 2]]]
+        # The 14 noncrossing partitions of a 4-element set ordered in a Hasse diagram
+        #   https://commons.wikimedia.org/wiki/File:Noncrossing_partitions_4;_Hasse.svg
+        @test ncpartitions(4) == [
+            [[1], [2], [3], [4]],
+            [[1], [2], [3, 4]],
+            [[1], [2, 3], [4]],
+            [[1], [2, 4], [3]],
+            [[1], [2, 3, 4]],
+            [[1, 2], [3], [4]],
+            [[1, 2], [3, 4]],
+            [[1, 3], [2], [4]],
+            [[1, 4], [2], [3]],
+            [[1, 4], [2, 3]],
+            [[1, 2, 3], [4]],
+            [[1, 3, 4], [2]],
+            [[1, 2, 4], [3]],
+            [[1, 2, 3, 4]],
         ]
-        @test length(nc4) == catalannum(4)
+
+        for n in 1:8
+            @test length(ncpartitions(n)) == catalannum(n)
+        end
     end
 
 end
