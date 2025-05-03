@@ -250,11 +250,43 @@ Base.eltype(p::SetPartitions) = Vector{Vector{eltype(p.s)}}
 """
     partitions(s::AbstractVector)
 
-Generate all set partitions of the elements of an array `s`, represented as arrays of
-arrays. Because the number of partitions can be very large, this function returns an
-iterator object. Use `collect(partitions(s))` to get an array of all partitions. The
-number of partitions to generate can be efficiently computed using
-`length(partitions(s))`.
+Generate all set partitions of the elements of an array `s`,
+represented as arrays of arrays.
+
+Because the number of partitions can be very large,
+this function returns an iterator object.
+Use `collect(partitions(s))` to get an array of all partitions.
+
+The number of partitions of an `n`-element set
+is given by the n-th Bell number `Bn`:
+`length(partitions(s)) == catalannum(legnth(s))`.
+
+# Examples
+```jldoctest
+julia> collect(partitions([1, 1]))
+2-element Vector{Vector{Vector{Int64}}}:
+ [[1, 1]]
+ [[1], [1]]
+
+julia> collect(partitions(-1:-1:-2))
+2-element Vector{Vector{Vector{Int64}}}:
+ [[-1, -2]]
+ [[-1], [-2]]
+
+julia> collect(partitions('a':'c'))
+5-element Vector{Vector{Vector{Char}}}:
+ [['a', 'b', 'c']]
+ [['a', 'b'], ['c']]
+ [['a', 'c'], ['b']]
+ [['a'], ['b', 'c']]
+ [['a'], ['b'], ['c']]
+
+julia> length(partitions(1:10)) == bellnum(10)
+true
+```
+
+# References
+- [Partition of a set - Wikipedia](https://en.wikipedia.org/wiki/Partition_of_a_set)
 """
 partitions(s::AbstractVector) = SetPartitions(s)
 
