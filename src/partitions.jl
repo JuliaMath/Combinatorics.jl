@@ -363,11 +363,45 @@ Base.eltype(p::FixedSetPartitions) = Vector{Vector{eltype(p.s)}}
     partitions(s::AbstractVector, m::Int)
 
 Generate all set partitions of the elements of an array `s` into exactly `m` subsets,
-represented as arrays of arrays. Because the number of partitions can be very large,
-this function returns an iterator object. Use `collect(partitions(s, m))` to get
-an array of all partitions. The number of partitions into `m` subsets is equal to the
-Stirling number of the second kind, and can be efficiently computed using
-`length(partitions(s, m))`.
+represented as arrays of arrays.
+
+Because the number of partitions can be very large,
+this function returns an iterator object.
+Use `collect(partitions(s, m))` to get an array of all partitions.
+
+The number of partitions into `m` subsets is equal to
+the Stirling number of the second kind,
+and can be efficiently computed using `length(partitions(s, m))`.
+
+See also: [`stirlings2(n::Int, k::Int)`](@ref)
+
+# Examples
+```jldoctest
+julia> collect(partitions('a':'c', 3))
+1-element Vector{Vector{Vector{Char}}}:
+ [['a'], ['b'], ['c']]
+
+julia> collect(partitions([1, 1, 1], 2))
+3-element Vector{Vector{Vector{Int64}}}:
+ [[1, 1], [1]]
+ [[1, 1], [1]]
+ [[1], [1, 1]]
+
+julia> collect(partitions(1:3, 2))
+3-element Vector{Vector{Vector{Int64}}}:
+ [[1, 2], [3]]
+ [[1, 3], [2]]
+ [[1], [2, 3]]
+
+julia> stirlings2(3, 2)
+3
+
+julia> length(partitions(1:10, 3)) == stirlings2(10, 3)
+true
+```
+
+# References
+- [Partition of a set - Wikipedia](https://en.wikipedia.org/wiki/Partition_of_a_set)
 """
 partitions(s::AbstractVector, m::Int) =
     length(s) >= 1 && m >= 1 ?
