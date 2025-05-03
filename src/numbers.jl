@@ -104,7 +104,7 @@ Wikipedia : https://en.wikipedia.org/wiki/Lobb_number
 """
 function lobbnum(bm::Integer,bn::Integer)
     if !(0 <= bm <= bn)
-        throw(DomainError("m and n must be non-negative"))
+        throw(DomainError((m=bm, n=bn), "m and n must be non-negative and m <= n"))
     else
         m = BigInt(bm)
         n = BigInt(bn)
