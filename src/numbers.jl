@@ -60,7 +60,32 @@ end
 """
     catalannum(n)
 
-Compute the ``n``th Catalan number.
+Compute the ``n``th Catalan number given by:
+```math
+C_n = \\frac{1}{n+1} \\binom{2n}{n}
+```
+
+# Examples
+```jldoctest
+julia> [ catalannum(i) for i in 0:5 ]
+6-element Vector{BigInt}:
+  1
+  1
+  2
+  5
+ 14
+ 42
+
+julia> catalannum(-1)
+ERROR: DomainError with -1:
+n must be nonnegative
+Stacktrace:
+[...]
+```
+
+# References
+- [Catalan number - Wikipedia](https://en.wikipedia.org/wiki/Catalan_number)
+- [DLMF: §26.5 Lattice Paths: Catalan Numbers](https://dlmf.nist.gov/26.5)
 """
 function catalannum(bn::Integer)
     if bn < 0
