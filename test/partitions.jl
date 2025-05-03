@@ -49,19 +49,31 @@
         @test_throws DomainError partitions(8, -1)
     end
 
-    @test collect(partitions([1, 2, 3])) == Any[Any[[1, 2, 3]], Any[[1, 2], [3]], Any[[1, 3], [2]], Any[[1], [2, 3]], Any[[1], [2], [3]]]
+    @testset "partitions(s::AbstractVector)" begin
+        @test collect(partitions([1])) == [[[1]]]
+        @test collect(partitions([1, 2])) == [[[1, 2]], [[1], [2]]]
+        @test collect(partitions([1, 2, 3])) == [[[1, 2, 3]], [[1, 2], [3]], [[1, 3], [2]], [[1], [2, 3]], [[1], [2], [3]]]
+        @test collect(partitions(1:3)) == collect(partitions([1, 2, 3]))
+        @test collect(partitions('a':'b')) == [[['a', 'b']], [['a'], ['b']]]
+
+        # length:  https://oeis.org/A000110
+        @test length(partitions(1:10)) == 115975
+        @test length(partitions(1:20)) == 51724158235372
+        @test length(collect(partitions('a':'h'))) == length(partitions('a':'h'))
+    
+        # Type stable
+        @inferred first(partitions([1, 2, 3]))
+        @test isa(collect(partitions([1, 2, 3])), Vector{Vector{Vector{Int}}})
+    end
+
     @test collect(partitions([1, 2, 3, 4], 3)) == Any[Any[[1, 2], [3], [4]], Any[[1, 3], [2], [4]], Any[[1], [2, 3], [4]],
         Any[[1, 4], [2], [3]], Any[[1], [2, 4], [3]], Any[[1], [2], [3, 4]]]
     @test collect(partitions([1, 2, 3, 4], 1)) == Any[Any[[1, 2, 3, 4]]]
     @test collect(partitions([1, 2, 3, 4], 5)) == []
 
-    @inferred first(partitions([1, 2, 3]))
     @inferred first(partitions([1, 2, 3, 4], 3))
-
-    @test isa(collect(partitions([1, 2, 3])), Vector{Vector{Vector{Int}}})
     @test isa(collect(partitions([1, 2, 3, 4], 3)), Vector{Vector{Vector{Int}}})
 
-    @test length(collect(partitions('a':'h'))) == length(partitions('a':'h'))
     @test length(collect(partitions('a':'h', 5))) == length(partitions('a':'h', 5))
 
     @testset "integer partitions" begin
