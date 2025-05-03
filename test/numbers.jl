@@ -20,7 +20,9 @@
       @test_throws DomainError bellnum(-1)
 
       # catalan
-      @test catalannum(5) == 42
+      # https://oeis.org/A000108
+      @test catalannum.(0:10) == [1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862, 16796]
+      @test catalannum(20) == 6564120420
       @test catalannum(30) == parse(BigInt, "3814986502092304")
       @test_throws DomainError catalannum(-1)
 
