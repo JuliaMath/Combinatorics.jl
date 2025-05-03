@@ -474,12 +474,46 @@ function integer_partitions(n::Integer)
 end
 
 
-
-#Noncrossing partitions
+# Noncrossing partitions
 
 const _cmp = cmp
 
-#Produces noncrossing partitions of length n
+"""
+    ncpartitions(n::Int)
+
+Generates all noncrossing partitions of a set of `n` elements,
+returning them as a `Vector` of partition representations.
+
+The number of noncrossing partitions of an `n`-element set
+is given by the n-th Catalan number `Cn`:
+`length(ncpartitions(n)) == catalannum(n)`.
+
+See also: [`catalannum`](@ref)
+
+# Examples
+```jldoctest
+julia> ncpartitions(1)
+1-element Vector{Vector{Vector{Int64}}}:
+ [[1]]
+
+julia> ncpartitions(3)
+5-element Vector{Vector{Vector{Int64}}}:
+ [[1], [2], [3]]
+ [[1], [2, 3]]
+ [[1, 2], [3]]
+ [[1, 3], [2]]
+ [[1, 2, 3]]
+
+julia> catalannum(3)
+5
+
+julia> length(ncpartitions(6)) == catalannum(6)
+true
+```
+
+# References
+- [Noncrossing partition - Wikipedia](https://en.wikipedia.org/wiki/Noncrossing_partition)
+"""
 function ncpartitions(n::Int)
     partitions = Vector{Vector{Int}}[]
     _ncpart!(1,n,n,Vector{Int}[], partitions)
