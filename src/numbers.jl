@@ -1,4 +1,4 @@
-#Special named numbers and symbols
+# Special named numbers and symbols
 
 export bellnum,
     catalannum,
@@ -16,6 +16,28 @@ export bellnum,
     bellnum(n)
 
 Compute the ``n``th Bell number.
+
+# Examples
+```jldoctest
+julia> [ bellnum(i) for i in 0:5 ]
+6-element Vector{Signed}:
+  1
+  1
+  2
+  5
+ 15
+ 52
+
+julia> bellnum(-1)
+ERROR: DomainError with -1:
+n must be nonnegative
+Stacktrace:
+[...]
+```
+
+# References
+- [Bell number - Wikipedia](https://en.wikipedia.org/wiki/Bell_number)
+- [DLMF: §26.7 Set Partitions: Bell Numbers](https://dlmf.nist.gov/26.7)
 """
 function bellnum(n::Integer)
     if n < 0
