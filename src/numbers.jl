@@ -19,7 +19,7 @@ Compute the ``n``th Bell number.
 """
 function bellnum(n::Integer)
     if n < 0
-        throw(DomainError(n))
+        throw(DomainError(n, "n must be nonnegative"))
     elseif n < 2
         return 1
     end
