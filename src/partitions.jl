@@ -8,7 +8,7 @@ export
     #nextprod,
 
 
-#integer partitions
+# integer partitions
 
 struct IntegerPartitions
     n::Int
@@ -24,15 +24,54 @@ function Base.iterate(p::IntegerPartitions, xs = Int[])
 end
 
 """
-    partitions(n)
+    partitions(n::Integer)
 
-Generate all integer arrays that sum to `n`. Because the number of partitions can be very
-large, this function returns an iterator object. Use `collect(partitions(n))` to get an
-array of all partitions. The number of partitions to generate can be efficiently computed
-using `length(partitions(n))`.
+Generate all integer arrays that sum to `n`.
+
+Because the number of partitions can be very large,
+this function returns an iterator object.
+Use `collect(partitions(n))` to get an array of all partitions.
+
+The number of partitions to generate can be efficiently computed using
+`length(partitions(n))`.
+
+See also: 
+- [`integer_partitions(n::Integer)`](@ref)
+    for a non-iterator version that returns all partitions as a array
+- [`partitions(n::Integer, m::Integer)`](@ref)
+    for partitions with exactly `m` parts.
+
+## Examples
+```jldoctest
+julia> collect(partitions(2))
+2-element Vector{Vector{Int64}}:
+ [2]
+ [1, 1]
+
+julia> collect(partitions(3))
+3-element Vector{Vector{Int64}}:
+ [3]
+ [2, 1]
+ [1, 1, 1]
+
+julia> integer_partitions(3)
+3-element Vector{Vector{Int64}}:
+ [1, 1, 1]
+ [2, 1]
+ [3]
+
+julia> first(partitions(10))
+1-element Vector{Int64}:
+ 10
+
+julia> length(partitions(10))
+42
+```
+
+# References
+- [Integer partition - Wikipedia](https://en.wikipedia.org/wiki/Integer_partition)
 """
 partitions(n::Integer) = IntegerPartitions(n)
-
 
 
 function nextpartition(n, as)
