@@ -60,7 +60,7 @@
         @test length(partitions(1:10)) == 115975
         @test length(partitions(1:20)) == 51724158235372
         @test length(collect(partitions('a':'h'))) == length(partitions('a':'h'))
-    
+
         # Type stable
         @inferred first(partitions([1, 2, 3]))
         @test isa(collect(partitions([1, 2, 3])), Vector{Vector{Vector{Int}}})
@@ -116,9 +116,22 @@
         @test_throws DomainError integer_partitions(-1)
     end
 
-    @test_throws ArgumentError prevprod([2, 3, 5], Int128(typemax(Int)) + 1)
-    @test prevprod([2, 3, 5], 30) == 30
-    @test prevprod([2, 3, 5], 33) == 32
+    @testset "prevprod" begin
+        @test prevprod([2, 3, 5], 30) == 30         # 30 = 2 * 3 * 5
+        @test prevprod([2, 3, 5], 33) == 32         # 32 = 2^5
+        @test prevprod([2, 3, 5, 7], 420) == 420    # 420 = 2^2 * 3 * 5 * 7
+
+        # prime factor:  https://en.wikipedia.org/wiki/Table_of_prime_factors
+        prime_factors = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]
+        @test prevprod(prime_factors, 37) == 37
+        @test prevprod(prime_factors, 97) == 96     # 96 = 2^5 * 3
+        @test prevprod(prime_factors, 149) == 148   # 148 = 2^2 * 37
+        @test prevprod(prime_factors, 911) == 910   # 910 = 2 * 5 * 7 * 13
+        @test prevprod(prime_factors, 4999) == 4998 # 4998 = 2 * 3 * 7^2 * 17
+
+        # errors
+        @test_throws ArgumentError prevprod([2, 3, 5], Int128(typemax(Int)) + 1)
+    end
 
     @testset "noncrossing partitions" begin
         @test ncpartitions(0) == []
