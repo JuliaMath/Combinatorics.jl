@@ -136,12 +136,47 @@ Base.length(f::FixedPartitions) = npartitions(f.n,f.m)
 Base.eltype(f::FixedPartitions) = Vector{Int}
 
 """
-    partitions(n, m)
+    partitions(n::Integer, m::Integer)
 
-Generate all arrays of `m` integers that sum to `n`. Because the number of partitions can
-be very large, this function returns an iterator object. Use `collect(partitions(n, m))` to
-get an array of all partitions. The number of partitions to generate can be efficiently
-computed using `length(partitions(n, m))`.
+Generate all integer partitions of `n` into exactly `m` parts, that sum to `n`.
+
+Because the number of partitions can be very large,
+this function returns an iterator object.
+Use `collect(partitions(n, m))` to get an array of all partitions.
+
+The number of partitions to generate can be efficiently computed using
+`length(partitions(n, m))`.
+
+See also: [`partitions(n::Integer)`](@ref)
+
+## Examples
+```jldoctest
+julia> collect(partitions(4))
+5-element Vector{Vector{Int64}}:
+ [4]
+ [3, 1]
+ [2, 2]
+ [2, 1, 1]
+ [1, 1, 1, 1]
+
+julia> collect(partitions(4, 2))
+2-element Vector{Vector{Int64}}:
+ [3, 1]
+ [2, 2]
+
+julia> collect(partitions(4, 4))
+1-element Vector{Vector{Int64}}:
+ [1, 1, 1, 1]
+
+julia> collect(partitions(4, 5))
+Vector{Int64}[]
+
+julia> partitions(4, 0)
+ERROR: DomainError with (4, 0):
+n and m must be positive
+Stacktrace:
+[...]
+```
 """
 partitions(n::Integer, m::Integer) =
     n >= 1 && m >= 1 ?
