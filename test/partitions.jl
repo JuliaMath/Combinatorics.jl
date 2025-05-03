@@ -66,15 +66,34 @@
         @test isa(collect(partitions([1, 2, 3])), Vector{Vector{Vector{Int}}})
     end
 
-    @test collect(partitions([1, 2, 3, 4], 3)) == Any[Any[[1, 2], [3], [4]], Any[[1, 3], [2], [4]], Any[[1], [2, 3], [4]],
-        Any[[1, 4], [2], [3]], Any[[1], [2, 4], [3]], Any[[1], [2], [3, 4]]]
-    @test collect(partitions([1, 2, 3, 4], 1)) == Any[Any[[1, 2, 3, 4]]]
-    @test collect(partitions([1, 2, 3, 4], 5)) == []
+    @testset "partitions(s::AbstractVector, m::Int)" begin
+        @test collect(partitions(1:3, 2)) == [
+            [[1, 2], [3]],
+            [[1, 3], [2]],
+            [[1], [2, 3]],
+        ]
+        @test collect(partitions([1, 2, 3, 4], 1)) == [[[1, 2, 3, 4]]]
+        @test collect(partitions([1, 2, 3, 4], 3)) == [
+            [[1, 2], [3], [4]], [[1, 3], [2], [4]], [[1], [2, 3], [4]],
+            [[1, 4], [2], [3]], [[1], [2, 4], [3]], [[1], [2], [3, 4]]
+        ]
+        @test collect(partitions([1, 2, 3, 4], 4)) == [[[1], [2], [3], [4]]]
+        @test collect(partitions([1, 2, 3, 4], 5)) == []
 
-    @inferred first(partitions([1, 2, 3, 4], 3))
-    @test isa(collect(partitions([1, 2, 3, 4], 3)), Vector{Vector{Vector{Int}}})
+        # length: Stirling numbers of the second kind
+        #   https://dlmf.nist.gov/26.8#T2
+        @test length(partitions(1:3, 2)) == 3
+        @test length(partitions([1, 2, 3, 4], 3)) == 6
+        @test length(partitions(1:10, 4)) == 34105
+        @test length(partitions(1:10, 5)) == 42525
+        @test length(partitions(1:10, 5)) == stirlings2(10, 5)
+        @test length(partitions(1:10, 6)) == 22827
+        @test length(collect(partitions('a':'h', 5))) == length(partitions('a':'h', 5))
 
-    @test length(collect(partitions('a':'h', 5))) == length(partitions('a':'h', 5))
+        # Type stable
+        @inferred first(partitions([1, 2, 3, 4], 3))
+        @test isa(collect(partitions([1, 2, 3, 4], 3)), Vector{Vector{Vector{Int}}})
+    end
 
     @testset "integer partitions" begin
         @test_broken integer_partitions(0) == [[]]
