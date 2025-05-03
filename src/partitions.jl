@@ -446,11 +446,43 @@ end
 """
     integer_partitions(n)
 
-List the partitions of the integer `n`.
+Generates all partitions of the integer `n` as a list of integer arrays,
+where each partition represents a way to write `n` as a sum of positive integers.
+
+See also: [`partitions(n::Integer)`](@ref)
 
 !!! note
     The order of the resulting array is consistent with that produced by the computational
     discrete algebra software GAP.
+
+# Examples
+```jldoctest
+julia> integer_partitions(2)
+2-element Vector{Vector{Int64}}:
+ [1, 1]
+ [2]
+
+julia> integer_partitions(3)
+3-element Vector{Vector{Int64}}:
+ [1, 1, 1]
+ [2, 1]
+ [3]
+
+julia> collect(partitions(3))
+3-element Vector{Vector{Int64}}:
+ [3]
+ [2, 1]
+ [1, 1, 1]
+
+julia> integer_partitions(-1)
+ERROR: DomainError with -1:
+n must be nonnegative
+Stacktrace:
+[...]
+```
+
+# References
+- [Integer partition - Wikipedia](https://en.wikipedia.org/wiki/Integer_partition)
 """
 function integer_partitions(n::Integer)
     if n < 0
