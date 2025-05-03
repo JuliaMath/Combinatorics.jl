@@ -13,31 +13,54 @@
         @test length(partitions(1)) == 1
         @test length(partitions(40)) == 37338
         @test length(partitions(49)) == 173525
+        @test length(collect(partitions(30))) == length(partitions(30))
 
         # Type stable
         @inferred first(partitions(4))
         @test isa(collect(partitions(4)), Vector{Vector{Int}})
     end
 
-    @test collect(partitions(8, 3)) == Any[[6, 1, 1], [5, 2, 1], [4, 3, 1], [4, 2, 2], [3, 3, 2]]
-    @test collect(partitions(8, 1)) == Any[[8]]
-    @test collect(partitions(8, 9)) == []
+    @testset "partitions(n::Integer, m::Integer)" begin
+        @test collect(partitions(8, 1)) == [[8]]
+        @test collect(partitions(8, 3)) == [[6, 1, 1], [5, 2, 1], [4, 3, 1], [4, 2, 2], [3, 3, 2]]
+        @test collect(partitions(8, 8)) == [ones(Int, 8)]
+        @test collect(partitions(8, 9)) == []
+        @test collect(partitions(90, 90)) == [ones(Int, 90)]
+        @test collect(partitions(90, 91)) == []
+
+        # legnth
+        @test length(partitions(8, 1)) == 1
+        @test length(partitions(8, 3)) == 5
+        @test length(partitions(8, 8)) == 1
+        @test length(partitions(8, 9)) == 0
+        @test length(partitions(90, 1)) == 1
+        # gap> NrPartitions(90, 4);
+        @test length(partitions(90, 4)) == 5231
+        @test length(collect(partitions(90, 4))) == length(partitions(90, 4))
+        @test length(partitions(90, 90)) == 1
+
+        # Type stable
+        @inferred first(partitions(8, 3))
+        @test isa(collect(partitions(8, 3)), Vector{Vector{Int}})
+
+        # errors
+        @test_throws DomainError partitions(-1, 1)
+        @test_throws DomainError partitions(8, 0)
+        @test_throws DomainError partitions(8, -1)
+    end
+
     @test collect(partitions([1, 2, 3])) == Any[Any[[1, 2, 3]], Any[[1, 2], [3]], Any[[1, 3], [2]], Any[[1], [2, 3]], Any[[1], [2], [3]]]
     @test collect(partitions([1, 2, 3, 4], 3)) == Any[Any[[1, 2], [3], [4]], Any[[1, 3], [2], [4]], Any[[1], [2, 3], [4]],
         Any[[1, 4], [2], [3]], Any[[1], [2, 4], [3]], Any[[1], [2], [3, 4]]]
     @test collect(partitions([1, 2, 3, 4], 1)) == Any[Any[[1, 2, 3, 4]]]
     @test collect(partitions([1, 2, 3, 4], 5)) == []
 
-    @inferred first(partitions(8, 3))
     @inferred first(partitions([1, 2, 3]))
     @inferred first(partitions([1, 2, 3, 4], 3))
 
-    @test isa(collect(partitions(8, 3)), Vector{Vector{Int}})
     @test isa(collect(partitions([1, 2, 3])), Vector{Vector{Vector{Int}}})
     @test isa(collect(partitions([1, 2, 3, 4], 3)), Vector{Vector{Vector{Int}}})
 
-    @test length(collect(partitions(30))) == length(partitions(30))
-    @test length(collect(partitions(90, 4))) == length(partitions(90, 4))
     @test length(collect(partitions('a':'h'))) == length(partitions('a':'h'))
     @test length(collect(partitions('a':'h', 5))) == length(partitions('a':'h', 5))
 
