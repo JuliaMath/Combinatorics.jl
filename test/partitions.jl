@@ -26,10 +26,26 @@
     @test length(collect(partitions('a':'h'))) == length(partitions('a':'h'))
     @test length(collect(partitions('a':'h', 5))) == length(partitions('a':'h', 5))
 
-    # integer_partitions
-    @test integer_partitions(0) == []
-    @test integer_partitions(5) == Any[[1, 1, 1, 1, 1], [2, 1, 1, 1], [2, 2, 1], [3, 1, 1], [3, 2], [4, 1], [5]]
-    @test_throws DomainError integer_partitions(-1)
+    @testset "integer partitions" begin
+        @test_broken integer_partitions(0) == [[]]
+        @test integer_partitions(1) == [[1]]
+        @test integer_partitions(2) == [[1, 1], [2]]
+        @test integer_partitions(3) == [[1, 1, 1], [2, 1], [3]]
+        # gap> Partitions( 5 );
+        @test integer_partitions(5) == [
+            [1, 1, 1, 1, 1],
+            [2, 1, 1, 1],
+            [2, 2, 1],
+            [3, 1, 1],
+            [3, 2],
+            [4, 1],
+            [5]
+        ]
+        # integer_partitions <--> partitions(::Integer)
+        @test Set(integer_partitions(5)) == Set(partitions(5))
+
+        @test_throws DomainError integer_partitions(-1)
+    end
 
     @test_throws ArgumentError prevprod([2, 3, 5], Int128(typemax(Int)) + 1)
     @test prevprod([2, 3, 5], 30) == 30
