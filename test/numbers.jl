@@ -1,4 +1,24 @@
+
 @testset "numbers" begin
+      # bell
+      # https://dlmf.nist.gov/26.7#T1
+      @test bellnum.(0:10) == [
+            1
+            1
+            2
+            5
+            15
+            52
+            203
+            877
+            4140
+            21147
+            115975
+      ]
+      # gap> Bell(42);
+      @test bellnum(42) == parse(BigInt, "35742549198872617291353508656626642567")
+      @test_throws DomainError bellnum(-1)
+
       # catalan
       @test catalannum(5) == 42
       @test catalannum(30) == parse(BigInt, "3814986502092304")
@@ -67,23 +87,5 @@
       @test stirlings2(6, 5) == 15
       @test stirlings2(6, 6) == 1
       @test stirlings2(big"26", 10) == 13199555372846848005
-
-      # bell
-      @test bellnum.(0:10) == [
-           1
-           1
-           2
-           5
-          15
-          52
-         203
-         877
-        4140
-       21147
-      115975
-      ]
-
-      @test bellnum(42) == parse(BigInt, "35742549198872617291353508656626642567")
-      @test_throws DomainError(-1) bellnum(-1)
 
 end
