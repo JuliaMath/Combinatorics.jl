@@ -1,5 +1,24 @@
 @testset "partitions" begin
-    @test collect(partitions(4)) == Any[[4], [3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1]]
+
+    @testset "partitions(n::Integer)" begin
+        @test_broken collect(partitions(0)) == [[]]
+        @test collect(partitions(1)) == [[1]]
+        @test collect(partitions(2)) == [[2], [1, 1]]
+        @test collect(partitions(3)) == [[3], [2, 1], [1, 1, 1]]
+        @test collect(partitions(4)) == [[4], [3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1]]
+
+        # Partition function p(n):  https://oeis.org/A000041
+        @test length(partitions(-1)) == 0
+        @test length(partitions(0)) == 1
+        @test length(partitions(1)) == 1
+        @test length(partitions(40)) == 37338
+        @test length(partitions(49)) == 173525
+
+        # Type stable
+        @inferred first(partitions(4))
+        @test isa(collect(partitions(4)), Vector{Vector{Int}})
+    end
+
     @test collect(partitions(8, 3)) == Any[[6, 1, 1], [5, 2, 1], [4, 3, 1], [4, 2, 2], [3, 3, 2]]
     @test collect(partitions(8, 1)) == Any[[8]]
     @test collect(partitions(8, 9)) == []
@@ -9,18 +28,14 @@
     @test collect(partitions([1, 2, 3, 4], 1)) == Any[Any[[1, 2, 3, 4]]]
     @test collect(partitions([1, 2, 3, 4], 5)) == []
 
-    @inferred first(partitions(4))
     @inferred first(partitions(8, 3))
     @inferred first(partitions([1, 2, 3]))
     @inferred first(partitions([1, 2, 3, 4], 3))
 
-    @test isa(collect(partitions(4)), Vector{Vector{Int}})
     @test isa(collect(partitions(8, 3)), Vector{Vector{Int}})
     @test isa(collect(partitions([1, 2, 3])), Vector{Vector{Vector{Int}}})
     @test isa(collect(partitions([1, 2, 3, 4], 3)), Vector{Vector{Vector{Int}}})
 
-    @test length(partitions(0)) == 1
-    @test length(partitions(-1)) == 0
     @test length(collect(partitions(30))) == length(partitions(30))
     @test length(collect(partitions(90, 4))) == length(partitions(90, 4))
     @test length(collect(partitions('a':'h'))) == length(partitions('a':'h'))
