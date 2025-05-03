@@ -35,7 +35,7 @@ Use `collect(partitions(n))` to get an array of all partitions.
 The number of partitions to generate can be efficiently computed using
 `length(partitions(n))`.
 
-See also: 
+See also:
 - [`integer_partitions(n::Integer)`](@ref)
     for a non-iterator version that returns all partitions as a array
 - [`partitions(n::Integer, m::Integer)`](@ref)
@@ -536,15 +536,31 @@ end
 """
     prevprod(a::Vector{Int}, x)
 
-Previous integer not greater than `x` that can be written as ``\\prod k_i^{p_i}`` for
-integers ``p_1``, ``p_2``, etc.
+Find the largest integer not greater than `x`
+that can be expressed as a product of powers of the elements in `a`.
 
-For integers ``i_1``, ``i_2``, ``i_3``, this is equivalent to finding the largest ``x``
-such that
+This function computes the largest value `y ≤ x` that can be written as:
+```math
+y = \\prod a_i^{n_i}
+  = a_1^{n_1} a_2^{n_2} \\cdots a_k^{n_k}
+  \\leq x
+```
+where ``n_i`` is a non-negative integer, `k` is the length of Vector `a`.
 
-``i_1^{n_1} i_2^{n_2} i_3^{n_3} \\leq x``
+# Examples
+```jldoctest
+julia> prevprod([10], 1000)   # 1000 = 10^3
+1000
 
-for integers ``n_1``, ``n_2``, ``n_3``.
+julia> prevprod([2, 5], 30)   # 25 = 2^0 * 5^2
+25
+
+julia> prevprod([2, 3], 100)  # 96 = 2^5 * 3^1
+96
+
+julia> prevprod([2, 3, 5], 1) # 1 = 2^0 * 3^0 * 5^0
+1
+```
 """
 function prevprod(a::Vector{Int}, x)
     if x > typemax(Int)
