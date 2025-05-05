@@ -28,12 +28,14 @@ function has_repeats(state::Vector{Int})
 end
 
 function increment!(state::Vector{Int}, min::Int, max::Int)
-    state[end] += 1
-    for i in reverse(eachindex(state))[firstindex(state):end-1]
-        if state[i] > max
-            state[i] = min
-            state[i-1] += 1
-        end
+    # All array indexing can be marked inbounds because of the type restriction in the signature.
+    # If the type restriction is ever loosened, please check safety of the `@inbounds`.
+    @inbounds state[end] += 1
+    i = lastindex(state)
+    @inbounds while i > firstindex(state) && state[i] > max
+        state[i] = min
+        state[i-1] += 1
+        i -= 1
     end
 end
 
