@@ -23,14 +23,14 @@ end
 # with the difference that we can also define `eltype(::Permutations)`, which is used in some tests.
 
 function Base.iterate(p::Permutations, state=nothing)
-    if isnothing(state)
+    if state === nothing
         mp = multiset_permutations(eachindex(p.data), p.length)
         it = iterate(mp)
-        if isnothing(it) return nothing end
+        if it === nothing return nothing end
     else
         mp, mp_state = state
         it = iterate(mp, mp_state)
-        if isnothing(it) return nothing end
+        if it === nothing return nothing end
     end
     indices, mp_state = it
     return [p.data[i] for i in indices], (mp=mp, mp_state=mp_state)
