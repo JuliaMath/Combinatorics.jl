@@ -33,7 +33,7 @@ function Base.iterate(p::Permutations, state=nothing)
         if isnothing(it) return nothing end
     end
     indices, mp_state = it
-    return [p.data[i] for i in indices], (; mp, mp_state)
+    return [p.data[i] for i in indices], (mp=mp, mp_state=mp_state)
 end
 
 function Base.length(p::Permutations)
