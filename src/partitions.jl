@@ -259,7 +259,7 @@ Use `collect(partitions(s))` to get an array of all partitions.
 
 The number of partitions of an `n`-element set
 is given by the n-th Bell number `Bn`:
-`length(partitions(s)) == catalannum(legnth(s))`.
+`length(partitions(s)) == bellnum(length(s))`.
 
 See also: [`bellnum`](@ref)
 
