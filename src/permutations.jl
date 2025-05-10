@@ -1,6 +1,7 @@
 #Permutations
 
 export
+    derangements,
     levicivita,
     multiset_permutations,
     nthperm!,
@@ -136,6 +137,42 @@ function permutations(a, t::Integer)
     return Permutations(a, t)
 end
 
+"""
+    derangements(a)
+
+Generate all derangements of an indexable object `a` in lexicographic order.
+Because the number of derangements can be very large, this function returns an iterator object.
+Use `collect(derangements(a))` to get an array of all derangements.
+Only works for `a` with defined length.
+
+# Examples
+```jldoctest
+julia> derangements("julia") |> collect
+44-element Vector{Vector{Char}}:
+ ['u', 'j', 'i', 'a', 'l']
+ ['u', 'j', 'a', 'l', 'i']
+ ['u', 'l', 'j', 'a', 'i']
+ ['u', 'l', 'i', 'a', 'j']
+ ['u', 'l', 'a', 'j', 'i']
+ ['u', 'i', 'j', 'a', 'l']
+ ['u', 'i', 'a', 'j', 'l']
+ ['u', 'i', 'a', 'l', 'j']
+ ['u', 'a', 'j', 'l', 'i']
+ ['u', 'a', 'i', 'j', 'l']
+ ⋮
+ ['a', 'j', 'i', 'l', 'u']
+ ['a', 'l', 'j', 'u', 'i']
+ ['a', 'l', 'u', 'j', 'i']
+ ['a', 'l', 'i', 'j', 'u']
+ ['a', 'l', 'i', 'u', 'j']
+ ['a', 'i', 'j', 'u', 'l']
+ ['a', 'i', 'j', 'l', 'u']
+ ['a', 'i', 'u', 'j', 'l']
+ ['a', 'i', 'u', 'l', 'j']
+```
+"""
+derangements(a) = (d for d in multiset_permutations(a, length(a)) if all(t -> t[1] != t[2], zip(a, d)))
+
 
 function nextpermutation(m, t, state)
     perm = [m[state[i]] for i in 1:t]
@@ -249,8 +286,8 @@ julia> collect(multiset_permutations([1,1,2], 3))
 ```
 """
 function multiset_permutations(a, t::Integer)
-    m = unique(collect(a))
-    f = [sum([c == x for c in a]) for x in m]
+    m = unique(a)
+    f = [sum(c == x for c in a)::Int for x in m]
     multiset_permutations(m, f, t)
 end
 
