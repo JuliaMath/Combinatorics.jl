@@ -1,12 +1,7 @@
 #Partitions
 
-export
-    integer_partitions,
-    ncpartitions,
-    partitions,
-    prevprod
-    #nextprod,
-
+export integer_partitions, ncpartitions, partitions, prevprod
+#nextprod,
 
 # integer partitions
 
@@ -17,9 +12,9 @@ end
 Base.length(p::IntegerPartitions) = npartitions(p.n)
 Base.eltype(p::IntegerPartitions) = Vector{Int}
 
-function Base.iterate(p::IntegerPartitions, xs = Int[])
-    length(xs) == p.n && return
-    xs = nextpartition(p.n,xs)
+function Base.iterate(p::IntegerPartitions, xs=Int[])
+    length(xs) == p.n && return nothing
+    xs = nextpartition(p.n, xs)
     (xs, xs)
 end
 
@@ -73,14 +68,13 @@ julia> length(partitions(10))
 """
 partitions(n::Integer) = IntegerPartitions(n)
 
-
 function nextpartition(n, as)
     isempty(as) && return Int[n]
 
     xs = similar(as, 0)
     sizehint!(xs, length(as) + 1)
 
-    for i = 1:length(as)-1
+    for i in 1:(length(as)-1)
         if as[i+1] == 1
             x = as[i]-1
             push!(xs, x)
@@ -114,8 +108,10 @@ let _npartitions = Dict{Int,Int}()
         else
             np = 0
             sgn = 1
-            for k = 1:n
-                np += sgn * (npartitions(n - (k*(3k-1)) >> 1) + npartitions(n - (k*(3k+1)) >> 1))
+            for k in 1:n
+                np +=
+                    sgn *
+                    (npartitions(n - (k*(3k-1)) >> 1) + npartitions(n - (k*(3k+1)) >> 1))
                 sgn = -sgn
             end
             _npartitions[n] = np
@@ -132,7 +128,7 @@ struct FixedPartitions
     m::Int
 end
 
-Base.length(f::FixedPartitions) = npartitions(f.n,f.m)
+Base.length(f::FixedPartitions) = npartitions(f.n, f.m)
 Base.eltype(f::FixedPartitions) = Vector{Int}
 
 """
@@ -178,18 +174,21 @@ Stacktrace:
 [...]
 ```
 """
-partitions(n::Integer, m::Integer) =
-    n >= 1 && m >= 1 ?
-        FixedPartitions(n, m) :
+function partitions(n::Integer, m::Integer)
+    if n >= 1 && m >= 1
+        FixedPartitions(n, m)
+    else
         throw(DomainError((n, m), "n and m must be positive"))
+    end
+end
 
-function Base.iterate(f::FixedPartitions, s::Vector{Int} = Int[])
-    f.m <= f.n || return
+function Base.iterate(f::FixedPartitions, s::Vector{Int}=Int[])
+    f.m <= f.n || return nothing
     if !isempty(s)
-        (f.m == 1 || s[1]-1 <= s[end]) && return
+        (f.m == 1 || s[1]-1 <= s[end]) && return nothing
     end
 
-    xs = nextfixedpartition(f.n,f.m,s)
+    xs = nextfixedpartition(f.n, f.m, s)
     (xs, xs)
 end
 
@@ -197,7 +196,8 @@ function nextfixedpartition(n, m, bs)
     as = copy(bs)
     if isempty(as)
         # First iteration
-        as = ones(Int, m); as[1] = n - m + 1
+        as = ones(Int, m);
+        as[1] = n - m + 1
     elseif as[2] < as[1]-1
         # Most common iteration
         as[1] -= 1
@@ -206,13 +206,13 @@ function nextfixedpartition(n, m, bs)
         # Iterate
         j = 0
         s = as[1]+as[2]-1
-        for jj = 3:m # TODO: use `for outer j = ...` on 0.7
+        for jj in 3:m # TODO: use `for outer j = ...` on 0.7
             j = jj
             as[jj] < as[1]-1 && break
             s += as[jj]
         end
         x = as[j] += 1
-        for k = j-1:-1:2
+        for k in (j-1):-1:2
             as[k] = x
             s -= x
         end
@@ -229,7 +229,7 @@ let _nipartitions = Dict{Tuple{Int,Int},Int}()
             0
         elseif n == m
             1
-        elseif (np = get(_nipartitions, (n,m), 0)) > 0
+        elseif (np = get(_nipartitions, (n, m), 0)) > 0
             np
         else
             _nipartitions[(n, m)] = npartitions(n-1, m-1) + npartitions(n-m, m)
@@ -297,41 +297,44 @@ function Base.iterate(p::SetPartitions)
     iterate(p, (zeros(Int32, n), ones(Int32, n-1), n, 1))
 end
 function Base.iterate(p::SetPartitions, s)
-    s[1][1] > 0 && return
+    s[1][1] > 0 && return nothing
     nextsetpartition(p.s, s...)
 end
 
 function nextsetpartition(s::AbstractVector, a, b, n, m)
     function makeparts(s, a, m)
-        temp = [similar(s, 0) for k = 0:m]
-        for i = 1:n
+        temp = [similar(s, 0) for k in 0:m]
+        for i in 1:n
             push!(temp[a[i]+1], s[i])
         end
         filter!(!isempty, temp)
     end
 
-    if isempty(s);  return ([s], (eltype(a)[1], eltype(b)[], n, 1));  end
+    if isempty(s)
+        ;
+        return ([s], (eltype(a)[1], eltype(b)[], n, 1));
+    end
 
-    part = makeparts(s,a,m)
+    part = makeparts(s, a, m)
 
     if a[end] != m
         a[end] += 1
     else
         j = 0
-        for jj = n-1:-1:1
+        for jj in (n-1):-1:1
             j = jj
             a[jj] == b[jj] || break
         end
         a[j] += 1
         m = Int(b[j]) + (a[j] == b[j])
-        for k = j+1:n-1
+        for k in (j+1):(n-1)
             a[k] = 0
             b[k] = m
         end
         a[end] = 0
     end
 
-    return (part, (a,b,n,m))
+    return (part, (a, b, n, m))
 end
 
 let _nsetpartitions = Dict{Int,Int}()
@@ -345,8 +348,8 @@ let _nsetpartitions = Dict{Int,Int}()
             wn
         else
             wn = 0
-            for k = 0:n-1
-                wn += binomial(n-1,k)*nsetpartitions(n-1-k)
+            for k in 0:(n-1)
+                wn += binomial(n-1, k)*nsetpartitions(n-1-k)
             end
             _nsetpartitions[n] = wn
         end
@@ -358,7 +361,7 @@ struct FixedSetPartitions{T<:AbstractVector}
     m::Int
 end
 
-Base.length(p::FixedSetPartitions) = nfixedsetpartitions(length(p.s),p.m)
+Base.length(p::FixedSetPartitions) = nfixedsetpartitions(length(p.s), p.m)
 Base.eltype(p::FixedSetPartitions) = Vector{Vector{eltype(p.s)}}
 
 """
@@ -405,15 +408,22 @@ true
 # References
 - [Partition of a set - Wikipedia](https://en.wikipedia.org/wiki/Partition_of_a_set)
 """
-partitions(s::AbstractVector, m::Int) =
-    length(s) >= 1 && m >= 1 ?
-        FixedSetPartitions(s, m) :
+function partitions(s::AbstractVector, m::Int)
+    if length(s) >= 1 && m >= 1
+        FixedSetPartitions(s, m)
+    else
         throw(DomainError((length(s), m), "length(s) and m must be positive"))
+    end
+end
 
 function Base.iterate(p::FixedSetPartitions)
     n = length(p.s)
     m = p.m
-    state = m <= n ? (vcat(ones(Int, n-m),1:m), vcat(1:1,n-m+2:n), n) : (Int[], Int[], n)
+    state = if m <= n
+        (vcat(ones(Int, n-m), 1:m), vcat(1:1, (n-m+2):n), n)
+    else
+        (Int[], Int[], n)
+    end
     # state consists of:
     # vector a of length n describing to which partition every element of s belongs
     # vector b of length n describing the first index b[i] that belongs to partition i
@@ -423,20 +433,20 @@ function Base.iterate(p::FixedSetPartitions)
 end
 
 function Base.iterate(p::FixedSetPartitions, s)
-    (isempty(s[1]) || s[1][1] > 1) && return
-    nextfixedsetpartition(p.s,p.m, s...)
+    (isempty(s[1]) || s[1][1] > 1) && return nothing
+    nextfixedsetpartition(p.s, p.m, s...)
 end
 
 function nextfixedsetpartition(s::AbstractVector, m, a, b, n)
     function makeparts(s, a)
-        local part = [ similar(s,0) for k = 1:m ]
-        for i = 1:n
+        local part = [similar(s, 0) for k in 1:m]
+        for i in 1:n
             push!(part[a[i]], s[i])
         end
         return part
     end
 
-    part = makeparts(s,a)
+    part = makeparts(s, a)
 
     if m == 1
         a[1] = 2
@@ -447,7 +457,7 @@ function nextfixedsetpartition(s::AbstractVector, m, a, b, n)
         a[end] += 1
     else
         j = k = 0
-        for jj = n-1:-1:1
+        for jj in (n-1):-1:1
             j = jj
             if a[j] < m && b[a[j]+1] < j
                 break
@@ -455,31 +465,31 @@ function nextfixedsetpartition(s::AbstractVector, m, a, b, n)
         end
         if j > 1
             a[j] += 1
-            for p = j+1:n
+            for p in (j+1):n
                 if b[a[p]] != p
                     a[p] = 1
                 end
             end
         else
-            for kk = m:-1:2
+            for kk in m:-1:2
                 k = kk
                 if b[k-1] < b[k] - 1
                     break
                 end
             end
             b[k] -= 1
-            b[k+1:m] = n-m+k+1:n
+            b[(k+1):m] = (n-m+k+1):n
             a[1:n] .= 1
             a[b] = 1:m
         end
     end
 
-    return (part, (a,b,n))
+    return (part, (a, b, n))
 end
 
 function nfixedsetpartitions(n::Int, m::Int)
     numpart = 0
-    for k = 0:m
+    for k in 0:m
         numpart += (-1)^(m-k) * binomial(m, k) * (k^n)
     end
     numpart = div(numpart, factorial(m))
@@ -568,7 +578,7 @@ function prevprod(a::Vector{Int}, x)
     end
     k = length(a)
     v = ones(Int, k)                  # current value of each counter
-    mx = [nextpow(ai,x) for ai in a]  # allow each counter to exceed p (sentinel)
+    mx = [nextpow(ai, x) for ai in a]  # allow each counter to exceed p (sentinel)
     first = Int(prevpow(a[1], x))     # start at best case in first factor
     v[1] = first
     p::widen(Int) = first
@@ -599,7 +609,6 @@ function prevprod(a::Vector{Int}, x)
     best = x >= p > best ? p : best
     return Int(best)
 end
-
 
 """
     integer_partitions(n)
@@ -656,13 +665,12 @@ function integer_partitions(n::Integer)
     for p in integer_partitions(n-1)
         push!(list, [p; 1])
         if length(p) == 1 || p[end] < p[end-1]
-            push!(list, [p[1:end-1]; p[end]+1])
+            push!(list, [p[1:(end-1)]; p[end]+1])
         end
     end
 
     list
 end
-
 
 # Noncrossing partitions
 
@@ -706,28 +714,28 @@ true
 """
 function ncpartitions(n::Int)
     partitions = Vector{Vector{Int}}[]
-    _ncpart!(1,n,n,Vector{Int}[], partitions)
+    _ncpart!(1, n, n, Vector{Int}[], partitions)
     partitions
 end
 
 function _ncpart!(a::Int, b::Int, nn::Int, x::Vector, partitions::Vector)
     n = b - a + 1
-    for k = 1:n, root in CoolLexCombinations(n, k)
+    for k in 1:n, root in CoolLexCombinations(n, k)
         root .+= a - 1
         #Abort if construction is out of lex order
-        !isempty(x) && _cmp(x[end], root) == 1 && return
+        !isempty(x) && _cmp(x[end], root) == 1 && return nothing
 
         #Save if we've filled all the holes
         sofar = Vector{Int}[x..., root]
         ssofaru = sort!(union(sofar...))
         if length(ssofaru) == nn && ssofaru == collect(1:nn)
             push!(partitions, sofar)
-            return
+            return nothing
         end
 
         #otherwise patch all remaining holes
         blob = [ssofaru; nn + 1]
-        for l = 1:length(blob)-1
+        for l in 1:(length(blob)-1)
             ap, bp = blob[l] + 1, blob[l+1] - 1
             ap <= bp && _ncpart!(ap, bp, nn, sofar, partitions)
         end

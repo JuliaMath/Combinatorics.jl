@@ -1,7 +1,6 @@
 #Factorials and elementary coefficients
 
-export
-    derangement,
+export derangement,
     partialderangement,
     factorial,
     subfactorial,
@@ -17,7 +16,7 @@ export
 
 Compute ``n!/k!``.
 """
-function Base.factorial(n::T, k::T) where T<:Integer
+function Base.factorial(n::T, k::T) where {T<:Integer}
     if k < 0 || n < 0 || k > n
         throw(DomainError((n, k), "n and k must be nonnegative with k ≤ n"))
     end
@@ -41,7 +40,6 @@ function Base.factorial(n::BigInt, k::BigInt)
     return f
 end
 Base.factorial(n::Integer, k::Integer) = factorial(promote(n, k)...)
-
 
 """
     derangement(n)
@@ -98,13 +96,14 @@ end
 # Hyperfactorial
 hyperfactorial(n::Integer) = n==0 ? BigInt(1) : prod(i->i^i, BigInt(1):n)
 
-
 function multifactorial(n::Integer, m::Integer)
     if n < 0
         throw(DomainError(n, "n must be nonnegative"))
     end
     z = Ref{BigInt}(0)
-    ccall((:__gmpz_mfac_uiui, :libgmp), Cvoid, (Ref{BigInt}, UInt, UInt), z, UInt(n), UInt(m))
+    ccall(
+        (:__gmpz_mfac_uiui, :libgmp), Cvoid, (Ref{BigInt}, UInt, UInt), z, UInt(n), UInt(m)
+    )
     return z[]
 end
 
