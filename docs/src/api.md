@@ -7,6 +7,13 @@ Modules = [Combinatorics]
 Pages   = ["combinations.jl"]
 ```
 
+## Compositions
+
+```@autodocs
+Modules = [Combinatorics]
+Pages   = ["compositions.jl"]
+```
+
 ## Factorials
 
 ```@autodocs
