@@ -646,7 +646,7 @@ function integer_partitions(n::Integer)
     if n < 0
         throw(DomainError(n, "n must be nonnegative"))
     elseif n == 0
-        return Vector{Int}[]
+        return Vector{Int}[[]]
     elseif n == 1
         return Vector{Int}[[1]]
     end
