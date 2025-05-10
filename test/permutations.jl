@@ -71,6 +71,7 @@ end
     # derangements
     @test length(collect(derangements(1:4))) == 9
     @test length(collect(derangements(1:8))) == derangement(8) == 14833
+    @test collect(derangements([])) == [[]]
     @test collect(derangements(Int[])) == [Int[]]
     @test collect(derangements([1])) == Vector{Int}[]
     @test collect(derangements([1, 1])) == Vector{Int}[]
