@@ -97,12 +97,47 @@ function catalannum(bn::Integer)
 end
 
 """
-    lobbnum(m,n)
+    lobbnum(m, n)
 
-Compute the Lobb number `L(m,n)`, or the generalised Catalan number given by ``\\frac{2m+1}{m+n+1} \\binom{2n}{m+n}``.
-Wikipedia : https://en.wikipedia.org/wiki/Lobb_number
+Compute the Lobb number `L(m,n)`, or the generalised Catalan number given by:
+```math
+L_{m,n} = \\frac{2m+1}{m+n+1} \\binom{2n}{m+n}
+```
+For `m = 0`, we get the ``n``-th Catalan number.
+
+See also: [`catalannum`](@ref).
+
+# Examples
+```jldoctest
+julia> [ [lobbnum(m, n) for m in 0:n] for n in 0:5 ]
+6-element Vector{Vector{BigInt}}:
+ [1]
+ [1, 1]
+ [2, 3, 1]
+ [5, 9, 5, 1]
+ [14, 28, 20, 7, 1]
+ [42, 90, 75, 35, 9, 1]
+
+julia> lobbnum(0, 25) == catalannum(25)
+true
+
+julia> lobbnum(-1, 1)
+ERROR: DomainError with (m = -1, n = 1):
+m and n must be non-negative and m <= n
+Stacktrace:
+[...]
+
+julia> lobbnum(5, 1)
+ERROR: DomainError with (m = 5, n = 1):
+m and n must be non-negative and m <= n
+Stacktrace:
+[...]
+```
+
+# References
+- [Lobb number - Wikipedia](https://en.wikipedia.org/wiki/Lobb_number)
 """
-function lobbnum(bm::Integer,bn::Integer)
+function lobbnum(bm::Integer, bn::Integer)
     if !(0 <= bm <= bn)
         throw(DomainError((m=bm, n=bn), "m and n must be non-negative and m <= n"))
     else
