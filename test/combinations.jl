@@ -1,6 +1,7 @@
 @testset "combinations" begin
-    @test [combinations([])...] == []
-    @test [combinations(['a', 'b', 'c'])...] == [['a'], ['b'], ['c'], ['a', 'b'], ['a', 'c'], ['b', 'c'], ['a', 'b', 'c']]
+    @test [combinations([])...] == [[]]
+    @test [combinations(['a', 'b', 'c'])...] == [[],['a'],['b'],['c'],['a','b'],['a','c'],['b','c'],['a','b','c']]
+    @test length(collect(combinations(1:5))) == 32
 
     @test [combinations("abc", 3)...] == [['a', 'b', 'c']]
     @test [combinations("abc", 2)...] == [['a', 'b'], ['a', 'c'], ['b', 'c']]
