@@ -16,7 +16,7 @@ end
 
 function has_repeats(state::Vector{Int})
     # This can be safely marked inbounds because of the type restriction in the signature.
-    # If the type restriction is ever loosened, please check safety of the `@inbounds`
+    # If the type restriction is ever loosened, please check safety of the `@inbounds`.
     @inbounds for outer in eachindex(state)
         for inner in (outer+1):lastindex(state)
             if state[outer] == state[inner]
@@ -28,12 +28,14 @@ function has_repeats(state::Vector{Int})
 end
 
 function increment!(state::Vector{Int}, min::Int, max::Int)
-    state[end] += 1
-    for i in reverse(eachindex(state))[firstindex(state):end-1]
-        if state[i] > max
-            state[i] = min
-            state[i-1] += 1
-        end
+    # All array indexing can be marked inbounds because of the type restriction in the signature.
+    # If the type restriction is ever loosened, please check safety of the `@inbounds`.
+    @inbounds state[end] += 1
+    i = lastindex(state)
+    @inbounds while i > firstindex(state) && state[i] > max
+        state[i] = min
+        state[i-1] += 1
+        i -= 1
     end
 end
 
@@ -96,7 +98,7 @@ permutations(a) = permutations(a, length(a))
     permutations(a, t)
 
 Generate all size `t` permutations of an indexable object `a`.
-Only works for `a` with defined length. 
+Only works for `a` with defined length.
 If `(t <= 0) || (t > length(a))`, then returns an empty vector of eltype of `a`
 
 # Examples
@@ -122,7 +124,7 @@ julia> [ (len, collect(permutations(1:3, len))) for len in -1:4 ]
 """
 function permutations(a, t::Integer)
     if t == 0
-        # Correct behavior for a permutation of length 0 is a vector containing a single empty vector 
+        # Correct behavior for a permutation of length 0 is a vector containing a single empty vector
         return [Vector{eltype(a)}()]
     elseif t == 1
         # Easy case, just return each element in its own vector

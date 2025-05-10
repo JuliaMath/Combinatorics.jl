@@ -30,7 +30,7 @@ end
     @test collect(permutations([], -1)) == Any[]
     @test collect(permutations([], 0)) == [Any[]]
     @test collect(permutations([], 1)) == Any[]
-    
+
     @testset "permutation lengths" begin
         expected_lengths = [1, 5, 20, 60, 120, 120]
         ks = 0:5
