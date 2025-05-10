@@ -114,12 +114,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.1] - 2020-04-22
 
-> TODO: Update this section
+### Added
+
+- ci: Install TagBot as a GitHub Action [#90]
+
+### Removed
+
+### Changed
+
+- compat: Bump `Polynomials` compat to include v0.7, v0.8 [#91]
+
+### Fixed
+
+[1.0.1]: https://github.com/JuliaMath/Combinatorics.jl/compare/v1.0.0...v1.0.1
+[#90]: https://github.com/JuliaMath/Combinatorics.jl/pull/90
+[#91]: https://github.com/JuliaMath/Combinatorics.jl/pull/91
+
 
 ## [1.0.0] - 2019-11-29
 
 > TODO: Update this section
 
 
-[1.0.1]: https://github.com/JuliaMath/Combinatorics.jl/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/JuliaMath/Combinatorics.jl/releases/tag/v1.0.0
