@@ -98,7 +98,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.2] - 2020-05-14
 
-> TODO: Update this section
+### Added
+
+### Removed
+
+- Remove stale dependency on `Polynomials.jl` [#94]
+
+### Changed
+
+### Fixed
+
+[1.0.2]: https://github.com/JuliaMath/Combinatorics.jl/compare/v1.0.1...v1.0.2
+[#94]: https://github.com/JuliaMath/Combinatorics.jl/pull/94
+
 
 ## [1.0.1] - 2020-04-22
 
@@ -109,6 +121,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > TODO: Update this section
 
 
-[1.0.2]: https://github.com/JuliaMath/Combinatorics.jl/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/JuliaMath/Combinatorics.jl/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/JuliaMath/Combinatorics.jl/releases/tag/v1.0.0
