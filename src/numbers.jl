@@ -25,15 +25,14 @@ function bellnum(n::Integer)
     end
     list = Vector{BigInt}(undef, n)
     list[1] = 1
-    for i = 2:n
-        for j = 1:i - 2
-            list[i - j - 1] += list[i - j]
+    for i in 2:n
+        for j in 1:(i-2)
+            list[i-j-1] += list[i-j]
         end
-        list[i] = list[1] + list[i - 1]
+        list[i] = list[1] + list[i-1]
     end
     return list[n]
 end
-
 
 """
     catalannum(n)
@@ -55,7 +54,7 @@ end
 Compute the Lobb number `L(m,n)`, or the generalised Catalan number given by ``\\frac{2m+1}{m+n+1} \\binom{2n}{m+n}``.
 Wikipedia : https://en.wikipedia.org/wiki/Lobb_number
 """
-function lobbnum(bm::Integer,bn::Integer)
+function lobbnum(bm::Integer, bn::Integer)
     if !(0 <= bm <= bn)
         throw(DomainError("m and n must be non-negative"))
     else
@@ -71,14 +70,14 @@ end
 Compute the Narayana number `N(n,k)` given by ``\\frac{1}{n}\\binom{n}{k}\\binom{n}{k-1}``
 Wikipedia : https://en.wikipedia.org/wiki/Narayana_number
 """
-function narayana(bn::Integer,bk::Integer)
+function narayana(bn::Integer, bk::Integer)
     if !(1 <= bk <= bn)
         throw(DomainError("Domain is 1 <= k <= n"))
     else
         n = BigInt(bn)
         k = BigInt(bk)
     end
-    div(binomial(n, k)*binomial(n, k - 1) , n)
+    div(binomial(n, k)*binomial(n, k - 1), n)
 end
 
 function fibonaccinum(n::Integer)
@@ -89,7 +88,6 @@ function fibonaccinum(n::Integer)
     ccall((:__gmpz_fib_ui, :libgmp), Cvoid, (Ref{BigInt}, UInt), z, UInt(n))
     return z[]
 end
-
 
 function jacobisymbol(a::Integer, b::Integer)
     ba = Ref{BigInt}(a)
@@ -104,8 +102,12 @@ Compute the ``n``th entry in Lassalle's sequence, OEIS entry A180874.
 """
 function lassallenum(m::Integer)
     A = ones(BigInt, m)
-    for n = 2:m
-        A[n] = (-1)^(n-1) * (catalannum(n) + sum(j->(-1)^j*binomial(2n-1, 2j-1)*A[j]*catalannum(n-j), 1:n-1))
+    for n in 2:m
+        A[n] =
+            (-1)^(n-1) * (
+                catalannum(n) +
+                sum(j->(-1)^j*binomial(2n-1, 2j-1)*A[j]*catalannum(n-j), 1:(n-1))
+            )
     end
     A[m]
 end

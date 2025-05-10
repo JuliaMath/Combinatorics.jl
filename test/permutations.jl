@@ -6,17 +6,25 @@ struct Permutations{T}
 end
 
 @testset "permutations" begin
-    @test collect(permutations("abc")) == Any[['a', 'b', 'c'], ['a', 'c', 'b'], ['b', 'a', 'c'],
-        ['b', 'c', 'a'], ['c', 'a', 'b'], ['c', 'b', 'a']]
+    @test collect(permutations("abc")) == Any[
+        ['a', 'b', 'c'],
+        ['a', 'c', 'b'],
+        ['b', 'a', 'c'],
+        ['b', 'c', 'a'],
+        ['c', 'a', 'b'],
+        ['c', 'b', 'a'],
+    ]
 
-    @test collect(Iterators.filter(x -> (iseven(x[1])), permutations([1, 2, 3]))) == Any[[2, 1, 3], [2, 3, 1]]
-    @test collect(Iterators.filter(x -> (iseven(x[3])), permutations([1, 2, 3]))) == Any[[1, 3, 2], [3, 1, 2]]
+    @test collect(Iterators.filter(x -> (iseven(x[1])), permutations([1, 2, 3]))) ==
+        Any[[2, 1, 3], [2, 3, 1]]
+    @test collect(Iterators.filter(x -> (iseven(x[3])), permutations([1, 2, 3]))) ==
+        Any[[1, 3, 2], [3, 1, 2]]
 
     @test length(permutations(0)) == 1
 
     @test collect(permutations("abc", 4)) == Any[]
-    @test collect(permutations("abc", 2)) == Any[['a', 'b'], ['a', 'c'], ['b', 'a'],
-        ['b', 'c'], ['c', 'a'], ['c', 'b']]
+    @test collect(permutations("abc", 2)) ==
+        Any[['a', 'b'], ['a', 'c'], ['b', 'a'], ['b', 'c'], ['c', 'a'], ['c', 'b']]
     @test collect(permutations(1:5, 1)) == [[x] for x in 1:5]
     @test collect(permutations("abc", 0)) == [Char[]]
     @test collect(permutations("abc", -1)) == Any[]
@@ -57,9 +65,11 @@ end
 
     # multiset_permutations
     @test collect(multiset_permutations("aabc", 5)) == Any[]
-    @test collect(multiset_permutations("aabc", 2)) == Any[['a', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'a'],
-        ['b', 'c'], ['c', 'a'], ['c', 'b']]
-    @test collect(multiset_permutations("aabcc", 5)) == collect(multiset_permutations("aabcc"))
+    @test collect(multiset_permutations("aabc", 2)) == Any[
+        ['a', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'a'], ['b', 'c'], ['c', 'a'], ['c', 'b']
+    ]
+    @test collect(multiset_permutations("aabcc", 5)) ==
+        collect(multiset_permutations("aabcc"))
     @test collect(multiset_permutations("")) == Any[Char[]]
     @test collect(multiset_permutations("aabc", 0)) == Any[Char[]]
     @test collect(multiset_permutations("aabc", -1)) == Any[]
@@ -78,10 +88,11 @@ end
     @test collect(derangements([1, 1, 2])) == Vector{Int}[]
     @test collect(derangements([1, 1, 2, 2])) == [[2, 2, 1, 1]]
     @test map(join, derangements("aabbc")) == ["bbaca", "bbcaa", "bcaab", "cbaab"]
-    @test map(join, derangements("aaabbbc")) == ["bbbaaca", "bbbacaa", "bbbcaaa", "bbcaaab", "bcbaaab", "cbbaaab"]
+    @test map(join, derangements("aaabbbc")) ==
+        ["bbbaaca", "bbbacaa", "bbbcaaa", "bbcaaab", "bcbaaab", "cbbaaab"]
 
     #nthperm!
-    for n = 0:7, k = 1:factorial(n)
+    for n in 0:7, k in 1:factorial(n)
         p = nthperm!([1:n;], k)
         @test isperm(p)
         @test nthperm(p) == k
@@ -118,5 +129,4 @@ end
 
     @test Combinatorics.nsetpartitions(-1) == 0
     @test collect(permutations([])) == [[]]
-
 end

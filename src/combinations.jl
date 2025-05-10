@@ -1,8 +1,5 @@
 export combinations,
-       CoolLexCombinations,
-       multiset_combinations,
-       with_replacement_combinations,
-       powerset
+    CoolLexCombinations, multiset_combinations, with_replacement_combinations, powerset
 
 #The Combinations iterator
 struct Combinations
@@ -10,22 +7,22 @@ struct Combinations
     t::Int
 end
 
-@inline function Base.iterate(c::Combinations, s = [min(c.t - 1, i) for i in 1:c.t])
+@inline function Base.iterate(c::Combinations, s=[min(c.t - 1, i) for i in 1:c.t])
     if c.t == 0 # special case to generate 1 result for t==0
         isempty(s) && return (s, [1])
-        return
+        return nothing
     end
     for i in c.t:-1:1
         s[i] += 1
         if s[i] > (c.n - (c.t - i))
             continue
         end
-        for j in i+1:c.t
+        for j in (i+1):c.t
             s[j] = s[j-1] + 1
         end
         break
     end
-    s[1] > c.n - c.t + 1 && return
+    s[1] > c.n - c.t + 1 && return nothing
     (s, s)
 end
 
@@ -49,14 +46,13 @@ function combinations(a, t::Integer)
     (reorder(c) for c in Combinations(length(a), t))
 end
 
-
 """
     combinations(a)
 
 Generate combinations of the elements of `a` of all orders. Chaining of order iterators
 is eager, but the sequence at each order is lazy.
 """
-combinations(a) = Iterators.flatten([combinations(a, k) for k = 0:length(a)])
+combinations(a) = Iterators.flatten([combinations(a, k) for k in 0:length(a)])
 
 # cool-lex combinations iterator
 
@@ -102,7 +98,7 @@ function Base.iterate(C::CoolLexCombinations)
 end
 
 function Base.iterate(C::CoolLexCombinations, S::CoolLexIterState)
-    (S.R3 & S.R2 != 0) && return
+    (S.R3 & S.R2 != 0) && return nothing
 
     R0 = S.R0
     R1 = S.R1
@@ -134,7 +130,6 @@ end
 
 Base.length(C::CoolLexCombinations) = max(0, binomial(C.n, C.t))
 
-
 struct MultiSetCombinations{T}
     m::T
     f::Vector{Int}
@@ -158,7 +153,7 @@ function Base.length(c::MultiSetCombinations)
             end
         else
             for j in t:-1:1
-                p[j+1] = sum(p[max(1,j+1-f):(j+1)])
+                p[j+1] = sum(p[max(1, j+1-f):(j+1)])
             end
         end
     end
@@ -167,7 +162,7 @@ end
 
 function multiset_combinations(m, f::Vector{<:Integer}, t::Integer)
     length(m) == length(f) || error("Lengths of m and f are not the same.")
-    ref = length(f) > 0 ? vcat([[i for j in 1:f[i] ] for i in 1:length(f)]...) : Int[]
+    ref = length(f) > 0 ? vcat([[i for j in 1:f[i]] for i in 1:length(f)]...) : Int[]
     if t < 0
         t = length(ref) + 1
     end
@@ -185,8 +180,9 @@ function multiset_combinations(a, t::Integer)
     multiset_combinations(m, f, t)
 end
 
-function Base.iterate(c::MultiSetCombinations, s = c.ref)
-    ((!isempty(s) && max(s[1], c.t) > length(c.ref)) || (isempty(s) && c.t > 0)) && return
+function Base.iterate(c::MultiSetCombinations, s=c.ref)
+    ((!isempty(s) && max(s[1], c.t) > length(c.ref)) || (isempty(s) && c.t > 0)) &&
+        return nothing
 
     ref = c.ref
     n = length(ref)
@@ -196,7 +192,7 @@ function Base.iterate(c::MultiSetCombinations, s = c.ref)
     if t > 0
         s = copy(s)
         for i in t:-1:1
-            if s[i] < ref[i + (n - t)]
+            if s[i] < ref[i+(n-t)]
                 j = 1
                 while ref[j] <= s[i]
                     j += 1
@@ -232,8 +228,8 @@ Generate all combinations with replacement of size `t` from an array `a`.
 """
 with_replacement_combinations(a, t::Integer) = WithReplacementCombinations(a, t)
 
-function Base.iterate(c::WithReplacementCombinations, s = [1 for i in 1:c.t])
-    (!isempty(s) && s[1] > length(c.a) || c.t < 0) && return
+function Base.iterate(c::WithReplacementCombinations, s=[1 for i in 1:c.t])
+    (!isempty(s) && s[1] > length(c.a) || c.t < 0) && return nothing
 
     n = length(c.a)
     t = c.t
@@ -269,7 +265,7 @@ returns an iterator object. Use `collect(powerset(a, min, max))` to get an array
 subsets.
 """
 function powerset(a, min::Integer=0, max::Integer=length(a))
-    itrs = [combinations(a, k) for k = min:max]
+    itrs = [combinations(a, k) for k in min:max]
     min < 1 && append!(itrs, eltype(a)[])
     Iterators.flatten(itrs)
 end

@@ -1,14 +1,7 @@
 #Permutations
 
-export
-    derangements,
-    levicivita,
-    multiset_permutations,
-    nthperm!,
-    nthperm,
-    parity,
-    permutations
-
+export derangements,
+    levicivita, multiset_permutations, nthperm!, nthperm, parity, permutations
 
 struct Permutations{T}
     data::T
@@ -47,7 +40,9 @@ function next_permutation!(state::Vector{Int}, min::Int, max::Int)
     end
 end
 
-function Base.iterate(p::Permutations, state::Vector{Int}=fill(firstindex(p.data), p.length))
+function Base.iterate(
+    p::Permutations, state::Vector{Int}=fill(firstindex(p.data), p.length)
+)
     next_permutation!(state, firstindex(p.data), lastindex(p.data))
     if first(state) > lastindex(p.data)
         return nothing
@@ -57,13 +52,12 @@ end
 
 function Base.length(p::Permutations)
     length(p.data) < p.length && return 0
-    return Int(prod(length(p.data) - p.length + 1:length(p.data)))
+    return Int(prod((length(p.data)-p.length+1):length(p.data)))
 end
 
 Base.eltype(p::Permutations) = Vector{eltype(p.data)}
 
 Base.IteratorSize(p::Permutations) = Base.HasLength()
-
 
 """
     permutations(a)
@@ -171,8 +165,9 @@ julia> derangements("julia") |> collect
  ['a', 'i', 'u', 'l', 'j']
 ```
 """
-derangements(a) = (d for d in multiset_permutations(a, length(a)) if all(t -> t[1] != t[2], zip(a, d)))
-
+function derangements(a)
+    (d for d in multiset_permutations(a, length(a)) if all(t -> t[1] != t[2], zip(a, d)))
+end
 
 function nextpermutation(m, t, state)
     perm = [m[state[i]] for i in 1:t]
@@ -240,7 +235,7 @@ function Base.length(c::MultiSetPermutations)
         else
             for j in t:-1:1
                 q = 0
-                for k in (j+1):-1:max(1, j + 1 - f)
+                for k in (j+1):-1:max(1, j+1-f)
                     q += p[k] / g[j+2-k]
                 end
                 p[j+1] = q
@@ -249,7 +244,6 @@ function Base.length(c::MultiSetPermutations)
     end
     return round(Int, p[t+1])
 end
-
 
 """
     multiset_permutations(a)
@@ -301,10 +295,10 @@ function multiset_permutations(m, f::Vector{<:Integer}, t::Integer)
 end
 
 function Base.iterate(p::MultiSetPermutations, s=p.ref)
-    (!isempty(s) && max(s[1], p.t) > length(p.ref) || (isempty(s) && p.t > 0)) && return
+    (!isempty(s) && max(s[1], p.t) > length(p.ref) || (isempty(s) && p.t > 0)) &&
+        return nothing
     nextpermutation(p.m, p.t, s)
 end
-
 
 """
     nthperm!(a, k)
@@ -347,13 +341,13 @@ function nthperm!(a::AbstractVector, k::Integer)
     f = factorial(oftype(k, n))
     0 < k <= f || throw(ArgumentError("permutation k must satisfy 0 < k ≤ $f, got $k"))
     k -= 1 # make k 1-indexed
-    for i = 1:n-1
+    for i in 1:(n-1)
         f ÷= n - i + 1
         j = k ÷ f
         k -= j * f
         j += i
         elt = a[j]
-        for d = j:-1:i+1
+        for d in j:-1:(i+1)
             a[d] = a[d-1]
         end
         a[i] = elt
@@ -430,22 +424,20 @@ julia> nthperm(collect(10:-1:1))
 function nthperm(p::AbstractVector{<:Integer})
     isperm(p) || throw(ArgumentError("argument is not a permutation"))
     k, n = 1, length(p)
-    for i = 1:n-1
+    for i in 1:(n-1)
         f = factorial(n - i)
-        for j = i+1:n
+        for j in (i+1):n
             k += ifelse(p[j] < p[i], f, 0)
         end
     end
     return k
 end
 
-
 # Parity of permutations
 
-const levicivita_lut = cat([0 0 0; 0 0 1; 0 -1 0],
-                           [0 0 -1; 0 0 0; 1 0 0],
-                           [0 1 0; -1 0 0; 0 0 0];
-                           dims=3)
+const levicivita_lut = cat(
+    [0 0 0; 0 0 1; 0 -1 0], [0 0 -1; 0 0 0; 1 0 0], [0 1 0; -1 0 0; 0 0 0]; dims=3
+)
 
 """
     levicivita(p)
