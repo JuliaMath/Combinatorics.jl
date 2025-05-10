@@ -286,7 +286,7 @@ julia> collect(multiset_permutations([1,1,2], 3))
 ```
 """
 function multiset_permutations(a, t::Integer)
-    m = unique(collect(a))
+    m = unique(a)
     f = [sum(c == x for c in a)::Int for x in m]
     multiset_permutations(m, f, t)
 end
