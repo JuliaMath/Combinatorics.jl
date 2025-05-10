@@ -10,7 +10,7 @@ struct Combinations
     t::Int
 end
 
-function Base.iterate(c::Combinations, s = [min(c.t - 1, i) for i in 1:c.t])
+@inline function Base.iterate(c::Combinations, s = [min(c.t - 1, i) for i in 1:c.t])
     if c.t == 0 # special case to generate 1 result for t==0
         isempty(s) && return (s, [1])
         return
@@ -56,9 +56,7 @@ end
 Generate combinations of the elements of `a` of all orders. Chaining of order iterators
 is eager, but the sequence at each order is lazy.
 """
-combinations(a) = Iterators.flatten([combinations(a, k) for k = 1:length(a)])
-
-
+combinations(a) = Iterators.flatten([combinations(a, k) for k = 0:length(a)])
 
 # cool-lex combinations iterator
 

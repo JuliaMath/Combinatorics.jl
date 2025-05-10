@@ -159,6 +159,11 @@ end
 
 stirlings2cache = Dict()
 
+"""
+    stirlings2(n::Int, k::Int)
+
+Compute the Stirling number of the second kind, `S(n,k)`.
+"""
 function stirlings2(n::Integer, k::Integer)
     if n < 0
         throw(DomainError(n, "n must be nonnegative"))
