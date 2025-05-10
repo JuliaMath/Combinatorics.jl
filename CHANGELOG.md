@@ -133,7 +133,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0] - 2019-11-29
 
+### Added
+
+- Added `lobbnum` and `Narayana` numbers [#76]
+- Add partial derangements `partialderangement` [#78]
+- Add a Project file, remove REQUIRE, declare version 1.0 [#88]
+
+### Removed
+
+### Changed
+
+- Improve `nthperm!` argument checking [#14]
+- performance: Corrected and optimized `bellnum` [#74]
+- performance: Give access to non-allocating `combinations` iterator [#73]
+- performance: `nthperm()`: Replace one `%=` by a `-= remainder - divisor` computed earlier [#55]
+- performance: Make `partitions` type-stable [#35]
+- performance: Make `partitions` type-stable (deconflicted) [#75]
+- doc: readme: Remove reference to Base.combinations [#77]
+
+### Fixed
+
+- Fix deprecations for using `lexcmp` [#70]
+
+[1.0.0]: https://github.com/JuliaMath/Combinatorics.jl/compare/v0.7.0...v1.0.0
+[#14]: https://github.com/JuliaMath/Combinatorics.jl/issues/14
+[#35]: https://github.com/JuliaMath/Combinatorics.jl/issues/35
+[#55]: https://github.com/JuliaMath/Combinatorics.jl/issues/55
+[#70]: https://github.com/JuliaMath/Combinatorics.jl/issues/70
+[#73]: https://github.com/JuliaMath/Combinatorics.jl/issues/73
+[#74]: https://github.com/JuliaMath/Combinatorics.jl/issues/74
+[#75]: https://github.com/JuliaMath/Combinatorics.jl/issues/75
+[#76]: https://github.com/JuliaMath/Combinatorics.jl/issues/76
+[#77]: https://github.com/JuliaMath/Combinatorics.jl/issues/77
+[#78]: https://github.com/JuliaMath/Combinatorics.jl/issues/78
+[#88]: https://github.com/JuliaMath/Combinatorics.jl/issues/88
+
+
+## [0.7.0] - 2018-08-10
+
 > TODO: Update this section
 
-
-[1.0.0]: https://github.com/JuliaMath/Combinatorics.jl/releases/tag/v1.0.0
+[0.7.0]: https://github.com/JuliaMath/Combinatorics.jl/compare/v0.6.0...v0.7.0
