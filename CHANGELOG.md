@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `multiset_permutations` method that doesn't require length ([#164])
 - doc: add more examples and test for partitions ([#181])
+- doc: Add CHANGELOG.md [#189]
 
 ### Changed
 
@@ -26,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#164]: https://github.com/JuliaMath/Combinatorics.jl/pull/164
 [#181]: https://github.com/JuliaMath/Combinatorics.jl/pull/181
 [#183]: https://github.com/JuliaMath/Combinatorics.jl/pull/183
+[#189]: https://github.com/JuliaMath/Combinatorics.jl/pull/189
 
 
 ## [1.0.3] - 2025-05-03
