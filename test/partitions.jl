@@ -113,6 +113,16 @@
         # integer_partitions <--> partitions(::Integer)
         @test Set(integer_partitions(5)) == Set(partitions(5))
 
+        # Partition function p(n):  https://oeis.org/A000041
+        @test length(integer_partitions(0)) == 1
+        @test length(integer_partitions(1)) == 1
+        @test length(integer_partitions(2)) == 2
+        @test length(integer_partitions(3)) == 3
+        @test length(integer_partitions(4)) == 5
+        @test length(integer_partitions(5)) == 7
+        @test length(integer_partitions(40)) == 37338
+        @test length(integer_partitions(49)) == 173525
+
         @test_throws DomainError integer_partitions(-1)
     end
 
