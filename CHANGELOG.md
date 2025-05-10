@@ -171,6 +171,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.7.0] - 2018-08-10
 
-> TODO: Update this section
-
 [0.7.0]: https://github.com/JuliaMath/Combinatorics.jl/compare/v0.6.0...v0.7.0
+
+## [0.6.0] - 2018-03-31
+
+[0.6.0]: https://github.com/JuliaMath/Combinatorics.jl/compare/v0.5.0...v0.6.0
+
+## [0.5.0] - 2017-11-23
+
+[0.5.0]: https://github.com/JuliaMath/Combinatorics.jl/compare/v0.4.0...v0.5.0
+
+## [0.4.0] - 2017-03-17
+
+[0.4.0]: https://github.com/JuliaMath/Combinatorics.jl/compare/v0.3.0...v0.4.0
+
+## [0.3.0] - 2015-11-07
+
+[0.3.0]: https://github.com/JuliaMath/Combinatorics.jl/compare/v0.2.0...v0.3.0
+
+## [0.2.0] - 2015-11-06
+
+[0.2.0]: https://github.com/JuliaMath/Combinatorics.jl/compare/v0.1.1...v0.2.0
+
+## [0.1.1] - 2014-10-31
+
+[0.1.1]: https://github.com/JuliaMath/Combinatorics.jl/compare/v0.0.1...v0.1.1
+
+## [0.0.1] - 2014-03-17
+
+[0.0.1]: https://github.com/JuliaMath/Combinatorics.jl/releases/tag/v0.0.1
