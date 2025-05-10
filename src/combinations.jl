@@ -45,8 +45,8 @@ function combinations(a, t::Integer)
         # generate 0 combinations for negative argument
         t = length(a) + 1
     end
-    reorder(c) = [a[ci] for ci in c]
-    (reorder(c) for c in Combinations(length(a), t))
+    # generate all reorderings of 'a' based on combinations of indexes
+    (a[c] for c in Combinations(length(a), t))
 end
 
 
