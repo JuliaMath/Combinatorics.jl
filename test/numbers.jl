@@ -51,6 +51,7 @@
       @test stirlings1(6, 6) == 1
       @test stirlings1(6, 6, true) == 1
       @test sum([abs(stirlings1(8, i, true)) for i = 0:8]) == factorial(8)
+      @test stirlings1(big"26", 10) == 196928100451110820242880
 
       # stirlings2
       @test_throws DomainError stirlings2(-1, 1)
@@ -65,6 +66,7 @@
       @test stirlings2(6, 4) == 65
       @test stirlings2(6, 5) == 15
       @test stirlings2(6, 6) == 1
+      @test stirlings2(big"26", 10) == 13199555372846848005
 
       # bell
       @test bellnum.(0:10) == [
