@@ -125,7 +125,12 @@ function lucasnum(n::Integer)
     return z[]
 end
 
-function stirlings1(n::Int, k::Int, signed::Bool=false)
+"""
+    stirlings1(n::Integer, k::Integer)
+
+Compute the Stirling number of the first kind, `s(n,k)`.
+"""
+function stirlings1(n::Integer, k::Integer, signed::Bool=false)
     if signed == true
         return (-1)^(n - k) * stirlings1(n, k)
     end
@@ -152,11 +157,11 @@ function stirlings1(n::Int, k::Int, signed::Bool=false)
 end
 
 """
-    stirlings2(n::Int, k::Int)
+    stirlings2(n::Integer, k::Integer)
 
 Compute the Stirling number of the second kind, `S(n,k)`.
 """
-function stirlings2(n::Int, k::Int)
+function stirlings2(n::Integer, k::Integer)
     if n < 0
         throw(DomainError(n, "n must be nonnegative"))
     elseif n == k == 0
