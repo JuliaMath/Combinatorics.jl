@@ -8,7 +8,7 @@ export
     #nextprod,
 
 
-#integer partitions
+# integer partitions
 
 struct IntegerPartitions
     n::Int
@@ -24,15 +24,54 @@ function Base.iterate(p::IntegerPartitions, xs = Int[])
 end
 
 """
-    partitions(n)
+    partitions(n::Integer)
 
-Generate all integer arrays that sum to `n`. Because the number of partitions can be very
-large, this function returns an iterator object. Use `collect(partitions(n))` to get an
-array of all partitions. The number of partitions to generate can be efficiently computed
-using `length(partitions(n))`.
+Generate all integer arrays that sum to `n`.
+
+Because the number of partitions can be very large,
+this function returns an iterator object.
+Use `collect(partitions(n))` to get an array of all partitions.
+
+The number of partitions to generate can be efficiently computed using
+`length(partitions(n))`.
+
+See also:
+- [`integer_partitions(n::Integer)`](@ref)
+    for a non-iterator version that returns all partitions as a array
+- [`partitions(n::Integer, m::Integer)`](@ref)
+    for partitions with exactly `m` parts.
+
+## Examples
+```jldoctest
+julia> collect(partitions(2))
+2-element Vector{Vector{Int64}}:
+ [2]
+ [1, 1]
+
+julia> collect(partitions(3))
+3-element Vector{Vector{Int64}}:
+ [3]
+ [2, 1]
+ [1, 1, 1]
+
+julia> integer_partitions(3)
+3-element Vector{Vector{Int64}}:
+ [1, 1, 1]
+ [2, 1]
+ [3]
+
+julia> first(partitions(10))
+1-element Vector{Int64}:
+ 10
+
+julia> length(partitions(10))
+42
+```
+
+# References
+- [Integer partition - Wikipedia](https://en.wikipedia.org/wiki/Integer_partition)
 """
 partitions(n::Integer) = IntegerPartitions(n)
-
 
 
 function nextpartition(n, as)
@@ -97,12 +136,47 @@ Base.length(f::FixedPartitions) = npartitions(f.n,f.m)
 Base.eltype(f::FixedPartitions) = Vector{Int}
 
 """
-    partitions(n, m)
+    partitions(n::Integer, m::Integer)
 
-Generate all arrays of `m` integers that sum to `n`. Because the number of partitions can
-be very large, this function returns an iterator object. Use `collect(partitions(n, m))` to
-get an array of all partitions. The number of partitions to generate can be efficiently
-computed using `length(partitions(n, m))`.
+Generate all integer partitions of `n` into exactly `m` parts, that sum to `n`.
+
+Because the number of partitions can be very large,
+this function returns an iterator object.
+Use `collect(partitions(n, m))` to get an array of all partitions.
+
+The number of partitions to generate can be efficiently computed using
+`length(partitions(n, m))`.
+
+See also: [`partitions(n::Integer)`](@ref)
+
+## Examples
+```jldoctest
+julia> collect(partitions(4))
+5-element Vector{Vector{Int64}}:
+ [4]
+ [3, 1]
+ [2, 2]
+ [2, 1, 1]
+ [1, 1, 1, 1]
+
+julia> collect(partitions(4, 2))
+2-element Vector{Vector{Int64}}:
+ [3, 1]
+ [2, 2]
+
+julia> collect(partitions(4, 4))
+1-element Vector{Vector{Int64}}:
+ [1, 1, 1, 1]
+
+julia> collect(partitions(4, 5))
+Vector{Int64}[]
+
+julia> partitions(4, 0)
+ERROR: DomainError with (4, 0):
+n and m must be positive
+Stacktrace:
+[...]
+```
 """
 partitions(n::Integer, m::Integer) =
     n >= 1 && m >= 1 ?
@@ -176,11 +250,45 @@ Base.eltype(p::SetPartitions) = Vector{Vector{eltype(p.s)}}
 """
     partitions(s::AbstractVector)
 
-Generate all set partitions of the elements of an array `s`, represented as arrays of
-arrays. Because the number of partitions can be very large, this function returns an
-iterator object. Use `collect(partitions(s))` to get an array of all partitions. The
-number of partitions to generate can be efficiently computed using
-`length(partitions(s))`.
+Generate all set partitions of the elements of an array `s`,
+represented as arrays of arrays.
+
+Because the number of partitions can be very large,
+this function returns an iterator object.
+Use `collect(partitions(s))` to get an array of all partitions.
+
+The number of partitions of an `n`-element set
+is given by the n-th Bell number `Bn`:
+`length(partitions(s)) == bellnum(length(s))`.
+
+See also: [`bellnum`](@ref)
+
+# Examples
+```jldoctest
+julia> collect(partitions([1, 1]))
+2-element Vector{Vector{Vector{Int64}}}:
+ [[1, 1]]
+ [[1], [1]]
+
+julia> collect(partitions(-1:-1:-2))
+2-element Vector{Vector{Vector{Int64}}}:
+ [[-1, -2]]
+ [[-1], [-2]]
+
+julia> collect(partitions('a':'c'))
+5-element Vector{Vector{Vector{Char}}}:
+ [['a', 'b', 'c']]
+ [['a', 'b'], ['c']]
+ [['a', 'c'], ['b']]
+ [['a'], ['b', 'c']]
+ [['a'], ['b'], ['c']]
+
+julia> length(partitions(1:10)) == bellnum(10)
+true
+```
+
+# References
+- [Partition of a set - Wikipedia](https://en.wikipedia.org/wiki/Partition_of_a_set)
 """
 partitions(s::AbstractVector) = SetPartitions(s)
 
@@ -257,11 +365,45 @@ Base.eltype(p::FixedSetPartitions) = Vector{Vector{eltype(p.s)}}
     partitions(s::AbstractVector, m::Int)
 
 Generate all set partitions of the elements of an array `s` into exactly `m` subsets,
-represented as arrays of arrays. Because the number of partitions can be very large,
-this function returns an iterator object. Use `collect(partitions(s, m))` to get
-an array of all partitions. The number of partitions into `m` subsets is equal to the
-Stirling number of the second kind, and can be efficiently computed using
-`length(partitions(s, m))`.
+represented as arrays of arrays.
+
+Because the number of partitions can be very large,
+this function returns an iterator object.
+Use `collect(partitions(s, m))` to get an array of all partitions.
+
+The number of partitions into `m` subsets is equal to
+the Stirling number of the second kind,
+and can be efficiently computed using `length(partitions(s, m))`.
+
+See also: [`stirlings2(n::Int, k::Int)`](@ref)
+
+# Examples
+```jldoctest
+julia> collect(partitions('a':'c', 3))
+1-element Vector{Vector{Vector{Char}}}:
+ [['a'], ['b'], ['c']]
+
+julia> collect(partitions([1, 1, 1], 2))
+3-element Vector{Vector{Vector{Int64}}}:
+ [[1, 1], [1]]
+ [[1, 1], [1]]
+ [[1], [1, 1]]
+
+julia> collect(partitions(1:3, 2))
+3-element Vector{Vector{Vector{Int64}}}:
+ [[1, 2], [3]]
+ [[1, 3], [2]]
+ [[1], [2, 3]]
+
+julia> stirlings2(3, 2)
+3
+
+julia> length(partitions(1:10, 3)) == stirlings2(10, 3)
+true
+```
+
+# References
+- [Partition of a set - Wikipedia](https://en.wikipedia.org/wiki/Partition_of_a_set)
 """
 partitions(s::AbstractVector, m::Int) =
     length(s) >= 1 && m >= 1 ?
@@ -394,15 +536,31 @@ end
 """
     prevprod(a::Vector{Int}, x)
 
-Previous integer not greater than `x` that can be written as ``\\prod k_i^{p_i}`` for
-integers ``p_1``, ``p_2``, etc.
+Find the largest integer not greater than `x`
+that can be expressed as a product of powers of the elements in `a`.
 
-For integers ``i_1``, ``i_2``, ``i_3``, this is equivalent to finding the largest ``x``
-such that
+This function computes the largest value `y ≤ x` that can be written as:
+```math
+y = \\prod a_i^{n_i}
+  = a_1^{n_1} a_2^{n_2} \\cdots a_k^{n_k}
+  \\leq x
+```
+where ``n_i`` is a non-negative integer, `k` is the length of Vector `a`.
 
-``i_1^{n_1} i_2^{n_2} i_3^{n_3} \\leq x``
+# Examples
+```jldoctest
+julia> prevprod([10], 1000)   # 1000 = 10^3
+1000
 
-for integers ``n_1``, ``n_2``, ``n_3``.
+julia> prevprod([2, 5], 30)   # 25 = 2^0 * 5^2
+25
+
+julia> prevprod([2, 3], 100)  # 96 = 2^5 * 3^1
+96
+
+julia> prevprod([2, 3, 5], 1) # 1 = 2^0 * 3^0 * 5^0
+1
+```
 """
 function prevprod(a::Vector{Int}, x)
     if x > typemax(Int)
@@ -446,17 +604,49 @@ end
 """
     integer_partitions(n)
 
-List the partitions of the integer `n`.
+Generates all partitions of the integer `n` as a list of integer arrays,
+where each partition represents a way to write `n` as a sum of positive integers.
+
+See also: [`partitions(n::Integer)`](@ref)
 
 !!! note
     The order of the resulting array is consistent with that produced by the computational
     discrete algebra software GAP.
+
+# Examples
+```jldoctest
+julia> integer_partitions(2)
+2-element Vector{Vector{Int64}}:
+ [1, 1]
+ [2]
+
+julia> integer_partitions(3)
+3-element Vector{Vector{Int64}}:
+ [1, 1, 1]
+ [2, 1]
+ [3]
+
+julia> collect(partitions(3))
+3-element Vector{Vector{Int64}}:
+ [3]
+ [2, 1]
+ [1, 1, 1]
+
+julia> integer_partitions(-1)
+ERROR: DomainError with -1:
+n must be nonnegative
+Stacktrace:
+[...]
+```
+
+# References
+- [Integer partition - Wikipedia](https://en.wikipedia.org/wiki/Integer_partition)
 """
 function integer_partitions(n::Integer)
     if n < 0
         throw(DomainError(n, "n must be nonnegative"))
     elseif n == 0
-        return Vector{Int}[]
+        return Vector{Int}[[]]
     elseif n == 1
         return Vector{Int}[[1]]
     end
@@ -474,12 +664,46 @@ function integer_partitions(n::Integer)
 end
 
 
-
-#Noncrossing partitions
+# Noncrossing partitions
 
 const _cmp = cmp
 
-#Produces noncrossing partitions of length n
+"""
+    ncpartitions(n::Int)
+
+Generates all noncrossing partitions of a set of `n` elements,
+returning them as a `Vector` of partition representations.
+
+The number of noncrossing partitions of an `n`-element set
+is given by the n-th Catalan number `Cn`:
+`length(ncpartitions(n)) == catalannum(n)`.
+
+See also: [`catalannum`](@ref)
+
+# Examples
+```jldoctest
+julia> ncpartitions(1)
+1-element Vector{Vector{Vector{Int64}}}:
+ [[1]]
+
+julia> ncpartitions(3)
+5-element Vector{Vector{Vector{Int64}}}:
+ [[1], [2], [3]]
+ [[1], [2, 3]]
+ [[1, 2], [3]]
+ [[1, 3], [2]]
+ [[1, 2, 3]]
+
+julia> catalannum(3)
+5
+
+julia> length(ncpartitions(6)) == catalannum(6)
+true
+```
+
+# References
+- [Noncrossing partition - Wikipedia](https://en.wikipedia.org/wiki/Noncrossing_partition)
+"""
 function ncpartitions(n::Int)
     partitions = Vector{Vector{Int}}[]
     _ncpart!(1,n,n,Vector{Int}[], partitions)

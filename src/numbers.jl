@@ -151,6 +151,11 @@ function stirlings1(n::Int, k::Int, signed::Bool=false)
     return (n - 1) * stirlings1(n - 1, k) + stirlings1(n - 1, k - 1)
 end
 
+"""
+    stirlings2(n::Int, k::Int)
+
+Compute the Stirling number of the second kind, `S(n,k)`.
+"""
 function stirlings2(n::Int, k::Int)
     if n < 0
         throw(DomainError(n, "n must be nonnegative"))

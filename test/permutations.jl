@@ -30,7 +30,7 @@ end
     @test collect(permutations([], -1)) == Any[]
     @test collect(permutations([], 0)) == [Any[]]
     @test collect(permutations([], 1)) == Any[]
-    
+
     @testset "permutation lengths" begin
         expected_lengths = [1, 5, 20, 60, 120, 120]
         ks = 0:5
@@ -59,12 +59,26 @@ end
     @test collect(multiset_permutations("aabc", 5)) == Any[]
     @test collect(multiset_permutations("aabc", 2)) == Any[['a', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'a'],
         ['b', 'c'], ['c', 'a'], ['c', 'b']]
+    @test collect(multiset_permutations("aabcc", 5)) == collect(multiset_permutations("aabcc"))
+    @test collect(multiset_permutations("")) == Any[Char[]]
     @test collect(multiset_permutations("aabc", 0)) == Any[Char[]]
     @test collect(multiset_permutations("aabc", -1)) == Any[]
     @test collect(multiset_permutations("", 1)) == Any[]
     @test collect(multiset_permutations("", 0)) == Any[Char[]]
     @test collect(multiset_permutations("", -1)) == Any[]
     @test length(multiset_permutations("aaaaaaaaaaaaaaaaaaaaab", 21)) == 22
+
+    # derangements
+    @test length(collect(derangements(1:4))) == 9
+    @test length(collect(derangements(1:8))) == derangement(8) == 14833
+    @test collect(derangements([])) == [[]]
+    @test collect(derangements(Int[])) == [Int[]]
+    @test collect(derangements([1])) == Vector{Int}[]
+    @test collect(derangements([1, 1])) == Vector{Int}[]
+    @test collect(derangements([1, 1, 2])) == Vector{Int}[]
+    @test collect(derangements([1, 1, 2, 2])) == [[2, 2, 1, 1]]
+    @test map(join, derangements("aabbc")) == ["bbaca", "bbcaa", "bcaab", "cbaab"]
+    @test map(join, derangements("aaabbbc")) == ["bbbaaca", "bbbacaa", "bbbcaaa", "bbcaaab", "bcbaaab", "cbbaaab"]
 
     #nthperm!
     for n = 0:7, k = 1:factorial(n)

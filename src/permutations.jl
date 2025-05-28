@@ -1,6 +1,7 @@
 #Permutations
 
 export
+    derangements,
     levicivita,
     multiset_permutations,
     nthperm!,
@@ -80,7 +81,7 @@ permutations(a) = permutations(a, length(a))
     permutations(a, t)
 
 Generate all size `t` permutations of an indexable object `a`.
-Only works for `a` with defined length. 
+Only works for `a` with defined length.
 If `(t <= 0) || (t > length(a))`, then returns an empty vector of eltype of `a`
 
 # Examples
@@ -106,7 +107,7 @@ julia> [ (len, collect(permutations(1:3, len))) for len in -1:4 ]
 """
 function permutations(a, t::Integer)
     if t == 0
-        # Correct behavior for a permutation of length 0 is a vector containing a single empty vector 
+        # Correct behavior for a permutation of length 0 is a vector containing a single empty vector
         return [Vector{eltype(a)}()]
     elseif t == 1
         # Easy case, just return each element in its own vector
@@ -117,6 +118,42 @@ function permutations(a, t::Integer)
     end
     return Permutations(a, t)
 end
+
+"""
+    derangements(a)
+
+Generate all derangements of an indexable object `a` in lexicographic order.
+Because the number of derangements can be very large, this function returns an iterator object.
+Use `collect(derangements(a))` to get an array of all derangements.
+Only works for `a` with defined length.
+
+# Examples
+```jldoctest
+julia> derangements("julia") |> collect
+44-element Vector{Vector{Char}}:
+ ['u', 'j', 'i', 'a', 'l']
+ ['u', 'j', 'a', 'l', 'i']
+ ['u', 'l', 'j', 'a', 'i']
+ ['u', 'l', 'i', 'a', 'j']
+ ['u', 'l', 'a', 'j', 'i']
+ ['u', 'i', 'j', 'a', 'l']
+ ['u', 'i', 'a', 'j', 'l']
+ ['u', 'i', 'a', 'l', 'j']
+ ['u', 'a', 'j', 'l', 'i']
+ ['u', 'a', 'i', 'j', 'l']
+ ⋮
+ ['a', 'j', 'i', 'l', 'u']
+ ['a', 'l', 'j', 'u', 'i']
+ ['a', 'l', 'u', 'j', 'i']
+ ['a', 'l', 'i', 'j', 'u']
+ ['a', 'l', 'i', 'u', 'j']
+ ['a', 'i', 'j', 'u', 'l']
+ ['a', 'i', 'j', 'l', 'u']
+ ['a', 'i', 'u', 'j', 'l']
+ ['a', 'i', 'u', 'l', 'j']
+```
+"""
+derangements(a) = (d for d in multiset_permutations(a, length(a)) if all(t -> t[1] != t[2], zip(a, d)))
 
 
 function nextpermutation(m, t, state)
@@ -195,10 +232,18 @@ function Base.length(c::MultiSetPermutations)
     return round(Int, p[t+1])
 end
 
+
+"""
+    multiset_permutations(a)
+
+Generate all permutations of an array `a` where `a` may have duplicated elements.
+"""
+multiset_permutations(a) = multiset_permutations(a, length(a))
+
 """
     multiset_permutations(a, t)
 
-Generate all permutations of size `t` from an array `a` with possibly duplicated elements.
+Generate all permutations of size `t` from an array `a` where `a` may have duplicated elements.
 
 # Examples
 ```jldoctest
@@ -223,8 +268,8 @@ julia> collect(multiset_permutations([1,1,2], 3))
 ```
 """
 function multiset_permutations(a, t::Integer)
-    m = unique(collect(a))
-    f = [sum([c == x for c in a]) for x in m]
+    m = unique(a)
+    f = [sum(c == x for c in a)::Int for x in m]
     multiset_permutations(m, f, t)
 end
 
