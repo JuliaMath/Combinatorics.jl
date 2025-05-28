@@ -25,7 +25,7 @@ end
 
 function Base.iterate(p::Permutations, state=nothing)
     if state === nothing
-        mp = multiset_permutations(eachindex(p.data), p.length)
+        mp = multiset_permutations(collect(eachindex(p.data)), p.length)
         it = iterate(mp)
         if it === nothing return nothing end
     else
