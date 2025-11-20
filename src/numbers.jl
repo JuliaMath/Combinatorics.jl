@@ -350,9 +350,45 @@ function lucasnum(n::Integer)
 end
 
 """
-    stirlings1(n::Integer, k::Integer)
+    stirlings1(n::Integer, k::Integer, signed::Bool=false)
 
-Compute the Stirling number of the first kind, `s(n,k)`.
+Compute the Stirling number of the first kind, ``s(n,k)``.
+
+If `signed` is `true`, return the signed value ``(-1)^{n-k} s(n,k)``.
+
+# Examples
+```jldoctest
+julia> stirlings1(5, 5)  # s(n, n) = 1
+1
+
+julia> n=9; stirlings1(n, 1) == factorial(n-1)
+true
+
+julia> n=233; stirlings1(n, n-1) == binomial(n,2)
+true
+
+julia> stirlings1(6, 3, true)
+-225
+
+julia> [(k<=n ? stirlings1(n,k,true) : 0) for n in 1:6, k in 1:6]
+6×6 Matrix{Int64}:
+    1    0     0    0    0  0
+   -1    1     0    0    0  0
+    2   -3     1    0    0  0
+   -6   11    -6    1    0  0
+   24  -50    35  -10    1  0
+ -120  274  -225   85  -15  1
+
+julia> stirlings1(-1, 1)
+ERROR: DomainError with -1:
+n must be nonnegative
+Stacktrace:
+[...]
+```
+
+# References
+- [Stirling numbers of the first kind - Wikipedia](https://en.wikipedia.org/wiki/Stirling_numbers_of_the_first_kind)
+- [DLMF: §26.8 Stirling number of the first kind](https://dlmf.nist.gov/26.8#i.p1)
 """
 function stirlings1(n::Integer, k::Integer, signed::Bool=false)
     if signed == true
