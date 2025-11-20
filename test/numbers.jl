@@ -27,8 +27,14 @@
       @test_throws DomainError catalannum(-1)
 
       # fibonacci
-      @test fibonaccinum(5) == 5
+      # https://oeis.org/A000045
+      # Fibonacci and Lucas Factorizations:  https://mersennus.net/fibonacci/f1000.txt
+      @test fibonaccinum.(0:10) == [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+      @test fibonaccinum(92) == big"7540113804746346429"
+      @test fibonaccinum(92) < typemax(Int64) < fibonaccinum(93)
       @test fibonaccinum(101) == parse(BigInt, "573147844013817084101")
+      @test fibonaccinum(184) < typemax(Int128) < fibonaccinum(185)
+      @test fibonaccinum(233) == (139801 * 25047390419633 * big"631484089583693149557829547141")
       @test_throws DomainError fibonaccinum(-1)
 
       # lobb
