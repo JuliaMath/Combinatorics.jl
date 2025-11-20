@@ -48,7 +48,10 @@
       @test_throws DomainError narayana(-1, -1)
 
       # lassalle
+      # https://oeis.org/A180874
+      @test lassallenum.(1:10) == [1,1,5,56,1092,32670,1387815,79389310,5882844968,548129834616]
       @test lassallenum(14) == parse(BigInt, "270316008395632253340")
+      @test lassallenum(17) == parse(BigInt, "4359147487054262623576455600")
 
       # legendresymbol
       @test legendresymbol(1001, 9907) == jacobisymbol(1001, 9907) == -1
