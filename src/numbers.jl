@@ -303,6 +303,43 @@ function legendresymbol(a::Integer, b::Integer)
     return ccall((:__gmpz_legendre, :libgmp), Cint, (Ref{BigInt}, Ref{BigInt}), ba, bb)
 end
 
+"""
+    lucasnum(n)
+
+Compute the ``n``th Lucas number, ``L_n``, given by:
+```math
+L_0 = 2
+\\\\
+L_1 = 1
+\\\\
+L_n = L_{n-1} + L_{n-2}
+```
+
+# Examples
+```jldoctest
+julia> [ lucasnum(i) for i in 0:5 ]
+6-element Vector{BigInt}:
+  2
+  1
+  3
+  4
+  7
+ 11
+
+julia> lucasnum(10)
+123
+
+julia> lucasnum(-1)
+ERROR: DomainError with -1:
+n must be nonnegative
+Stacktrace:
+[...]
+```
+
+# References
+- [Lucas number - Wikipedia](https://en.wikipedia.org/wiki/Lucas_number)
+- [DLMF: §24.15 Lucas numbers](https://dlmf.nist.gov/24.15#iv.p1)
+"""
 function lucasnum(n::Integer)
     if n < 0
         throw(DomainError(n, "n must be nonnegative"))
