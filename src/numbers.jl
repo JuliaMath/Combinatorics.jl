@@ -267,6 +267,36 @@ function lassallenum(m::Integer)
     A[m]
 end
 
+"""
+    legendresymbol(a, p)
+
+Compute the Legendre symbol ``\\left(\\tfrac{a}{p}\\right)`` for odd prime ``p``.
+Returns ``-1``, ``0``, or ``1``.
+
+# Examples
+```jldoctest
+julia> legendresymbol.(6:8, 7)
+3-element Vector{Int32}:
+ -1
+  0
+  1
+
+julia> [ [legendresymbol.(a, n) for a in 0:(n-1)] for n in (1,3,5,7,9) ]
+5-element Vector{Vector{Int32}}:
+ [1]
+ [0, 1, -1]
+ [0, 1, -1, -1, 1]
+ [0, 1, 1, -1, 1, -1, -1]
+ [0, 1, 1, 0, 1, 1, 0, 1, 1]
+
+julia> legendresymbol(1001, 9907)
+-1
+```
+
+# References
+- [Legendre symbol - Wikipedia](https://en.wikipedia.org/wiki/Legendre_symbol)
+- [DLMF: §27.9 Legendre symbol](https://dlmf.nist.gov/27.9)
+"""
 function legendresymbol(a::Integer, b::Integer)
     ba = Ref{BigInt}(a)
     bb = Ref{BigInt}(b)
