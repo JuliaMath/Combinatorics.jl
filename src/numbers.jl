@@ -210,6 +210,44 @@ function fibonaccinum(n::Integer)
 end
 
 
+"""
+    jacobisymbol(a, b)
+
+Compute the Jacobi symbol ``\\left(\\tfrac{a}{b}\\right)`` for odd ``b``.
+Returns ``-1``, ``0``, or ``1``.
+
+# Examples
+```jldoctest
+julia> jacobisymbol.(2:4, 3)
+3-element Vector{Int32}:
+ -1
+  0
+  1
+
+julia> jacobisymbol.(-2:2, 1)  # (a|1) = 1
+5-element Vector{Int32}:
+ 1
+ 1
+ 1
+ 1
+ 1
+
+julia> [jacobisymbol(a, n) for n in (1,3,5,7,9), a in 1:9]
+5×9 Matrix{Int32}:
+ 1   1   1  1   1   1   1   1  1
+ 1  -1   0  1  -1   0   1  -1  0
+ 1  -1  -1  1   0   1  -1  -1  1
+ 1   1  -1  1  -1  -1   0   1  1
+ 1   1   0  1   1   0   1   1  0
+
+julia> jacobisymbol(1001, 9907)
+-1
+```
+
+# References
+- [Jacobi symbol - Wikipedia](https://en.wikipedia.org/wiki/Jacobi_symbol)
+- [DLMF: §27.9 Jacobi symbol](https://dlmf.nist.gov/27.9#p3)
+"""
 function jacobisymbol(a::Integer, b::Integer)
     ba = Ref{BigInt}(a)
     bb = Ref{BigInt}(b)
