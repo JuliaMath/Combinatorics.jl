@@ -258,6 +258,25 @@ end
     lassallenum(n)
 
 Compute the ``n``th entry in Lassalle's sequence, OEIS entry A180874.
+
+# Examples
+```jldoctest
+julia> lassallenum.(1:5)
+5-element Vector{BigInt}:
+    1
+    1
+    5
+   56
+ 1092
+
+julia> lassallenum(14)
+270316008395632253340
+```
+
+# References
+- Lassalle, M. (2012). Two integer sequences related to Catalan numbers.
+  *Journal of Combinatorial Theory*, Series A, 119(4), 923-935.
+- [OEIS A180874](https://oeis.org/A180874)
 """
 function lassallenum(m::Integer)
     A = ones(BigInt, m)
