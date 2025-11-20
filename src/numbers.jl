@@ -352,12 +352,15 @@ end
 """
     stirlings1(n::Integer, k::Integer, signed::Bool=false)
 
-Compute the Stirling number of the first kind, ``s(n,k)``.
+Compute the Stirling number of the first kind, ``s(n,k)``, for non-negative `n`.
 
 If `signed` is `true`, return the signed value ``(-1)^{n-k} s(n,k)``.
 
 # Examples
 ```jldoctest
+julia> stirlings1(0, 0)
+1
+
 julia> stirlings1(5, 5)  # s(n, n) = 1
 1
 
@@ -370,7 +373,7 @@ true
 julia> stirlings1(6, 3, true)
 -225
 
-julia> [(k<=n ? stirlings1(n,k,true) : 0) for n in 1:6, k in 1:6]
+julia> [stirlings1(n,k,true) for n in 1:6, k in 1:6]
 6×6 Matrix{Int64}:
     1    0     0    0    0  0
    -1    1     0    0    0  0
@@ -419,7 +422,7 @@ end
 """
     stirlings2(n::Integer, k::Integer)
 
-Compute the Stirling number of the second kind, ``S(n,k)``.
+Compute the Stirling number of the second kind, ``S(n,k)``, for non-negative `n`.
 
 # Examples
 ```jldoctest
