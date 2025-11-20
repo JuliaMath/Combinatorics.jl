@@ -419,7 +419,54 @@ end
 """
     stirlings2(n::Integer, k::Integer)
 
-Compute the Stirling number of the second kind, `S(n,k)`.
+Compute the Stirling number of the second kind, ``S(n,k)``.
+
+# Examples
+```jldoctest
+julia> stirlings2(0, 0)
+1
+
+julia> n=233; stirlings2(n, 0) == 0  # n > 0
+true
+
+julia> stirlings2(0, 1)
+0
+
+julia> n=13; stirlings2(n, 1) == stirlings2(n, n) == 1  # n > 0
+true
+
+julia> n=6; [stirlings2(6, k) for k in 0:6]
+7-element Vector{Int64}:
+  0
+  1
+ 31
+ 90
+ 65
+ 15
+  1
+
+julia> n=6; sum(stirlings2(6, k) for k in 0:6) == bellnum(n)
+true
+
+julia> [stirlings2(n,k) for n in 1:6, k in 1:6]
+6×6 Matrix{Int64}:
+ 1   0   0   0   0  0
+ 1   1   0   0   0  0
+ 1   3   1   0   0  0
+ 1   7   6   1   0  0
+ 1  15  25  10   1  0
+ 1  31  90  65  15  1
+
+julia> stirlings2(-1, 1)
+ERROR: DomainError with -1:
+n must be nonnegative
+Stacktrace:
+[...]
+```
+
+# References
+- [Stirling numbers of the second kind - Wikipedia](https://en.wikipedia.org/wiki/Stirling_numbers_of_the_second_kind)
+- [DLMF: §26.8 Stirling number of the second kind](https://dlmf.nist.gov/26.8#i.p3)
 """
 function stirlings2(n::Integer, k::Integer)
     if n < 0
