@@ -163,6 +163,43 @@ function narayana(bn::Integer,bk::Integer)
     div(binomial(n, k)*binomial(n, k - 1) , n)
 end
 
+"""
+    fibonaccinum(n)
+
+Compute the ``n``th Fibonacci number, ``F_n``, given by:
+```math
+F_0 = 0
+\\\\
+F_1 = 1
+\\\\
+F_n = F_{n-1} + F_{n-2}
+```
+
+# Examples
+```jldoctest
+julia> [ fibonaccinum(i) for i in 0:5 ]
+6-element Vector{BigInt}:
+ 0
+ 1
+ 1
+ 2
+ 3
+ 5
+
+julia> fibonaccinum(13)
+233
+
+julia> fibonaccinum(-1)
+ERROR: DomainError with -1:
+n must be nonnegative
+Stacktrace:
+[...]
+```
+
+# References
+- [Fibonacci sequence - Wikipedia](https://en.wikipedia.org/wiki/Fibonacci_sequence)
+- [DLMF: §26.11 Fibonacci number](https://dlmf.nist.gov/26.11#p4)
+"""
 function fibonaccinum(n::Integer)
     if n < 0
         throw(DomainError(n, "n must be nonnegative"))
