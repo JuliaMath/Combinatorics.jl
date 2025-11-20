@@ -150,12 +150,40 @@ end
 """
     narayana(n,k)
 
-Compute the Narayana number `N(n,k)` given by ``\\frac{1}{n}\\binom{n}{k}\\binom{n}{k-1}``
-Wikipedia : https://en.wikipedia.org/wiki/Narayana_number
+Compute the Narayana number `N(n,k)` given by ``\\frac{1}{n}\\binom{n}{k}\\binom{n}{k-1}``,
+where ``1 \\leq k \\leq n``.
+
+# Examples
+```jldoctest
+julia> narayana(1, 1)
+1
+
+julia> narayana(8, 5)
+490
+
+julia> [ [narayana(n, k) for k in 1:n] for n in 1:6 ]
+6-element Vector{Vector{BigInt}}:
+ [1]
+ [1, 1]
+ [1, 3, 1]
+ [1, 6, 6, 1]
+ [1, 10, 20, 10, 1]
+ [1, 15, 50, 50, 15, 1]
+
+julia> narayana(3, 4)
+ERROR: DomainError with (n = 3, k = 4):
+n and k must be 1 <= k <= n
+Stacktrace:
+[...]
+```
+
+# References
+- [Narayana number - Wikipedia](https://en.wikipedia.org/wiki/Narayana_number)
+- [DLMF: §26.6 Narayana Number](https://dlmf.nist.gov/26.6#Px3)
 """
 function narayana(bn::Integer,bk::Integer)
     if !(1 <= bk <= bn)
-        throw(DomainError("Domain is 1 <= k <= n"))
+        throw(DomainError((n=bn, k=bk), "n and k must be 1 <= k <= n"))
     else
         n = BigInt(bn)
         k = BigInt(bk)
