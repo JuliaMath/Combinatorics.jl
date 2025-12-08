@@ -7,8 +7,7 @@ on:
       - master
       - main
     tags: ['*']
-    pull_request:
-    workflow_dispatch:
+  workflow_dispatch:
 
 concurrency:
   # Skip intermediate builds: always.
@@ -40,7 +39,7 @@ jobs:
           - os: macos-latest
             version: '1.0'
         include:
-          - os: macos-13  # Intel
+          - os: macos-15-intel  # Intel
             version: '1.0'
     steps:
       - uses: actions/checkout@v6
