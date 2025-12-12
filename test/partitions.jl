@@ -1,5 +1,4 @@
 @testset "partitions" begin
-
     @testset "partitions(n::Integer)" begin
         @test_broken collect(partitions(0)) == [[]]
         @test collect(partitions(1)) == [[1]]
@@ -22,7 +21,8 @@
 
     @testset "partitions(n::Integer, m::Integer)" begin
         @test collect(partitions(8, 1)) == [[8]]
-        @test collect(partitions(8, 3)) == [[6, 1, 1], [5, 2, 1], [4, 3, 1], [4, 2, 2], [3, 3, 2]]
+        @test collect(partitions(8, 3)) ==
+            [[6, 1, 1], [5, 2, 1], [4, 3, 1], [4, 2, 2], [3, 3, 2]]
         @test collect(partitions(8, 8)) == [ones(Int, 8)]
         @test collect(partitions(8, 9)) == []
         @test collect(partitions(90, 90)) == [ones(Int, 90)]
@@ -52,7 +52,8 @@
     @testset "partitions(s::AbstractVector)" begin
         @test collect(partitions([1])) == [[[1]]]
         @test collect(partitions([1, 2])) == [[[1, 2]], [[1], [2]]]
-        @test collect(partitions([1, 2, 3])) == [[[1, 2, 3]], [[1, 2], [3]], [[1, 3], [2]], [[1], [2, 3]], [[1], [2], [3]]]
+        @test collect(partitions([1, 2, 3])) ==
+            [[[1, 2, 3]], [[1, 2], [3]], [[1, 3], [2]], [[1], [2, 3]], [[1], [2], [3]]]
         @test collect(partitions(1:3)) == collect(partitions([1, 2, 3]))
         @test collect(partitions('a':'b')) == [[['a', 'b']], [['a'], ['b']]]
 
@@ -67,15 +68,15 @@
     end
 
     @testset "partitions(s::AbstractVector, m::Int)" begin
-        @test collect(partitions(1:3, 2)) == [
-            [[1, 2], [3]],
-            [[1, 3], [2]],
-            [[1], [2, 3]],
-        ]
+        @test collect(partitions(1:3, 2)) == [[[1, 2], [3]], [[1, 3], [2]], [[1], [2, 3]]]
         @test collect(partitions([1, 2, 3, 4], 1)) == [[[1, 2, 3, 4]]]
         @test collect(partitions([1, 2, 3, 4], 3)) == [
-            [[1, 2], [3], [4]], [[1, 3], [2], [4]], [[1], [2, 3], [4]],
-            [[1, 4], [2], [3]], [[1], [2, 4], [3]], [[1], [2], [3, 4]]
+            [[1, 2], [3], [4]],
+            [[1, 3], [2], [4]],
+            [[1], [2, 3], [4]],
+            [[1, 4], [2], [3]],
+            [[1], [2, 4], [3]],
+            [[1], [2], [3, 4]],
         ]
         @test collect(partitions([1, 2, 3, 4], 4)) == [[[1], [2], [3], [4]]]
         @test collect(partitions([1, 2, 3, 4], 5)) == []
@@ -101,15 +102,8 @@
         @test integer_partitions(2) == [[1, 1], [2]]
         @test integer_partitions(3) == [[1, 1, 1], [2, 1], [3]]
         # gap> Partitions( 5 );
-        @test integer_partitions(5) == [
-            [1, 1, 1, 1, 1],
-            [2, 1, 1, 1],
-            [2, 2, 1],
-            [3, 1, 1],
-            [3, 2],
-            [4, 1],
-            [5]
-        ]
+        @test integer_partitions(5) ==
+            [[1, 1, 1, 1, 1], [2, 1, 1, 1], [2, 2, 1], [3, 1, 1], [3, 2], [4, 1], [5]]
         # integer_partitions <--> partitions(::Integer)
         @test Set(integer_partitions(5)) == Set(partitions(5))
 
@@ -170,5 +164,4 @@
             @test length(ncpartitions(n)) == catalannum(n)
         end
     end
-
 end

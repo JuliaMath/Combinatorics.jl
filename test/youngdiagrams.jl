@@ -18,5 +18,4 @@
         @test leglength(λ, μ) == -1
         @test character(λ, μ) == 1
     end
-
 end

@@ -24,7 +24,8 @@
     @test_throws DomainError partialderangement(-8, 0)
 
     # doublefactorial
-    @test doublefactorial(70) == parse(BigInt, "355044260642859198243475901411974413130137600000000")
+    @test doublefactorial(70) ==
+        parse(BigInt, "355044260642859198243475901411974413130137600000000")
     @test_throws DomainError doublefactorial(-1)
 
     # hyperfactorial
@@ -51,11 +52,10 @@
         @test_throws OverflowError multinomial(10, 10, 10, 6)
         @test_throws OverflowError multinomial(10, 10, 10, 10)
         # binomial(200, 100) overflows
-        @test_throws OverflowError multinomial(100, 100)  
+        @test_throws OverflowError multinomial(100, 100)
     end
 
     # primorial
     @test primorial(17) == 510510
     @test_throws DomainError primorial(-1)
-
 end
