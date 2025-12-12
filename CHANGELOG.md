@@ -13,21 +13,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add `multiset_permutations` method that doesn't require length ([#164])
-- doc: add more examples and test for partitions ([#181])
-- doc: Add CHANGELOG.md [#189]
+- doc: Add CHANGELOG.md ([#189])
 
 ### Changed
 
+### Fixed
+
+[Unreleased]: https://github.com/JuliaMath/Combinatorics.jl/compare/v1.1.0...HEAD
+[#189]: https://github.com/JuliaMath/Combinatorics.jl/pull/189
+
+
+## [1.1.0] - 2025-12-12
+
+### Added
+
+- feat(api): Add Derangements ([#150])
+- Allow calling `stirlings1` and `stirlings2` with `Integer` arguments ([#193])
+- Add `multiset_permutations` method that doesn't require length ([#164])
+- doc: add more examples and test for `partitions` ([#181])
+
+### Changed
+
+- Optimize `permutations` with low effort (no change in algorithm) ([#184])
+- Optimize `permutations` by implementing it via `multiset_permutations` ([#186])
 - ci: workaround for tagbot permissions ([#183])
+- Bump actions/checkout from 4 to 5 ([#198])
+- Bump actions/checkout from 5 to 6 ([#202])
+- ci: use `macos-15-intel` ([#203])
 
 ### Fixed
 
-[Unreleased]: https://github.com/JuliaMath/Combinatorics.jl/compare/v1.0.3...HEAD
+- Bugfix: include empty combination ([#129])
+- Bugfix: let `integer_partitions(0) == [Int[]]` ([#179])
+
+[1.1.0]: https://github.com/JuliaMath/Combinatorics.jl/compare/v1.0.3...v1.1.0
+[#129]: https://github.com/JuliaMath/Combinatorics.jl/pull/129
+[#150]: https://github.com/JuliaMath/Combinatorics.jl/pull/150
 [#164]: https://github.com/JuliaMath/Combinatorics.jl/pull/164
+[#179]: https://github.com/JuliaMath/Combinatorics.jl/pull/179
 [#181]: https://github.com/JuliaMath/Combinatorics.jl/pull/181
 [#183]: https://github.com/JuliaMath/Combinatorics.jl/pull/183
-[#189]: https://github.com/JuliaMath/Combinatorics.jl/pull/189
+[#184]: https://github.com/JuliaMath/Combinatorics.jl/pull/184
+[#186]: https://github.com/JuliaMath/Combinatorics.jl/pull/186
+[#193]: https://github.com/JuliaMath/Combinatorics.jl/pull/193
+[#198]: https://github.com/JuliaMath/Combinatorics.jl/pull/198
+[#202]: https://github.com/JuliaMath/Combinatorics.jl/pull/202
+[#203]: https://github.com/JuliaMath/Combinatorics.jl/pull/203
 
 
 ## [1.0.3] - 2025-05-03
