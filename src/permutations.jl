@@ -134,7 +134,7 @@ julia> derangements("julia") |> collect
  ['a', 'i', 'u', 'l', 'j']
 ```
 """
-derangements(a) = (d for d in multiset_permutations(a, length(a)) if all(a .!= d))
+derangements(a) = (d for d in multiset_permutations(a, length(a)) if all(collect(a) .≠ collect(d)))
 
 function nextpermutation!(m::Vector, t::Int, state::Vector{Int})
     perm = m[@view state[1:t]]
