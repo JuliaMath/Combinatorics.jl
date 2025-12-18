@@ -23,7 +23,7 @@ end
 function Base.length(p::Permutations)::Union{Int, BigInt}
     length(p.data) < p.length && return 0
     length(p.data) < 21       && return Int(prod(length(p.data) - p.length + 1:length(p.data)))
-    return prod(BigInt(length(p.data)) - p.length + 1:length(p.data))
+    return prod(big(length(p.data)) - p.length + 1:big(length(p.data)))
 end
 
 Base.eltype(::Type{Permutations{T}}) where T = Vector{eltype(T)}
@@ -172,7 +172,6 @@ function nextpermutation!(m::Vector, t::Int, state::Vector{Int})
     return (perm, state)
 end
 
-nextpermutation(m::Vector, t::Int, state::Vector{Int}) = nextpermutation!(m, t, collect(state))
 
 struct MultiSetPermutations{T}
     m::T
