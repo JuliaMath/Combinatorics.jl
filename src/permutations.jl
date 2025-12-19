@@ -100,41 +100,6 @@ function permutations(a, t::Int)
     return Permutations(data, t)
 end
 
-"""
-    derangements(a)
-
-Generate all derangements of an indexable object `a` in lexicographic order.
-Because the number of derangements can be very large, this function returns an iterator object.
-Use `collect(derangements(a))` to get an array of all derangements.
-Only works for `a` with defined length.
-
-# Examples
-```jldoctest
-julia> derangements("julia") |> collect
-44-element Vector{Vector{Char}}:
- ['u', 'j', 'i', 'a', 'l']
- ['u', 'j', 'a', 'l', 'i']
- ['u', 'l', 'j', 'a', 'i']
- ['u', 'l', 'i', 'a', 'j']
- ['u', 'l', 'a', 'j', 'i']
- ['u', 'i', 'j', 'a', 'l']
- ['u', 'i', 'a', 'j', 'l']
- ['u', 'i', 'a', 'l', 'j']
- ['u', 'a', 'j', 'l', 'i']
- ['u', 'a', 'i', 'j', 'l']
- ⋮
- ['a', 'j', 'i', 'l', 'u']
- ['a', 'l', 'j', 'u', 'i']
- ['a', 'l', 'u', 'j', 'i']
- ['a', 'l', 'i', 'j', 'u']
- ['a', 'l', 'i', 'u', 'j']
- ['a', 'i', 'j', 'u', 'l']
- ['a', 'i', 'j', 'l', 'u']
- ['a', 'i', 'u', 'j', 'l']
- ['a', 'i', 'u', 'l', 'j']
-```
-"""
-derangements(a) = (d for d in multiset_permutations(a, length(a)) if all(collect(a) .≠ d))
 
 function nextpermutation!(m::Vector, t::Int, state::Vector{Int})
     perm = m[@view state[1:t]]
@@ -271,6 +236,104 @@ end
 function Base.iterate(p::MultiSetPermutations, state::Vector{Int} = copy(p.ref))
     (!isempty(state) && max(state[1], p.t) > length(p.ref) || (isempty(state) && p.t > 0)) && return
     nextpermutation!(p.m, p.t, state)
+end
+
+
+#Derangements
+
+struct Derangements{T}
+    data::T
+    order::T
+    counts::Vector{Int}
+    t::Int
+end
+
+function derangements(a, t::Int=length(a))
+    data, order, counts = eltype(a)[], eltype(a)[], Dict{eltype(a), Int}()
+    sizehint!(data, length(a))
+    for i in eachindex(a)
+        n = get(counts, a[i], 0) + 1
+        counts[a[i]] = n
+        push!(data, a[i])
+        isone(n) && push!(order, a[i])
+    end
+    Derangements(data, order, [counts[key] for key in order], t)
+end
+
+Base.eltype(::Type{Derangements{T}}) where {T} = Vector{eltype(T)}
+
+Base.IteratorSize(::Derangements) = Base.SizeUnknown()
+
+function Base.iterate(d::Derangements)
+    2maximum(d.counts) > length(d.data) && return
+    nextderangement(d, ones(Int, length(d.data)), copy(d.counts), 1, ones(Int, length(d.data)))
+end
+
+function Base.iterate(d::Derangements, state)
+    derangement, state = nextderangement(d, state...)
+    all(isone, last(state)) ? nothing : (derangement, state)
+end
+
+"""
+    derangements(a)
+
+Generate all derangements of an indexable object `a` in index-based lexicographic order.
+Because the number of derangements can be very large, this function returns an iterator object.
+Use `collect(derangements(a))` to get an array of all derangements.
+Only works for `a` with defined length.
+
+# Examples
+```jldoctest
+julia> derangements("julia") |> collect
+44-element Vector{Vector{Char}}:
+ ['u', 'j', 'i', 'a', 'l']
+ ['u', 'j', 'a', 'l', 'i']
+ ['u', 'l', 'j', 'a', 'i']
+ ['u', 'l', 'i', 'a', 'j']
+ ['u', 'l', 'a', 'j', 'i']
+ ['u', 'i', 'j', 'a', 'l']
+ ['u', 'i', 'a', 'j', 'l']
+ ['u', 'i', 'a', 'l', 'j']
+ ['u', 'a', 'j', 'l', 'i']
+ ['u', 'a', 'i', 'j', 'l']
+ ⋮
+ ['a', 'j', 'i', 'l', 'u']
+ ['a', 'l', 'j', 'u', 'i']
+ ['a', 'l', 'u', 'j', 'i']
+ ['a', 'l', 'i', 'j', 'u']
+ ['a', 'l', 'i', 'u', 'j']
+ ['a', 'i', 'j', 'u', 'l']
+ ['a', 'i', 'j', 'l', 'u']
+ ['a', 'i', 'u', 'j', 'l']
+ ['a', 'i', 'u', 'l', 'j']
+```
+"""
+derangements(a) = derangements(a, length(a))
+
+function nextderangement(d::Derangements, perm::Vector{Int}, counts::Vector{Int}, idx::Int, iterstate::Vector{Int})
+    ordlen = length(d.order)
+    while true
+        depth = idx
+        @inbounds for i in iterstate[idx]:ordlen
+            iterstate[idx] = i + 1
+            if counts[i] ≥ 1 && d.order[i] ≠ d.data[idx]
+                perm[idx] = i
+                counts[i] -= 1
+                idx += 1
+                break
+            end
+        end
+        @inbounds if idx > d.t
+            idx -= 1
+            counts[perm[idx]] += 1
+            return d.order[@view perm[1:d.t]], (perm, counts, idx, iterstate)
+        elseif iterstate[idx] == ordlen + 1 && depth == idx
+            iterstate[idx] = 1
+            idx -= 1
+            iszero(idx) && return d.order[@view perm[1:d.t]], (perm, counts, idx, iterstate)
+            counts[perm[idx]] += 1
+        end
+    end
 end
 
 
