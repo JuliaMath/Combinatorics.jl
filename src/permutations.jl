@@ -265,11 +265,13 @@ Base.eltype(::Type{Derangements{T}}) where {T} = Vector{eltype(T)}
 Base.IteratorSize(::Derangements) = Base.SizeUnknown()
 
 function Base.iterate(d::Derangements)
-    2maximum(d.counts) > length(d.data) && return
+    (isempty(d.data) || iszero(d.t)) && return eltype(d)[], nothing
+    (d.t > length(d.data) || d.t < 0 || 2maximum(d.counts) > length(d.data)) && return
     nextderangement(d, ones(Int, length(d.data)), copy(d.counts), 1, ones(Int, length(d.data)))
 end
 
 function Base.iterate(d::Derangements, state)
+    isnothing(state) && return nothing
     derangement, state = nextderangement(d, state...)
     all(isone, last(state)) ? nothing : (derangement, state)
 end
@@ -277,7 +279,7 @@ end
 """
     derangements(a)
 
-Generate all derangements of an indexable object `a` in index-based lexicographic order.
+Generate all derangements of an indexable object `a` in lexicographic order.
 Because the number of derangements can be very large, this function returns an iterator object.
 Use `collect(derangements(a))` to get an array of all derangements.
 Only works for `a` with defined length.
