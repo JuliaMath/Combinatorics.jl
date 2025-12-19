@@ -113,7 +113,7 @@ function nextpermutation!(m::Vector, t::Int, state::Vector{Int})
             j += 1
         end
     end
-    @inbounds if t < n && j <= n
+    @inbounds if t < n && j ≤ n
         state[t], state[j] = state[j], state[t]
     else
         if t < n
@@ -271,7 +271,7 @@ function Base.iterate(d::Derangements)
 end
 
 function Base.iterate(d::Derangements, state)
-    isnothing(state) && return nothing
+    state === nothing && return nothing
     derangement, state = nextderangement(d, state...)
     all(isone, last(state)) ? nothing : (derangement, state)
 end
