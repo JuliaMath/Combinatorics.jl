@@ -147,7 +147,7 @@ end
 
 Base.eltype(::Type{MultiSetPermutations{T}}) where {T} = Vector{eltype(T)}
 
-function Base.length(c::MultiSetPermutations)::Int
+function Base.length(c::MultiSetPermutations)
     t = c.t
     if t > length(c.ref)
         return 0
@@ -174,7 +174,7 @@ function Base.length(c::MultiSetPermutations)::Int
             end
         end
     end
-    return round(Int, p[t+1])
+    return round(p[t+1] > typemax(Int) ? BigInt : Int, p[t+1])
 end
 
 
@@ -248,7 +248,18 @@ struct Derangements{T}
     t::Int
 end
 
-function derangements(a, t::Int=length(a))
+mutable struct DerangementsIterState
+    idx::Int
+    iterstate::Vector{Int}
+    perm::Vector{Int}
+    counts::Vector{Int}
+end
+
+function DerangementsIterState(d::Derangements)
+    DerangementsIterState(1, ones(Int, length(d.data)), ones(Int, length(d.data)), copy(d.counts))
+end
+
+function derangements(a, t::Int)
     data, order, counts = eltype(a)[], eltype(a)[], Dict{eltype(a), Int}()
     sizehint!(data, length(a))
     for i in eachindex(a)
@@ -265,15 +276,19 @@ Base.eltype(::Type{Derangements{T}}) where {T} = Vector{eltype(T)}
 Base.IteratorSize(::Derangements) = Base.SizeUnknown()
 
 function Base.iterate(d::Derangements)
-    (isempty(d.data) || iszero(d.t)) && return eltype(d)[], nothing
+    state = DerangementsIterState(d)
+    if isempty(d.data) || iszero(d.t)
+        state.idx = 0
+        return eltype(d)[], state
+    end
     (d.t > length(d.data) || d.t < 0 || 2maximum(d.counts) > length(d.data)) && return
-    nextderangement(d, ones(Int, length(d.data)), copy(d.counts), 1, ones(Int, length(d.data)))
+    nextderangement(d, state)
 end
 
-function Base.iterate(d::Derangements, state)
-    state === nothing && return nothing
-    derangement, state = nextderangement(d, state...)
-    all(isone, last(state)) ? nothing : (derangement, state)
+function Base.iterate(d::Derangements, state::DerangementsIterState)
+    iszero(state.idx) && return nothing
+    derangement, state = nextderangement(d, state)
+    iszero(state.idx) ? nothing : (derangement, state)
 end
 
 """
@@ -312,28 +327,28 @@ julia> derangements("julia") |> collect
 """
 derangements(a) = derangements(a, length(a))
 
-function nextderangement(d::Derangements, perm::Vector{Int}, counts::Vector{Int}, idx::Int, iterstate::Vector{Int})
+function nextderangement(d::Derangements, state::DerangementsIterState)
     ordlen = length(d.order)
     while true
-        depth = idx
-        @inbounds for i in iterstate[idx]:ordlen
-            iterstate[idx] = i + 1
-            if counts[i] ≥ 1 && d.order[i] ≠ d.data[idx]
-                perm[idx] = i
-                counts[i] -= 1
-                idx += 1
+        depth = state.idx
+        @inbounds for i in state.iterstate[state.idx]:ordlen
+            state.iterstate[state.idx] = i + 1
+            if state.counts[i] ≥ 1 && d.order[i] ≠ d.data[state.idx]
+                state.perm[state.idx] = i
+                state.counts[i] -= 1
+                state.idx += 1
                 break
             end
         end
-        @inbounds if idx > d.t
-            idx -= 1
-            counts[perm[idx]] += 1
-            return d.order[@view perm[1:d.t]], (perm, counts, idx, iterstate)
-        elseif iterstate[idx] == ordlen + 1 && depth == idx
-            iterstate[idx] = 1
-            idx -= 1
-            iszero(idx) && return d.order[@view perm[1:d.t]], (perm, counts, idx, iterstate)
-            counts[perm[idx]] += 1
+        @inbounds if state.idx > d.t
+            state.idx -= 1
+            state.counts[state.perm[state.idx]] += 1
+            return d.order[@view state.perm[1:d.t]], state
+        elseif state.iterstate[state.idx] == ordlen + 1 && depth == state.idx
+            state.iterstate[state.idx] = 1
+            state.idx -= 1
+            iszero(state.idx) && return d.order[@view state.perm[1:d.t]], state
+            state.counts[state.perm[state.idx]] += 1
         end
     end
 end
