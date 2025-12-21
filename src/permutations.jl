@@ -95,7 +95,7 @@ function permutations(a, t::Int)
     data = eltype(a)[]
     sizehint!(data, length(a))
     for i in eachindex(a)
-        @inbounds push!(data, a[i])  # push! flattens `a` even with `CartesianIndex` 
+        @inbounds push!(data, a[i])  # `push!` to a `Vector` flattens `a`
     end
     return Permutations(data, t)
 end
@@ -221,10 +221,10 @@ function multiset_permutations(a, t::Integer)
         isone(n) && push!(m, a[i])
     end
     f = [counts[key] for key in m]
-    multiset_permutations(m, f, t)
+    MultiSetPermutations(m, f, t)
 end
 
-function multiset_permutations(m::Vector, f::Vector{<:Integer}, t::Integer)
+function MultiSetPermutations(m::Vector, f::Vector{<:Integer}, t::Integer)
     length(m) == length(f) || error("Lengths of m and f are not the same.")
     ref = length(f) > 0 ? vcat(fill.(1:length(f), f)...) : Int[]
     if t < 0
@@ -259,6 +259,58 @@ function DerangementsIterState(d::Derangements)
     DerangementsIterState(1, ones(Int, length(d.data)), ones(Int, length(d.data)), copy(d.counts))
 end
 
+Base.eltype(::Type{Derangements{T}}) where {T} = Vector{eltype(T)}
+
+Base.IteratorSize(::Derangements) = Base.SizeUnknown()
+
+function Base.iterate(d::Derangements)
+    state = (isempty(d.data) || iszero(d.t)) ? DerangementsIterState(0, Int[], Int[], Int[]) : DerangementsIterState(d)
+    (d.t > length(d.data) || d.t < 0 || 2maximum([d.counts; 0]) > length(d.data)) && return
+    nextderangement(d, state)
+end
+
+function Base.iterate(d::Derangements, state::DerangementsIterState)
+    derangement, state = nextderangement(d, state)
+    iszero(state.idx) ? nothing : (derangement, state)
+end
+
+"""
+    derangements(a, t)
+
+Generate all derangements of an indexable object `a` of length `t` in index-based lexicographic order.
+Because the number of derangements can be very large, this function returns an iterator object.
+Use `collect(derangements(a))` to get an array of all derangements.
+Only works for `a` with defined length.
+
+# Examples
+```jldoctest
+julia> derangements(1:4, 4) |> collect
+9-element Vector{Vector{Int64}}:
+ [2, 1, 4, 3]
+ [2, 3, 4, 1]
+ [2, 4, 1, 3]
+ [3, 1, 4, 2]
+ [3, 4, 1, 2]
+ [3, 4, 2, 1]
+ [4, 1, 2, 3]
+ [4, 3, 1, 2]
+ [4, 3, 2, 1]
+
+julia> derangements(1:4, 3) |> collect
+11-element Vector{Vector{Int64}}:
+ [2, 1, 4]
+ [2, 3, 1]
+ [2, 3, 4]
+ [2, 4, 1]
+ [3, 1, 2]
+ [3, 1, 4]
+ [3, 4, 1]
+ [3, 4, 2]
+ [4, 1, 2]
+ [4, 3, 1]
+ [4, 3, 2]
+```
+"""
 function derangements(a, t::Int)
     data, order, counts = eltype(a)[], eltype(a)[], Dict{eltype(a), Int}()
     sizehint!(data, length(a))
@@ -271,30 +323,10 @@ function derangements(a, t::Int)
     Derangements(data, order, [counts[key] for key in order], t)
 end
 
-Base.eltype(::Type{Derangements{T}}) where {T} = Vector{eltype(T)}
-
-Base.IteratorSize(::Derangements) = Base.SizeUnknown()
-
-function Base.iterate(d::Derangements)
-    state = DerangementsIterState(d)
-    if isempty(d.data) || iszero(d.t)
-        state.idx = 0
-        return eltype(d)[], state
-    end
-    (d.t > length(d.data) || d.t < 0 || 2maximum(d.counts) > length(d.data)) && return
-    nextderangement(d, state)
-end
-
-function Base.iterate(d::Derangements, state::DerangementsIterState)
-    iszero(state.idx) && return nothing
-    derangement, state = nextderangement(d, state)
-    iszero(state.idx) ? nothing : (derangement, state)
-end
-
 """
     derangements(a)
 
-Generate all derangements of an indexable object `a` in lexicographic order.
+Generate all derangements of an indexable object `a` in index-based lexicographic order.
 Because the number of derangements can be very large, this function returns an iterator object.
 Use `collect(derangements(a))` to get an array of all derangements.
 Only works for `a` with defined length.
@@ -327,32 +359,43 @@ julia> derangements("julia") |> collect
 """
 derangements(a) = derangements(a, length(a))
 
+############################################################################################
+# `nextderangement` is a iterative translation of a pruned-dfs with backtracking algoritm. #
+# The iteration state is kept in `state` where: `idx` is the depth, `iterstate` is the     #
+# position of the for loop at each depth, `perm` is the sort permutation used to slice     #
+# `d.order`, and `counts[i]` is the remaining number of elements from `d.order[i]` that    #
+# still need to be accounted for in the derangment.                                        #
+# The source of the original algorithm is at https://arxiv.org/pdf/1009.4214               #
+############################################################################################
+
 function nextderangement(d::Derangements, state::DerangementsIterState)
     ordlen = length(d.order)
-    while true
+    while 0 < state.idx
         depth = state.idx
         @inbounds for i in state.iterstate[state.idx]:ordlen
             state.iterstate[state.idx] = i + 1
-            if state.counts[i] ≥ 1 && d.order[i] ≠ d.data[state.idx]
+            if state.counts[i] ≥ 1 && d.order[i] ≠ d.data[state.idx] # If true, candidate element for position idx has been found
                 state.perm[state.idx] = i
                 state.counts[i] -= 1
                 state.idx += 1
                 break
             end
         end
-        @inbounds if state.idx > d.t
+        @inbounds if state.idx > d.t # If true, a derangement of length `t` has been found
             state.idx -= 1
             state.counts[state.perm[state.idx]] += 1
             return d.order[@view state.perm[1:d.t]], state
-        elseif state.iterstate[state.idx] == ordlen + 1 && depth == state.idx
+        elseif state.iterstate[state.idx] == ordlen + 1 && depth == state.idx # If true, the for loop at this depth has terminated
             state.iterstate[state.idx] = 1
             state.idx -= 1
-            iszero(state.idx) && return d.order[@view state.perm[1:d.t]], state
-            state.counts[state.perm[state.idx]] += 1
+            !iszero(state.idx) && (state.counts[state.perm[state.idx]] += 1) 
         end
     end
+    eltype(d.data)[], state # Termination of algorithm
 end
 
+
+# nthperm
 
 """
     nthperm!(a, k)
