@@ -359,8 +359,8 @@ julia> nthcombo([1, 2, 3], [2, 3])
 ```
 """
 function nthcombo(a, combo::Vector)
-    isempty(combo) && return 1   
-    length(combo) ≤ length(a) && all(∈(a), combo) || throw(ArgumentError("$combo not a combination of $a"))
+    iscombo(a, combo) || throw(ArgumentError("$combo not a combination of $a"))
+
     aunique = unique(a)
     idxmap = Dict(zip(aunique, 1:length(aunique)))
     idxs = [idxmap[v] for v in combo]
@@ -375,4 +375,11 @@ function nthcombo(a, combo::Vector)
         end
     end
     n
+end
+
+function iscombo(a, combo)
+    counts = Dict{eltype(a), Int}()
+    foreach(key -> counts[key] = get(counts, key, 0) + 1, a)
+    foreach(key -> counts[key] = get(counts, key, 0) - 1, combo)
+    all(≥(0), (0, values(counts)...))
 end
