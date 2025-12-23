@@ -2,7 +2,8 @@ export combinations,
        CoolLexCombinations,
        multiset_combinations,
        with_replacement_combinations,
-       powerset
+       powerset,
+       nthcombo
 
 #The Combinations iterator
 struct Combinations
@@ -290,17 +291,17 @@ julia> collect(combinations([1,2,3], 2))
  [1, 3]
  [2, 3]
 
-julia> nthperm([1, 2, 3], 2, 1)
+julia> nthcombo([1, 2, 3], 2, 1)
 2-element Vector{Int64}:
  1
  2
 
-julia> nthperm([1, 2, 3], 2, 2)
+julia> nthcombo([1, 2, 3], 2, 2)
 2-element Vector{Int64}:
  1
  3
 
-julia> nthperm([1, 2, 3], 2, 4)
+julia> nthcombo([1, 2, 3], 2, 4)
 ERROR: ArgumentError: combination k must satisfy 0 ≤ k ≤ 3, got 4
 [...]
 ```
