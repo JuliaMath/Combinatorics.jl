@@ -381,5 +381,5 @@ function iscombo(a, combo)
     counts = Dict{eltype(a), Int}()
     foreach(key -> counts[key] = get(counts, key, 0) + 1, a)
     foreach(key -> counts[key] = get(counts, key, 0) - 1, combo)
-    all(≥(0), (0, values(counts)...))
+    all(v -> v ≥ 0, (0, values(counts)...))
 end
