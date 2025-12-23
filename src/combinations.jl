@@ -301,7 +301,7 @@ julia> nthcombo([1, 2, 3], 2, 2)
  1
  3
 
-julia> nthcombo([1, 2, 3], 2, 4)
+julia> nthcombo([1, 2, 3], 4, 2)
 ERROR: ArgumentError: combination k must satisfy 0 ≤ k ≤ 3, got 4
 [...]
 ```
@@ -340,7 +340,7 @@ thus is not guaranteed to be the inverse of `nthcombo(a, k, n)`.
 # Examples
 ```jldoctest
 julia> nthcombo([1:3...], nthcombo([1:3...], 2, 3))
- 3
+3
 
 julia> collect(combinations([1, 2, 3], 2))
 3-element Vector{Vector{Int64}}:
@@ -349,10 +349,10 @@ julia> collect(combinations([1, 2, 3], 2))
  [2, 3]
 
 julia> nthcombo([1, 2, 3], [1, 2])
- 1
+1
 
 julia> nthcombo([1, 2, 3], [2, 3])
- 3
+3
 ```
 """
 function nthcombo(a, combo::Vector)
