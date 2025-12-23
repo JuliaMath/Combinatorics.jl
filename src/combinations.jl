@@ -273,3 +273,100 @@ function powerset(a, min::Integer=0, max::Integer=length(a))
     min < 1 && append!(itrs, eltype(a)[])
     Iterators.flatten(itrs)
 end
+
+
+# Nth Combination
+
+"""
+    nthcombo(a, k::Int, n::Int)
+
+Compute the `n`th lexicographic k-combination of the vector `a`.
+
+# Examples
+```jldoctest
+julia> collect(combinations([1,2,3], 2))
+3-element Vector{Vector{Int64}}:
+ [1, 2]
+ [1, 3]
+ [2, 3]
+
+julia> nthperm([1, 2, 3], 2, 1)
+2-element Vector{Int64}:
+ 1
+ 2
+
+julia> nthperm([1, 2, 3], 2, 2)
+2-element Vector{Int64}:
+ 1
+ 3
+
+julia> nthperm([1, 2, 3], 2, 4)
+ERROR: ArgumentError: combination k must satisfy 0 ≤ k ≤ 3, got 4
+[...]
+```
+"""
+function nthcombo(a, k::Int, n::Int)
+    len = length(a)
+    (k == 0 || k == len) && return collect(a)[1:k]
+    0 < k < len || throw(ArgumentError("combination k must satisfy 0 ≤ k ≤ $len, got $k"))
+    
+    combo = eltype(a)[]
+    sizehint!(combo, k)
+    ncombos = binomial(len-1, k-1)
+    for i in eachindex(a)
+        if n ≤ ncombos
+            @inbounds push!(combo, a[i])
+            isone(k) && return combo
+            k -= 1
+            ncombos *= k
+        else
+            n -= ncombos
+            ncombos *= len - k
+        end
+        len -= 1
+        ncombos ÷= len
+    end
+end
+
+"""
+    nthcombo(a, c::Vector)
+
+Return the integer `n` that generated index-based lexicographic combination `c` from `a`. 
+Note that `nthcombo(a, nthcombo(a, k, n)) == n` for `1 ≤ n ≤ binomial(length(a), k)` and `unique(a) == a`.
+In the case `unique(a) ≠ a`, returns the lowest `n` matching the combination, and 
+thus is not guaranteed to be the inverse of `nthcombo(a, k, n)`.
+
+# Examples
+```jldoctest
+julia> nthcombo([1:3...], nthcombo([1:3...], 2, 3))
+ 3
+
+julia> collect(combinations([1, 2, 3], 2))
+3-element Vector{Vector{Int64}}:
+ [1, 2]
+ [1, 3]
+ [2, 3]
+
+julia> nthcombo([1, 2, 3], [1, 2])
+ 1
+
+julia> nthcombo([1, 2, 3], [2, 3])
+ 3
+```
+"""
+function nthcombo(a, combo::Vector)
+    aunique = unique(a)
+    idxmap = Dict(zip(aunique, 1:length(aunique)))
+    idxs = [idxmap[v] for v in combo]
+    ranges = collect(zip([0; idxs[1:end-1]] .+ 1, idxs .- 1))
+    m, k = length(a), length(combo)
+    
+    n = 1
+    for i in 1:k
+        lower, upper = ranges[i]
+        if upper - lower ≥ 0
+            n += sum(binomial.(m .- lower:upper, k - i))
+        end
+    end
+    n
+end
