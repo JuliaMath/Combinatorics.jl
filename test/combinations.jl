@@ -61,7 +61,7 @@
     @test_throws ArgumentError nthcombo([1, 2, 3, 4], [1, 5])
     @test_throws ArgumentError nthcombo([1, 2, 3], [1, 2, 3, 3])
 
-    data = collect(1:n)
+    data = collect(1:7)
     @test all([nthcombo(data, nthcombo(data, k, j)) == j for k in 1:7 for j in 1:binomial(7, k)])
     
 end
