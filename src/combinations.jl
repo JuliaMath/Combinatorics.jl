@@ -366,7 +366,7 @@ function nthcombo(a, combo::Vector)
     for i in 1:k
         lower, upper = ranges[i]
         if upper - lower ≥ 0
-            n += sum(binomial.(m .- lower:upper, k - i))
+            n += sum(binomial.(m .- collect(lower:upper), k - i))
         end
     end
     n
