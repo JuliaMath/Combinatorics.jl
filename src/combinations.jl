@@ -359,6 +359,7 @@ julia> nthcombo([1, 2, 3], [2, 3])
 ```
 """
 function nthcombo(a, combo::Vector)
+    isempty(combo) && return 1
     iscombo(a, combo) || throw(ArgumentError("$combo not a combination of $a"))
 
     aunique = unique(a)
