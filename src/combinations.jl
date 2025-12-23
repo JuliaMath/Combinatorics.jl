@@ -308,12 +308,15 @@ ERROR: ArgumentError: combination k must satisfy 0 ≤ k ≤ 3, got 4
 """
 function nthcombo(a, k::Int, n::Int)
     len = length(a)
+    0 ≤ k ≤ len || throw(ArgumentError("combination k must satisfy 0 ≤ k ≤ $len, got $k"))
+    ncombos = binomial(len, k)
+    0 < n ≤ ncombos || throw(ArgumentError("n must satisfy 0 < n ≤ $ncombos, got $n"))
     (k == 0 || k == len) && return collect(a)[1:k]
-    0 < k < len || throw(ArgumentError("combination k must satisfy 0 ≤ k ≤ $len, got $k"))
     
     combo = eltype(a)[]
     sizehint!(combo, k)
-    ncombos = binomial(len-1, k-1)
+    ncombos *= k
+    ncombos ÷= len
     for i in eachindex(a)
         if n ≤ ncombos
             @inbounds push!(combo, a[i])
@@ -356,6 +359,7 @@ julia> nthcombo([1, 2, 3], [2, 3])
 ```
 """
 function nthcombo(a, combo::Vector)
+    length(combo) ≤ length(a) && all(∈(a), combo) || throw(ArgumentError("$combo not a combination of $a"))
     aunique = unique(a)
     idxmap = Dict(zip(aunique, 1:length(aunique)))
     idxs = [idxmap[v] for v in combo]
