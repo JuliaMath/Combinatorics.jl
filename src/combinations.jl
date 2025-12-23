@@ -359,6 +359,7 @@ julia> nthcombo([1, 2, 3], [2, 3])
 ```
 """
 function nthcombo(a, combo::Vector)
+    isempty(combo) && return 1   
     length(combo) ≤ length(a) && all(∈(a), combo) || throw(ArgumentError("$combo not a combination of $a"))
     aunique = unique(a)
     idxmap = Dict(zip(aunique, 1:length(aunique)))
