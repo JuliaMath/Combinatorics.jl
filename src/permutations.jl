@@ -250,7 +250,7 @@ end
 
 mutable struct DerangementsIterState
     idx::Int
-    iterstate::Vector{Int}
+    inner::Vector{Int}
     perm::Vector{Int}
     counts::Vector{Int}
 end
@@ -361,36 +361,39 @@ derangements(a) = derangements(a, length(a))
 
 ############################################################################################
 # `nextderangement` is a iterative translation of a pruned-dfs with backtracking algoritm. #
-# The iteration state is kept in `state` where: `idx` is the depth, `iterstate` is the     #
-# position of the for loop at each depth, `perm` is the sort permutation used to slice     #
-# `d.order`, and `counts[i]` is the remaining number of elements from `d.order[i]` that    #
-# still need to be accounted for in the derangment.                                        #
-# The source of the original algorithm is at https://arxiv.org/pdf/1009.4214               #
+# The iteration state is kept in `state` where: `idx` is the depth, `inner` is the         #
+# position of the inner loop at each depth, `perm` has the derangement indices used to     #
+# slice `d.order`, and `counts[i]` is the remaining number of elements from `d.order[i]`   #
+# that still need to be included in the derangment.                                        #
+# The source of the original translated algorithm is at https://arxiv.org/pdf/1009.4214    #
 ############################################################################################
 
 function nextderangement(d::Derangements, state::DerangementsIterState)
     ordlen = length(d.order)
+    
     while 0 < state.idx
-        depth = state.idx
-        @inbounds for i in state.iterstate[state.idx]:ordlen
-            state.iterstate[state.idx] = i + 1
-            if state.counts[i] ≥ 1 && d.order[i] ≠ d.data[state.idx] # If true, candidate element for position idx has been found
-                state.perm[state.idx] = i
-                state.counts[i] -= 1
+        i = state.idx
+        @inbounds while i == state.idx && state.inner[i] ≤ ordlen
+            if state.counts[state.inner[i]] ≥ 1 && d.order[state.inner[i]] ≠ d.data[i] # If true, candidate element for index idx has been found
+                state.perm[i] = state.inner[i]
+                state.counts[state.inner[i]] -= 1
                 state.idx += 1
-                break
             end
+            
+            state.inner[i] += 1
         end
+        
         @inbounds if state.idx > d.t # If true, a derangement of length `t` has been found
             state.idx -= 1
             state.counts[state.perm[state.idx]] += 1
             return d.order[@view state.perm[1:d.t]], state
-        elseif state.iterstate[state.idx] == ordlen + 1 && depth == state.idx # If true, the for loop at this depth has terminated
-            state.iterstate[state.idx] = 1
+        elseif state.inner[state.idx] == ordlen + 1 && i == state.idx # If true, the inner loop at this depth has terminated
+            state.inner[state.idx] = 1
             state.idx -= 1
             !iszero(state.idx) && (state.counts[state.perm[state.idx]] += 1) 
         end
     end
+    
     eltype(d.data)[], state # Termination of algorithm
 end
 
