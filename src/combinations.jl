@@ -5,48 +5,59 @@ export combinations,
        powerset
 
 #The Combinations iterator
-struct Combinations
-    n::Int
+struct Combinations{T}
+    data::T
     t::Int
 end
 
-@inline function Base.iterate(c::Combinations, s = [min(c.t - 1, i) for i in 1:c.t])
+function Base.iterate(c::Combinations)
+    state = [min(c.t - 1, i) for i in 1:c.t]
     if c.t == 0 # special case to generate 1 result for t==0
-        isempty(s) && return (s, [1])
+        isempty(state) && return (c.data[state], [1])
         return
     end
+    nextcombination!(c, state)
+end
+
+@inline Base.iterate(c::Combinations, state) = nextcombination!(c, state)
+
+Base.length(c::Combinations) = binomial(length(c.data), c.t)
+
+Base.eltype(::Type{Combinations{T}}) where T = Vector{eltype(T)}
+
+@inline function nextcombination!(c::Combinations, idxvec)
     for i in c.t:-1:1
-        s[i] += 1
-        if s[i] > (c.n - (c.t - i))
+        idxvec[i] += 1
+        if idxvec[i] > (length(c.data) - (c.t - i))
             continue
         end
         for j in i+1:c.t
-            s[j] = s[j-1] + 1
+            idxvec[j] = idxvec[j-1] + 1
         end
         break
     end
-    s[1] > c.n - c.t + 1 && return
-    (s, s)
+    idxvec[1] > length(c.data) - c.t + 1 && return
+    c.data[idxvec], idxvec
 end
 
-Base.length(c::Combinations) = binomial(c.n, c.t)
-
-Base.eltype(::Type{Combinations}) = Vector{Int}
-
 """
-    combinations(a, n)
+    combinations(a, t)
 
-Generate all combinations of `n` elements from an indexable object `a`. Because the number
+Generate all combinations of `t` elements from an indexable object `a`. Because the number
 of combinations can be very large, this function returns an iterator object.
-Use `collect(combinations(a, n))` to get an array of all combinations.
+Use `collect(combinations(a, t))` to get an array of all combinations.
 """
 function combinations(a, t::Integer)
     if t < 0
         # generate 0 combinations for negative argument
         t = length(a) + 1
     end
-    reorder(c) = [a[ci] for ci in c]
-    (reorder(c) for c in Combinations(length(a), t))
+    data = eltype(a)[]
+    sizehint!(data, length(a))
+    for i in eachindex(a)
+        @inbounds push!(data, a[i])
+    end
+    Combinations(data, t)
 end
 
 
@@ -142,8 +153,6 @@ struct MultiSetCombinations{T}
     ref::Vector{Int}
 end
 
-Base.eltype(::Type{MultiSetCombinations{T}}) where {T} = Vector{eltype(T)}
-
 function Base.length(c::MultiSetCombinations)
     t = c.t
     if t > length(c.ref)
@@ -165,9 +174,9 @@ function Base.length(c::MultiSetCombinations)
     return p[t+1]
 end
 
-function multiset_combinations(m, f::Vector{<:Integer}, t::Integer)
+function MultisetCombinations(m, f::Vector{<:Integer}, t::Integer)
     length(m) == length(f) || error("Lengths of m and f are not the same.")
-    ref = length(f) > 0 ? vcat([[i for j in 1:f[i] ] for i in 1:length(f)]...) : Int[]
+    ref = length(f) > 0 ? vcat(fill.(1:length(f), f)...) : Int[]
     if t < 0
         t = length(ref) + 1
     end
@@ -180,40 +189,46 @@ end
 Generate all combinations of size `t` from an array `a` with possibly duplicated elements.
 """
 function multiset_combinations(a, t::Integer)
-    m = unique(collect(a))
-    f = Int[sum([c == x for c in a]) for x in m]
-    multiset_combinations(m, f, t)
+    counts = Dict{eltype(a), Int}()
+    m = eltype(a)[]
+    @inbounds for i in eachindex(a)
+        n = get(counts, a[i], 0) + 1
+        counts[a[i]] = n
+        isone(n) && push!(m, a[i])
+    end
+    f = [counts[key] for key in m]
+    MultisetCombinations(m, f, t)
 end
 
-function Base.iterate(c::MultiSetCombinations, s = c.ref)
+function Base.iterate(c::MultiSetCombinations, s = copy(c.ref))
     ((!isempty(s) && max(s[1], c.t) > length(c.ref)) || (isempty(s) && c.t > 0)) && return
+    nextmultisetcombination!(c.m, c.ref, c.t, s)
+end
 
-    ref = c.ref
+function nextmultisetcombination!(perm, ref, t, idxvec)
     n = length(ref)
-    t = c.t
     changed = false
-    comb = [c.m[s[i]] for i in 1:t]
-    if t > 0
-        s = copy(s)
+    comb = perm[@view idxvec[1:t]]
+    @inbounds if t > 0
         for i in t:-1:1
-            if s[i] < ref[i + (n - t)]
+            if idxvec[i] < ref[i + (n - t)]
                 j = 1
-                while ref[j] <= s[i]
+                while ref[j] ≤ idxvec[i]
                     j += 1
                 end
-                s[i] = ref[j]
+                idxvec[i] = ref[j]
                 for l in (i+1):t
-                    s[l] = ref[j+=1]
+                    idxvec[l] = ref[j+=1]
                 end
                 changed = true
                 break
             end
         end
-        !changed && (s[1] = n+1)
+        changed || (idxvec[1] = n+1)
     else
-        s = [n+1]
+        idxvec = [n+1]
     end
-    (comb, s)
+    (comb, idxvec)
 end
 
 struct WithReplacementCombinations{T}
@@ -234,29 +249,31 @@ with_replacement_combinations(a, t::Integer) = WithReplacementCombinations(a, t)
 
 function Base.iterate(c::WithReplacementCombinations, s = [1 for i in 1:c.t])
     (!isempty(s) && s[1] > length(c.a) || c.t < 0) && return
+    next_wrep_combination!(c.a, c.t, s)
+end
 
-    n = length(c.a)
-    t = c.t
-    comb = [c.a[si] for si in s]
-    if t > 0
-        s = copy(s)
+function next_wrep_combination!(a, t, idxvec)
+    n = length(a)
+    comb = a[idxvec]
+    @inbounds if t > 0
         changed = false
         for i in t:-1:1
-            if s[i] < n
-                s[i] += 1
+            if idxvec[i] < n
+                idxvec[i] += 1
                 for j in (i+1):t
-                    s[j] = s[i]
+                    idxvec[j] = idxvec[i]
                 end
                 changed = true
                 break
             end
         end
-        !changed && (s[1] = n+1)
+        changed || (idxvec[1] = n+1)
     else
-        s = [n+1]
+        idxvec = [n+1]
     end
-    (comb, s)
+    (comb, idxvec)
 end
+
 
 ## Power set
 
