@@ -13,7 +13,7 @@ end
 function Base.iterate(c::Combinations)
     state = [min(c.t - 1, i) for i in 1:c.t]
     if c.t == 0 # special case to generate 1 result for t==0
-        isempty(state) && return (c.data[state], [1])
+        isempty(state) && return (c.data[state], [length(c.data)+2])
         return
     end
     nextcombination!(c, state)
@@ -245,7 +245,14 @@ Base.length(c::WithReplacementCombinations) = binomial(length(c.a) + c.t - 1, c.
 
 Generate all combinations with replacement of size `t` from an array `a`.
 """
-with_replacement_combinations(a, t::Integer) = WithReplacementCombinations(a, t)
+function with_replacement_combinations(a, t::Integer)
+    data = eltype(a)[]
+    sizehint!(data, length(a))
+    for i in eachindex(a)
+        @inbounds push!(data, a[i])
+    end
+    WithReplacementCombinations(data, t)
+end
 
 function Base.iterate(c::WithReplacementCombinations, s = [1 for i in 1:c.t])
     (!isempty(s) && s[1] > length(c.a) || c.t < 0) && return
