@@ -88,7 +88,7 @@ julia> [ (len, collect(permutations(1:3, len))) for len in -1:4 ]
  (4, [])
 ```
 """
-function permutations(a, t::Int)
+function permutations(a, t::Integer)
     if t < 0
         t = length(a) + 1
     end
@@ -137,6 +137,8 @@ function nextpermutation!(m::Vector, t::Int, state::Vector{Int})
     return (perm, state)
 end
 
+
+# Multiset Permutations
 
 struct MultiSetPermutations{T}
     m::T
@@ -239,13 +241,26 @@ function Base.iterate(p::MultiSetPermutations, state::Vector{Int} = copy(p.ref))
 end
 
 
-#Derangements
+# Derangements
 
 struct Derangements{T}
     data::T
     order::T
     counts::Vector{Int}
     t::Int
+    function Derangements{T}(a, t::Integer) where T<:Vector
+        order, counts = eltype(T)[], Dict{eltype(T), Int}()
+        data = sizehint!(eltype(T)[], length(a))
+        
+        for i in eachindex(a)
+            n = get(counts, a[i], 0) + 1
+            counts[a[i]] = n
+            push!(data, a[i])
+            isone(n) && push!(order, a[i])
+        end
+        
+        new{T}(data, order, [counts[key] for key in order], t)
+    end
 end
 
 mutable struct DerangementsIterState
@@ -253,20 +268,21 @@ mutable struct DerangementsIterState
     inner::Vector{Int}
     perm::Vector{Int}
     counts::Vector{Int}
+    function DerangementsIterState(d::Derangements)
+        if isempty(d.data) || iszero(d.t)
+            return new(0, Int[], Int[], Int[])
+        end
+        new(1, ones(Int, length(d.data)), ones(Int, length(d.data)), copy(d.counts))
+    end
 end
 
-function DerangementsIterState(d::Derangements)
-    DerangementsIterState(1, ones(Int, length(d.data)), ones(Int, length(d.data)), copy(d.counts))
-end
+Base.eltype(::Type{Derangements{T}}) where T<:Vector = T
 
-Base.eltype(::Type{Derangements{T}}) where {T} = Vector{eltype(T)}
-
-Base.IteratorSize(::Derangements) = Base.SizeUnknown()
+Base.IteratorSize(::Type{Derangements{T}}) where T<:Vector = Base.SizeUnknown()
 
 function Base.iterate(d::Derangements)
-    state = (isempty(d.data) || iszero(d.t)) ? DerangementsIterState(0, Int[], Int[], Int[]) : DerangementsIterState(d)
     (d.t > length(d.data) || d.t < 0 || 2maximum([d.counts; 0]) > length(d.data)) && return
-    nextderangement(d, state)
+    nextderangement(d, DerangementsIterState(d))
 end
 
 function Base.iterate(d::Derangements, state::DerangementsIterState)
@@ -311,17 +327,7 @@ julia> derangements(1:4, 3) |> collect
  [4, 3, 2]
 ```
 """
-function derangements(a, t::Int)
-    data, order, counts = eltype(a)[], eltype(a)[], Dict{eltype(a), Int}()
-    sizehint!(data, length(a))
-    for i in eachindex(a)
-        n = get(counts, a[i], 0) + 1
-        counts[a[i]] = n
-        push!(data, a[i])
-        isone(n) && push!(order, a[i])
-    end
-    Derangements(data, order, [counts[key] for key in order], t)
-end
+derangements(a, t::Integer) = Derangements{Vector{eltype(a)}}(a, t)
 
 """
     derangements(a)
