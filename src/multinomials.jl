@@ -10,9 +10,9 @@ end
 
 # Standard stars and bars:
 # https://en.wikipedia.org/wiki/Stars_and_bars_(combinatorics)
-function Base.iterate(m::MultiExponents, s = nothing)
+function Base.iterate(m::MultiExponents, s=nothing)
     next = s === nothing ? iterate(m.c) : iterate(m.c, s)
-    next === nothing && return
+    next === nothing && return nothing
     stars, ss = next
 
     # stars minus their consecutive
@@ -49,7 +49,7 @@ julia> collect(multiexponents(3, 2))
 """
 function multiexponents(m, n)
     # number of stars and bars = m+n-1
-    c = combinations(1:m+n-1, n)
+    c = combinations(1:(m+n-1), n)
 
     MultiExponents(c, m)
 end
