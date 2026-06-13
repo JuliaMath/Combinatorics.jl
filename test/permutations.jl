@@ -119,4 +119,37 @@ end
     @test Combinatorics.nsetpartitions(-1) == 0
     @test collect(permutations([])) == [[]]
 
+    @testset "permutations prop test n=10, k=5" begin
+        n = 1:10
+        k = 5
+        for (jl, py) in zip(
+            permutations(n, k),
+            pyitertools.permutations(n, k),
+        )
+            @test jl == collect(py)
+        end
+    end
+
+    @testset "permutations prop test n=100, k=2" begin
+        n = 1:100
+        k = 2
+        for (jl, py) in zip(
+            permutations(n, k),
+            pyitertools.permutations(n, k),
+        )
+            @test jl == collect(py)
+        end
+    end
+
+    @testset "string permutations prop test n=20, k=3" begin
+        s = collect("abcdefghijklmnopqrstu")
+        k = 3
+        for (jl, py) in zip(
+            permutations(s, k),
+            pyitertools.permutations(s, k),
+        )
+            @test jl == collect(py)
+        end
+    end
+
 end
