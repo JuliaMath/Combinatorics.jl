@@ -17,7 +17,11 @@ end
 Base.length(p::IntegerPartitions) = npartitions(p.n)
 Base.eltype(p::IntegerPartitions) = Vector{Int}
 
-function Base.iterate(p::IntegerPartitions, xs = Int[])
+function Base.iterate(p::IntegerPartitions, xs = nothing)
+    if xs === nothing
+        p.n == 0 && return Int[], Int[]
+        xs = Int[]
+    end
     length(xs) == p.n && return
     xs = nextpartition(p.n,xs)
     (xs, xs)
