@@ -15,50 +15,33 @@ struct Permutations{T}
     length::Int
 end
 
-# The following code basically implements `permutations` in terms of `multiset_permutations` as
-#
-#     permutations(a, t::Integer=length(a)) = Iterators.map(
-#         indices -> [a[i] for i in indices],
-#         multiset_permutations(eachindex(a), t))
-#
-# with the difference that we can also define `eltype(::Permutations)`, which is used in some tests.
-
-function Base.iterate(p::Permutations, state=nothing)
-    if state === nothing
-        mp = multiset_permutations(collect(eachindex(p.data)), p.length)
-        it = iterate(mp)
-        if it === nothing return nothing end
-    else
-        mp, mp_state = state
-        it = iterate(mp, mp_state)
-        if it === nothing return nothing end
-    end
-    indices, mp_state = it
-    return [p.data[i] for i in indices], (mp=mp, mp_state=mp_state)
+function Base.iterate(p::Permutations, state::Vector{Int} = collect(eachindex(p.data)))
+    (!isempty(state) && max(state[1], p.length) > length(p.data) || (isempty(state) && p.length > 0)) && return
+    nextpermutation!(p.data, p.length , state)
 end
 
-function Base.length(p::Permutations)
+function Base.length(p::Permutations)::Union{Int, BigInt}
     length(p.data) < p.length && return 0
-    return Int(prod(length(p.data) - p.length + 1:length(p.data)))
+    length(p.data) < 21       && return Int(prod(length(p.data) - p.length + 1:length(p.data)))
+    return prod(big(length(p.data) - p.length + 1):big(length(p.data)))
 end
 
-Base.eltype(p::Permutations) = Vector{eltype(p.data)}
+Base.eltype(::Type{Permutations{T}}) where T = Vector{eltype(T)}
 
 Base.IteratorSize(p::Permutations) = Base.HasLength()
-
 
 """
     permutations(a)
 
-Generate all permutations of an indexable object `a` in lexicographic order. Because the number of permutations
-can be very large, this function returns an iterator object.
+Generate all permutations of an indexable object `a` in index-based lexicographic order. 
+Because the number of permutations can be very large, this function returns an iterator object.
 Use `collect(permutations(a))` to get an array of all permutations.
 Only works for `a` with defined length.
 
 # Examples
 ```jldoctest
 julia> permutations(1:2)
-Combinatorics.Permutations{UnitRange{Int64}}(1:2, 2)
+Combinatorics.Permutations{Vector{Int64}}([1, 2], 2)
 
 julia> collect(permutations(1:2))
 2-element Vector{Vector{Int64}}:
@@ -87,13 +70,13 @@ If `(t <= 0) || (t > length(a))`, then returns an empty vector of eltype of `a`
 # Examples
 ```jldoctest
 julia> [ (len, permutations(1:3, len)) for len in -1:4 ]
-6-element Vector{Tuple{Int64, Any}}:
- (-1, Vector{Int64}[])
- (0, [Int64[]])
- (1, [[1], [2], [3]])
- (2, Combinatorics.Permutations{UnitRange{Int64}}(1:3, 2))
- (3, Combinatorics.Permutations{UnitRange{Int64}}(1:3, 3))
- (4, Vector{Int64}[])
+6-element Vector{Tuple{Int64, Combinatorics.Permutations{Vector{Int64}}}}:
+ (-1, Combinatorics.Permutations{Vector{Int64}}([1, 2, 3], 4))
+ (0, Combinatorics.Permutations{Vector{Int64}}([1, 2, 3], 0))
+ (1, Combinatorics.Permutations{Vector{Int64}}([1, 2, 3], 1))
+ (2, Combinatorics.Permutations{Vector{Int64}}([1, 2, 3], 2))
+ (3, Combinatorics.Permutations{Vector{Int64}}([1, 2, 3], 3))
+ (4, Combinatorics.Permutations{Vector{Int64}}([1, 2, 3], 4))
 
 julia> [ (len, collect(permutations(1:3, len))) for len in -1:4 ]
 6-element Vector{Tuple{Int64, Vector{Vector{Int64}}}}:
@@ -106,92 +89,56 @@ julia> [ (len, collect(permutations(1:3, len))) for len in -1:4 ]
 ```
 """
 function permutations(a, t::Integer)
-    if t == 0
-        # Correct behavior for a permutation of length 0 is a vector containing a single empty vector
-        return [Vector{eltype(a)}()]
-    elseif t == 1
-        # Easy case, just return each element in its own vector
-        return [[ai] for ai in a]
-    elseif t < 0 || t > length(a)
-        # Correct behavior for a permutation of these lengths is a an empty vector (of the correct type)
-        return Vector{Vector{eltype(a)}}()
+    if t < 0
+        t = length(a) + 1
     end
-    return Permutations(a, t)
+    data = eltype(a)[]
+    sizehint!(data, length(a))
+    for i in eachindex(a)
+        @inbounds push!(data, a[i])  # `push!` to a `Vector` flattens `a`
+    end
+    return Permutations(data, t)
 end
 
-"""
-    derangements(a)
 
-Generate all derangements of an indexable object `a` in lexicographic order.
-Because the number of derangements can be very large, this function returns an iterator object.
-Use `collect(derangements(a))` to get an array of all derangements.
-Only works for `a` with defined length.
-
-# Examples
-```jldoctest
-julia> derangements("julia") |> collect
-44-element Vector{Vector{Char}}:
- ['u', 'j', 'i', 'a', 'l']
- ['u', 'j', 'a', 'l', 'i']
- ['u', 'l', 'j', 'a', 'i']
- ['u', 'l', 'i', 'a', 'j']
- ['u', 'l', 'a', 'j', 'i']
- ['u', 'i', 'j', 'a', 'l']
- ['u', 'i', 'a', 'j', 'l']
- ['u', 'i', 'a', 'l', 'j']
- ['u', 'a', 'j', 'l', 'i']
- ['u', 'a', 'i', 'j', 'l']
- ⋮
- ['a', 'j', 'i', 'l', 'u']
- ['a', 'l', 'j', 'u', 'i']
- ['a', 'l', 'u', 'j', 'i']
- ['a', 'l', 'i', 'j', 'u']
- ['a', 'l', 'i', 'u', 'j']
- ['a', 'i', 'j', 'u', 'l']
- ['a', 'i', 'j', 'l', 'u']
- ['a', 'i', 'u', 'j', 'l']
- ['a', 'i', 'u', 'l', 'j']
-```
-"""
-derangements(a) = (d for d in multiset_permutations(a, length(a)) if all(t -> t[1] != t[2], zip(a, d)))
-
-
-function nextpermutation(m, t, state)
-    perm = [m[state[i]] for i in 1:t]
+function nextpermutation!(m::Vector, t::Int, state::Vector{Int})
+    perm = m[@view state[1:t]]
     n = length(state)
-    if t <= 0
+    if t ≤ 0
         return (perm, [n + 1])
     end
-    s = copy(state)
     if t < n
         j = t + 1
-        while j <= n && s[t] >= s[j]
+        @inbounds while j ≤ n && state[t] ≥ state[j]
             j += 1
         end
     end
-    if t < n && j <= n
-        s[t], s[j] = s[j], s[t]
+    @inbounds if t < n && j ≤ n
+        state[t], state[j] = state[j], state[t]
     else
         if t < n
-            reverse!(s, t + 1)
+            reverse!(state, t + 1)
         end
         i = t - 1
-        while i >= 1 && s[i] >= s[i+1]
+        while i ≥ 1 && state[i] ≥ state[i+1]
             i -= 1
         end
         if i > 0
             j = n
-            while j > i && s[i] >= s[j]
+            while j > i && state[i] ≥ state[j]
                 j -= 1
             end
-            s[i], s[j] = s[j], s[i]
-            reverse!(s, i + 1)
+            state[i], state[j] = state[j], state[i]
+            reverse!(state, i + 1)
         else
-            s[1] = n + 1
+            state[1] = n + 1
         end
     end
-    return (perm, s)
+    return (perm, state)
 end
+
+
+# Multiset Permutations
 
 struct MultiSetPermutations{T}
     m::T
@@ -208,9 +155,9 @@ function Base.length(c::MultiSetPermutations)
         return 0
     end
     if t > 20
-        g = [factorial(big(i)) for i in 0:t]
+        g = factorial.(big.(0:t))
     else
-        g = [factorial(i) for i in 0:t]
+        g = factorial.(0:t)
     end
     p = [g[t+1]; zeros(Float64, t)]
     for i in 1:length(c.f)
@@ -229,7 +176,7 @@ function Base.length(c::MultiSetPermutations)
             end
         end
     end
-    return round(Int, p[t+1])
+    return round(p[t+1] > typemax(Int) ? BigInt : Int, p[t+1])
 end
 
 
@@ -268,25 +215,196 @@ julia> collect(multiset_permutations([1,1,2], 3))
 ```
 """
 function multiset_permutations(a, t::Integer)
-    m = unique(a)
-    f = [sum(c == x for c in a)::Int for x in m]
-    multiset_permutations(m, f, t)
+    counts = Dict{eltype(a), Int}()
+    m = eltype(a)[]
+    @inbounds for i in eachindex(a)
+        n = get(counts, a[i], 0) + 1
+        counts[a[i]] = n
+        isone(n) && push!(m, a[i])
+    end
+    f = [counts[key] for key in m]
+    MultiSetPermutations(m, f, t)
 end
 
-function multiset_permutations(m, f::Vector{<:Integer}, t::Integer)
+function MultiSetPermutations(m::Vector, f::Vector{<:Integer}, t::Integer)
     length(m) == length(f) || error("Lengths of m and f are not the same.")
-    ref = length(f) > 0 ? vcat([[i for j in 1:f[i]] for i in 1:length(f)]...) : Int[]
+    ref = length(f) > 0 ? vcat(fill.(1:length(f), f)...) : Int[]
     if t < 0
         t = length(ref) + 1
     end
     MultiSetPermutations(m, f, t, ref)
 end
 
-function Base.iterate(p::MultiSetPermutations, s=p.ref)
-    (!isempty(s) && max(s[1], p.t) > length(p.ref) || (isempty(s) && p.t > 0)) && return
-    nextpermutation(p.m, p.t, s)
+function Base.iterate(p::MultiSetPermutations, state::Vector{Int} = copy(p.ref))
+    (!isempty(state) && max(state[1], p.t) > length(p.ref) || (isempty(state) && p.t > 0)) && return
+    nextpermutation!(p.m, p.t, state)
 end
 
+
+# Derangements
+
+struct Derangements{T}
+    data::T
+    order::T
+    counts::Vector{Int}
+    t::Int
+    function Derangements{T}(a, t::Integer) where T<:Vector
+        order, counts = eltype(T)[], Dict{eltype(T), Int}()
+        data = sizehint!(eltype(T)[], length(a))
+        
+        for i in eachindex(a)
+            n = get(counts, a[i], 0) + 1
+            counts[a[i]] = n
+            push!(data, a[i])
+            isone(n) && push!(order, a[i])
+        end
+        
+        new{T}(data, order, [counts[key] for key in order], t)
+    end
+end
+
+mutable struct DerangementsIterState
+    idx::Int
+    inner::Vector{Int}
+    perm::Vector{Int}
+    counts::Vector{Int}
+    function DerangementsIterState(d::Derangements)
+        if isempty(d.data) || iszero(d.t)
+            return new(0, Int[], Int[], Int[])
+        end
+        new(1, ones(Int, length(d.data)), ones(Int, length(d.data)), copy(d.counts))
+    end
+end
+
+Base.eltype(::Type{Derangements{T}}) where T<:Vector = T
+
+Base.IteratorSize(::Type{Derangements{T}}) where T<:Vector = Base.SizeUnknown()
+
+function Base.iterate(d::Derangements)
+    (d.t > length(d.data) || d.t < 0 || 2maximum([d.counts; 0]) > length(d.data)) && return
+    nextderangement(d, DerangementsIterState(d))
+end
+
+function Base.iterate(d::Derangements, state::DerangementsIterState)
+    derangement, state = nextderangement(d, state)
+    iszero(state.idx) ? nothing : (derangement, state)
+end
+
+"""
+    derangements(a, t)
+
+Generate all derangements of an indexable object `a` of length `t` in index-based lexicographic order.
+Because the number of derangements can be very large, this function returns an iterator object.
+Use `collect(derangements(a))` to get an array of all derangements.
+Only works for `a` with defined length.
+
+# Examples
+```jldoctest
+julia> derangements(1:4, 4) |> collect
+9-element Vector{Vector{Int64}}:
+ [2, 1, 4, 3]
+ [2, 3, 4, 1]
+ [2, 4, 1, 3]
+ [3, 1, 4, 2]
+ [3, 4, 1, 2]
+ [3, 4, 2, 1]
+ [4, 1, 2, 3]
+ [4, 3, 1, 2]
+ [4, 3, 2, 1]
+
+julia> derangements(1:4, 3) |> collect
+11-element Vector{Vector{Int64}}:
+ [2, 1, 4]
+ [2, 3, 1]
+ [2, 3, 4]
+ [2, 4, 1]
+ [3, 1, 2]
+ [3, 1, 4]
+ [3, 4, 1]
+ [3, 4, 2]
+ [4, 1, 2]
+ [4, 3, 1]
+ [4, 3, 2]
+```
+"""
+derangements(a, t::Integer) = Derangements{Vector{eltype(a)}}(a, t)
+
+"""
+    derangements(a)
+
+Generate all derangements of an indexable object `a` in index-based lexicographic order.
+Because the number of derangements can be very large, this function returns an iterator object.
+Use `collect(derangements(a))` to get an array of all derangements.
+Only works for `a` with defined length.
+
+# Examples
+```jldoctest
+julia> derangements("julia") |> collect
+44-element Vector{Vector{Char}}:
+ ['u', 'j', 'i', 'a', 'l']
+ ['u', 'j', 'a', 'l', 'i']
+ ['u', 'l', 'j', 'a', 'i']
+ ['u', 'l', 'i', 'a', 'j']
+ ['u', 'l', 'a', 'j', 'i']
+ ['u', 'i', 'j', 'a', 'l']
+ ['u', 'i', 'a', 'j', 'l']
+ ['u', 'i', 'a', 'l', 'j']
+ ['u', 'a', 'j', 'l', 'i']
+ ['u', 'a', 'i', 'j', 'l']
+ ⋮
+ ['a', 'j', 'i', 'l', 'u']
+ ['a', 'l', 'j', 'u', 'i']
+ ['a', 'l', 'u', 'j', 'i']
+ ['a', 'l', 'i', 'j', 'u']
+ ['a', 'l', 'i', 'u', 'j']
+ ['a', 'i', 'j', 'u', 'l']
+ ['a', 'i', 'j', 'l', 'u']
+ ['a', 'i', 'u', 'j', 'l']
+ ['a', 'i', 'u', 'l', 'j']
+```
+"""
+derangements(a) = derangements(a, length(a))
+
+############################################################################################
+# `nextderangement` is a iterative translation of a pruned-dfs with backtracking algoritm. #
+# The iteration state is kept in `state` where: `idx` is the depth, `inner` is the         #
+# position of the inner loop at each depth, `perm` has the derangement indices used to     #
+# slice `d.order`, and `counts[i]` is the remaining number of elements from `d.order[i]`   #
+# that still need to be included in the derangment.                                        #
+# The source of the original translated algorithm is at https://arxiv.org/pdf/1009.4214    #
+############################################################################################
+
+function nextderangement(d::Derangements, state::DerangementsIterState)
+    ordlen = length(d.order)
+    
+    while 0 < state.idx
+        i = state.idx
+        @inbounds while i == state.idx && state.inner[i] ≤ ordlen
+            if state.counts[state.inner[i]] ≥ 1 && d.order[state.inner[i]] ≠ d.data[i] # If true, candidate element for index idx has been found
+                state.perm[i] = state.inner[i]
+                state.counts[state.inner[i]] -= 1
+                state.idx += 1
+            end
+            
+            state.inner[i] += 1
+        end
+        
+        @inbounds if state.idx > d.t # If true, a derangement of length `t` has been found
+            state.idx -= 1
+            state.counts[state.perm[state.idx]] += 1
+            return d.order[@view state.perm[1:d.t]], state
+        elseif state.inner[state.idx] == ordlen + 1 && i == state.idx # If true, the inner loop at this depth has terminated
+            state.inner[state.idx] = 1
+            state.idx -= 1
+            !iszero(state.idx) && (state.counts[state.perm[state.idx]] += 1) 
+        end
+    end
+    
+    eltype(d.data)[], state # Termination of algorithm
+end
+
+
+# nthperm
 
 """
     nthperm!(a, k)
