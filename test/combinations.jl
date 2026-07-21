@@ -44,4 +44,24 @@
     @test collect(powerset(['a', 'b', 'c'], 1)) == Any[['a'], ['b'], ['c'], ['a', 'b'], ['a', 'c'], ['b', 'c'], ['a', 'b', 'c']]
     @test collect(powerset(['a', 'b', 'c'], 1, 2)) == Any[['a'], ['b'], ['c'], ['a', 'b'], ['a', 'c'], ['b', 'c']]
 
+    # Nth Combo
+    @test nthcombo([1, 2, 3, 4], 0, 1) == []
+    @test nthcombo([1, 2, 3, 4], 4, 1) == [1, 2, 3, 4]
+    @test nthcombo([1, 2, 3, 4], 3, 2) == [1, 2, 4]
+    @test all([nthcombo([1, 2, 3, 4], 2, n) for n in 1:binomial(4, 2)] .== collect(combinations([1, 2, 3, 4], 2)))
+    @test_throws ArgumentError nthcombo([1, 2, 3, 4], 0, 3)
+    @test_throws ArgumentError nthcombo([1, 2, 3, 4], 5, 3)
+    @test_throws ArgumentError nthcombo([1, 2, 3, 4], 2, 0)
+    @test_throws ArgumentError nthcombo([1, 2, 3], 2, 6)
+    
+    @test nthcombo([1, 2, 3, 4], []) == 1
+    @test nthcombo([1, 2, 3, 4], [1, 2, 3, 4]) == 1
+    @test nthcombo([1, 2, 3, 4], [1, 2, 4]) == 2
+    @test [nthcombo(1:7, combo) for combo in combinations(1:7, 3)] == collect(1:binomial(7, 3))
+    @test_throws ArgumentError nthcombo([1, 2, 3, 4], [1, 5])
+    @test_throws ArgumentError nthcombo([1, 2, 3], [1, 2, 3, 3])
+
+    data = collect(1:7)
+    @test all([nthcombo(data, nthcombo(data, k, j)) == j for k in 1:7 for j in 1:binomial(7, k)])
+    
 end
