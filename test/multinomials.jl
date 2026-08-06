@@ -20,10 +20,22 @@ using LinearAlgebra
     @test [multiexponents(1, 10)...] == [[10]]
 
     # general cases
-    @test [multiexponents(3, 2)...] == [[2, 0, 0], [1, 1, 0], [1, 0, 1], [0, 2, 0], [0, 1, 1], [0, 0, 2]]
+    @test [multiexponents(3, 2)...] ==
+        [[2, 0, 0], [1, 1, 0], [1, 0, 1], [0, 2, 0], [0, 1, 1], [0, 0, 2]]
     @test [multiexponents(2, 3)...] == [[3, 0], [2, 1], [1, 2], [0, 3]]
     @test [multiexponents(2, 2)...] == [[2, 0], [1, 1], [0, 2]]
-    @test [multiexponents(3, 3)...] == [[3, 0, 0], [2, 1, 0], [2, 0, 1], [1, 2, 0], [1, 1, 1], [1, 0, 2], [0, 3, 0], [0, 2, 1], [0, 1, 2], [0, 0, 3]]
+    @test [multiexponents(3, 3)...] == [
+        [3, 0, 0],
+        [2, 1, 0],
+        [2, 0, 1],
+        [1, 2, 0],
+        [1, 1, 1],
+        [1, 0, 2],
+        [0, 3, 0],
+        [0, 2, 1],
+        [0, 1, 2],
+        [0, 0, 3],
+    ]
 
     @test length(multiexponents(1, 1)) == 1
     @test length(multiexponents(2, 2)) == 3
