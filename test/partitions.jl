@@ -1,7 +1,7 @@
 @testset "partitions" begin
 
     @testset "partitions(n::Integer)" begin
-        @test_broken collect(partitions(0)) == [[]]
+        @test collect(partitions(0)) == [[]]
         @test collect(partitions(1)) == [[1]]
         @test collect(partitions(2)) == [[2], [1, 1]]
         @test collect(partitions(3)) == [[3], [2, 1], [1, 1, 1]]
