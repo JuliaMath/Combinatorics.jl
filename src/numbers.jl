@@ -86,7 +86,7 @@ function fibonaccinum(n::Integer)
         throw(DomainError(n, "n must be nonnegative"))
     end
     z = Ref{BigInt}(0)
-    ccall((:__gmpz_fib_ui, :libgmp), Cvoid, (Ref{BigInt}, UInt), z, UInt(n))
+    ccall((:__gmpz_fib_ui, libgmp), Cvoid, (Ref{BigInt}, UInt), z, UInt(n))
     return z[]
 end
 
@@ -94,7 +94,7 @@ end
 function jacobisymbol(a::Integer, b::Integer)
     ba = Ref{BigInt}(a)
     bb = Ref{BigInt}(b)
-    return ccall((:__gmpz_jacobi, :libgmp), Cint, (Ref{BigInt}, Ref{BigInt}), ba, bb)
+    return ccall((:__gmpz_jacobi, libgmp), Cint, (Ref{BigInt}, Ref{BigInt}), ba, bb)
 end
 
 """
@@ -113,7 +113,7 @@ end
 function legendresymbol(a::Integer, b::Integer)
     ba = Ref{BigInt}(a)
     bb = Ref{BigInt}(b)
-    return ccall((:__gmpz_legendre, :libgmp), Cint, (Ref{BigInt}, Ref{BigInt}), ba, bb)
+    return ccall((:__gmpz_legendre, libgmp), Cint, (Ref{BigInt}, Ref{BigInt}), ba, bb)
 end
 
 function lucasnum(n::Integer)
@@ -121,7 +121,7 @@ function lucasnum(n::Integer)
         throw(DomainError(n, "n must be nonnegative"))
     end
     z = Ref{BigInt}(0)
-    ccall((:__gmpz_lucnum_ui, :libgmp), Cvoid, (Ref{BigInt}, UInt), z, UInt(n))
+    ccall((:__gmpz_lucnum_ui, libgmp), Cvoid, (Ref{BigInt}, UInt), z, UInt(n))
     return z[]
 end
 

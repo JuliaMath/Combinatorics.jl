@@ -74,7 +74,7 @@ function doublefactorial(n::Integer)
         throw(DomainError(n, "n must be nonnegative"))
     end
     z = Ref{BigInt}(0)
-    ccall((:__gmpz_2fac_ui, :libgmp), Cvoid, (Ref{BigInt}, UInt), z, UInt(n))
+    ccall((:__gmpz_2fac_ui, libgmp), Cvoid, (Ref{BigInt}, UInt), z, UInt(n))
     return z[]
 end
 
@@ -104,7 +104,7 @@ function multifactorial(n::Integer, m::Integer)
         throw(DomainError(n, "n must be nonnegative"))
     end
     z = Ref{BigInt}(0)
-    ccall((:__gmpz_mfac_uiui, :libgmp), Cvoid, (Ref{BigInt}, UInt, UInt), z, UInt(n), UInt(m))
+    ccall((:__gmpz_mfac_uiui, libgmp), Cvoid, (Ref{BigInt}, UInt, UInt), z, UInt(n), UInt(m))
     return z[]
 end
 
@@ -113,7 +113,7 @@ function primorial(n::Integer)
         throw(DomainError(n, "n must be nonnegative"))
     end
     z = Ref{BigInt}(0)
-    ccall((:__gmpz_primorial_ui, :libgmp), Cvoid, (Ref{BigInt}, UInt), z, UInt(n))
+    ccall((:__gmpz_primorial_ui, libgmp), Cvoid, (Ref{BigInt}, UInt), z, UInt(n))
     return z[]
 end
 
