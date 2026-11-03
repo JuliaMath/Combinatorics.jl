@@ -1,6 +1,9 @@
 
 module Combinatorics
 
+# `Base.GMP.libgmp` was added in Julia 1.9
+const libgmp = isdefined(Base.GMP, :libgmp) ? Base.GMP.libgmp : :libgmp
+
 include("numbers.jl")
 include("factorials.jl")
 include("combinations.jl")
